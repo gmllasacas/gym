@@ -1,0 +1,10 @@
+{
+	"name": "gz/sistema",
+	"type": "project",
+	"description": "Sistema with CodeIgniter v3",
+	"require": {
+		"php": "~7.4.0",
+		"ext-json": "*",
+		"ext-mbstring": "*"
+	}
+}
