@@ -537,7 +537,7 @@ class Generico extends CI_Controller
                 case 'base_configuracion':
                     if (!empty($_FILES['logo']['name'])) {
                         $this->load->library('upload');
-                        $config['upload_path'] = './public/img/recursos/';
+                        $config['upload_path'] = './public/uploads/';
                         $config['allowed_types']= 'bmp|gif|jpeg|jpg|tif|png';
                         $config['max_size'] = 4096;
                         $config['encrypt_name'] = true;
@@ -547,7 +547,7 @@ class Generico extends CI_Controller
                             break;
                         } else {
                             $uploaddata = $this->upload->data();
-                            $inputs['logo']='public/img/recursos/'.$uploaddata['file_name'];
+                            $inputs['logo']='public/uploads/'.$uploaddata['file_name'];
                         }
                     }
                     $inputs['fecha']=date('Y-m-d H:i:s');
@@ -595,33 +595,49 @@ class Generico extends CI_Controller
                 switch ($table) {
                     case 'base_usuario':
                         $where = array('id'=>$id);
-                        $registro=basedetalleregistro($table, $where, true);
+                        $registro = basedetalleregistro($table, $where, true);
                         break;
                     case 'proceso_producto':
                         $where = array('id'=>$id);
-                        $registro=basedetalleregistro($table, $where, true);
+                        $registro = basedetalleregistro($table, $where, true);
                         $kardex = basedetalleregistro('proceso_kardex', ['estado'=>'1','producto'=>$id]);
                         $registro['existencias'] = ($kardex['saldo']>0 ? $kardex['saldo'] : 0);
                         break;
                     case 'proceso_venta':
                         $where = array('id'=>$id);
-                        $registro=basedetalleregistro($table, $where, true);
+                        $registro = basedetalleregistro($table, $where, true);
                         $registro['detalles'] = $this->generico_modelo->listado('proceso_venta_detalle', '1', ['venta'=>$id]);
                         $registro['anulacion'] = basedetalleregistro('proceso_venta_anulacion', ['estado'=>'1','venta'=>$id]);
-                        $registro['anulacion']['usuario'] = basedetalleregistro('base_usuario', ['estado'=>'1','id'=>$registro['anulacion']['usuario']]);
+                        $registro['anulacion']['usuario'] = basedetalleregistro('base_usuario', ['id'=>$registro['anulacion']['usuario']]);
                         break;
                     case 'proceso_ingreso':
                         $where = array('id'=>$id);
-                        $registro=basedetalleregistro($table, $where, true);
+                        $registro = basedetalleregistro($table, $where, true);
                         $registro['detalles'] = $this->generico_modelo->listado('proceso_ingreso_detalle', '1', ['ingreso'=>$id]);
                         $registro['anulacion'] = basedetalleregistro('proceso_ingreso_anulacion', ['estado'=>'1','ingreso'=>$id]);
                         $registro['anulacion']['usuario'] = basedetalleregistro('base_usuario', ['estado'=>'1','id'=>$registro['anulacion']['usuario']]);
                         break;
+                    case 'proceso_auditoria':
+                        $where = array('id'=>$id);
+                        $registro = basedetalleregistro($table, $where, true);
+                        $registro['usuario'] = basedetalleregistro('base_usuario', ['id'=>$registro['usuario']]);
+                        $data = json_decode($registro['data'], true);
+                        $detalles = [];
+                        foreach ($data as $key => $value) {
+                            if ($key == 'estado') {
+                                $estado = basedetalleregistro('base_estado', ['id'=>$value]);
+                                $value = $estado['descripcion'];
+                            }
+                            $key = strtoupper(str_replace('_', ' ', $key));
+                            $detalles[] = ['campo' => $key, 'dato' => $value];
+                        }
+                        $registro['detalles'] = $detalles;
+                        break;
                     case 'proceso_pago':
                         $where = array('id'=>$id);
-                        $registro=basedetalleregistro($table, $where, true);
+                        $registro = basedetalleregistro($table, $where, true);
                         $registro['anulacion'] = basedetalleregistro('proceso_pago_anulacion', ['estado'=>'1','pago'=>$id]);
-                        $registro['anulacion']['usuario'] = basedetalleregistro('base_usuario', ['estado'=>'1','id'=>$registro['anulacion']['usuario']]);
+                        $registro['anulacion']['usuario'] = basedetalleregistro('base_usuario', ['id'=>$registro['anulacion']['usuario']]);
                         break;
                     default:
                         $where = array('id' => $id);

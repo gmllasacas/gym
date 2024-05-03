@@ -19,7 +19,7 @@
                                 <li class="divider"></li>
                                 <li class="dropdown-header">Acciones</li>
                                 <li>
-                                    <a tabindex="-1" href="<?php echo base_url();?>">
+                                    <a tabindex="-1" href="<?php echo base_url();?>sistema/salir">
                                         <i class="si si-logout pull-right"></i>Cerrar Sesión
                                     </a>
                                 </li>

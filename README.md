@@ -19,7 +19,10 @@ application\config\development\config.php
 ```bash
 scripts\base.sql
 ```
-
+- En linux, dar los permisos necesarios a la ruta:
+```bash
+public/uploads/
+```
 ## Uso
 Ingrese al sistema mediante la ruta, e ingrese su usuario y contraseña:
 - GET https://localhost/gym

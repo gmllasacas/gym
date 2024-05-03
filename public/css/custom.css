@@ -569,6 +569,9 @@ fieldset[disabled] .btn-info.active {
 }
 .img-avatar {
     border-radius: 10%;
+    width: auto;
+    height: auto;
+    max-height: 64px;
 }
 .logo-content {
 	padding: 10px 0px 9px 10px;
