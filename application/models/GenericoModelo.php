@@ -157,7 +157,15 @@ class GenericoModelo extends CI_Model
                     WHERE proceso_credito.estado REGEXP ? AND proceso_credito.cliente = ?",
                     array('^['.$estado.']',$cliente)
                 );
-                
+                break;
+            case 'proceso_auditoria':
+                $query = $this->db->query(
+                    "SELECT proceso_auditoria.*, base_usuario.username
+                    FROM proceso_auditoria 
+                    INNER JOIN base_usuario ON base_usuario.id=proceso_auditoria.usuario
+                    WHERE proceso_auditoria.estado REGEXP ?",
+                    array('^['.$estado.']')
+                );
                 break;
             default:
                 $order_by = isset($params['order_by']) ? $params['order_by'] : 'id';
@@ -296,7 +304,6 @@ class GenericoModelo extends CI_Model
 
     public function login($params)
     {
-
         $query = $this->db->query(
             "SELECT base_usuario.*, base_cliente_sistema.ruc
             FROM base_usuario

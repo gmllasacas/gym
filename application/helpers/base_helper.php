@@ -184,7 +184,10 @@ if (! function_exists('basenuevoregistro')) {
             unset($inputs[$value]);
         }
         if ($ci->db->insert($table, $inputs, true)) {
-            $query = $ci->db->select('*')->from($table)->where(array('id'=>$ci->db->insert_id()))->get();
+            $id = $ci->db->insert_id();
+            $query = $ci->db->select('*')->from($table)->where(array('id'=>$id))->get();
+            $inputs['id'] = $id;
+            registro_auditoria($inputs, "Creó un registro de '$table' con ID: " . $id);
             return $query->row_array();
         }
 
@@ -203,6 +206,8 @@ if (! function_exists('baseactualizarregistro')) {
         }
         if ($ci->db->update($table, $inputs, $where)) {
             $query = $ci->db->select('*')->from($table)->where($where)->get();
+            $inputs['id'] = $where['id'];
+            registro_auditoria($inputs, "Actualizó un registro de '$table' con ID: " . $where['id']);
             return $query->row_array();
         }
 
@@ -250,12 +255,29 @@ if (! function_exists('unidades_docenas')) {
     }
 }
 
-if (! function_exists('respuesta')) {
+if (! function_exists('response')) {
     function response($data = [], $status = 200)
     {
         $respuesta = ['status' => $status];
 
         echo json_encode(array_merge($respuesta, $data));
         exit();
+    }
+}
+
+if (! function_exists('registro_auditoria')) {
+    function registro_auditoria($data, $accion)
+    {
+        $ci=& get_instance();
+        $ci->load->library('session');
+
+        $inputs = [
+            'usuario' => $ci->session->userdata('id'),
+            'accion' => str_replace(['proceso_', 'base_'], ['', ''], $accion),
+            'data' => json_encode($data),
+            //'sucursal' => $ci->session->userdata('sucursal'),
+            'fecha' => date('Y-m-d H:i:s'),
+        ];
+        $ci->db->insert('proceso_auditoria', $inputs, true);
     }
 }

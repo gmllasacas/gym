@@ -31,7 +31,7 @@ class Sistema extends CI_Controller
                 $ruc=10478672882;
                 break;
             default:
-                $ruc=10412455130;
+                $ruc=10478672882;
                 break;
         }
 
@@ -69,12 +69,14 @@ class Sistema extends CI_Controller
                         //$this->session->set_userdata('mensaje', 'Bienvenido '.$registro['nombres'].' '.$registro['apellidos']);
 
                         $permisos = $this->generico_modelo->listado('permisos', '1', ['perfil'=>$this->session->userdata('perfil')]);
+                        registro_auditoria([], "Inició sesión");
                         response([
                             'message' => 'Datos correctos',
                             'redirect'=> base_url().$permisos[0]['url'],
                         ]);
                     } else {
                         $restante = (3 - $intentos) < 0 ? 3 : (3 - $intentos);
+                        registro_auditoria([], "Intentó iniciar sesión, contraseña incorrecta");
                         response(['message'=>'Contraseña incorrecta, tiene ' .  $restante . ' intento(s) restante(s)'], 500);
                     }
                 } else {
@@ -88,6 +90,7 @@ class Sistema extends CI_Controller
 
     public function salir()
     {
+        registro_auditoria([], "Terminó sesión");
         $this->session->sess_destroy();
         redirect(base_url(), 'location');
     }
@@ -156,5 +159,23 @@ class Sistema extends CI_Controller
         $this->load->view('sistema/usuarios', $datos);
         $this->load->view('bases/pie');
         $this->load->view('bases/funciones', ['funciones' => ['sistema/usuarios']]);
+    }
+
+    public function auditoria()
+    {
+        $datos = [
+            'menu_text' => 'Sistema',
+            'submenu_text' => 'Auditoría',
+            'titulo_text' => 'Auditoría',
+            'export_text' => 'Listado de registros',
+            'registro_text' => 'auditoría',
+        ];
+
+        $this->load->view('bases/cabezera');
+        $this->load->view('bases/menu', ['menu' =>1,'submenu' =>105]);
+        $this->load->view('bases/barra');
+        $this->load->view('sistema/auditoria', $datos);
+        $this->load->view('bases/pie');
+        $this->load->view('bases/funciones', ['funciones' => ['sistema/auditoria']]);
     }
 }
