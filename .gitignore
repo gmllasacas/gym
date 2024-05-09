@@ -5,3 +5,6 @@ application/logs/*
 
 #Composer
 vendor/
+
+#Uploads
+public/uploads/*

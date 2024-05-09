@@ -11,7 +11,11 @@ jQuery(function () {
     jQuery('body').on('click', '#editarlogo', function() {
         jQuery(registroform+' [name=logo]').trigger('click');
     });
-    
+
+    jQuery('body').on('click', '#editardashboard', function() {
+        jQuery(registroform+' [name=dashboard]').trigger('click');
+    });
+
     var registrovalidate = jQuery(registroform).validate({
         rules: {
             'ruc': {

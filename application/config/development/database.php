@@ -26,3 +26,4 @@ $db['default']['compress'] = false;
 $db['default']['stricton'] = false;
 $db['default']['failover'] = array();
 $db['default']['save_queries'] = true;
+$db['default']['port'] = 3307;

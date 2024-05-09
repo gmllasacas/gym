@@ -8,6 +8,7 @@ class Generico extends CI_Controller
     {
         parent::__construct();
         $this->configuracion=basedetalleregistro('base_configuracion', ['id'=>1]);
+        $this->configuracion['logo'] = ($this->configuracion['logo'] == '') ? 'public/img/recursos/logo.png' : $this->configuracion['logo'];
         $this->load->helper('text');
         $this->load->model('genericomodelo', 'generico_modelo');
     }
@@ -550,6 +551,22 @@ class Generico extends CI_Controller
                             $inputs['logo']='public/uploads/'.$uploaddata['file_name'];
                         }
                     }
+                    if (!empty($_FILES['dashboard']['name'])) {
+                        $this->load->library('upload');
+                        $config['upload_path'] = './public/uploads/';
+                        $config['allowed_types']= 'bmp|gif|jpeg|jpg|tif|png';
+                        $config['max_size'] = 4096;
+                        $config['encrypt_name'] = true;
+                        $this->upload->initialize($config);
+                        if (!$this->upload->do_upload('dashboard')) {
+                            response(['message'=>$this->upload->display_errors()], 500);
+                            break;
+                        } else {
+                            $uploaddata = $this->upload->data();
+                            $inputs['dashboard']='public/uploads/'.$uploaddata['file_name'];
+                        }
+                    }
+
                     $inputs['fecha']=date('Y-m-d H:i:s');
                     if ($inputs['ruc']!='') {
                         $inputs['ruc']=str_replace(' ', '', addslashes($this->input->post('ruc')));

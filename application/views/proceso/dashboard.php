@@ -1,7 +1,7 @@
 
 
             <main id="main-container">
-                <div class="content bg-image overflow-hidden" style="background-image: url('<?php echo base_url();?>/public/img/recursos/textiles.jpg');">
+                <div class="content bg-image overflow-hidden" style="background-image: url('<?php echo base_url().$configuracion['dashboard'];?>');">
                     <div class="push-10-t push-15">
                         <h1 class="h2 text-white animated zoomIn">Dashboard</h1>
                     </div>

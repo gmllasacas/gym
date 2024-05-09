@@ -8,12 +8,22 @@ class Proceso extends CI_Controller
     {
         parent::__construct();
         $this->configuracion=basedetalleregistro('base_configuracion', ['id'=>1]);
+        $this->configuracion['logo'] = ($this->configuracion['logo'] == '') ? 'public/img/recursos/logo.png' : $this->configuracion['logo'];
         $this->load->helper('text');
         $this->load->model('genericomodelo', 'generico_modelo');
     }
 
     public function dashboard()
     {
+        $this->db->simple_query(
+            'SET SESSION sql_mode =
+            REPLACE(REPLACE(REPLACE(
+            @@sql_mode,
+            "ONLY_FULL_GROUP_BY,", ""),
+            ",ONLY_FULL_GROUP_BY", ""),
+            "ONLY_FULL_GROUP_BY", "")'
+        );
+
         /**Año actual */
         $date = date('Y-m-d');
         $dateini = date('Y-01-01');
@@ -238,6 +248,7 @@ class Proceso extends CI_Controller
         /**Clientes */
 
         /**Año actual */
+        $this->configuracion['dashboard'] = ($this->configuracion['dashboard'] == '') ? 'public/img/recursos/dashboard.jpg' : $this->configuracion['dashboard'];
 
         $datos = [
             'menu_text' => 'Sistema',
@@ -250,6 +261,7 @@ class Proceso extends CI_Controller
             'data_graph_pagos'=>$data_graph_pagos,
             'data_graph_ingresos'=>$data_graph_ingresos,
             'data_pie_clientes'=>$data_pie_clientes,
+            'configuracion'=>$this->configuracion
         ];
         
         $this->load->view('bases/cabezera');

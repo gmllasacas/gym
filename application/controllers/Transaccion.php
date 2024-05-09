@@ -8,6 +8,7 @@ class Transaccion extends CI_Controller
     {
         parent::__construct();
         $this->configuracion=basedetalleregistro('base_configuracion', ['id'=>1]);
+        $this->configuracion['logo'] = ($this->configuracion['logo'] == '') ? 'public/img/recursos/logo.png' : $this->configuracion['logo'];
         $this->load->helper('text');
         $this->load->model('genericomodelo', 'generico_modelo');
     }

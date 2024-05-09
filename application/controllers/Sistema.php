@@ -8,6 +8,7 @@ class Sistema extends CI_Controller
     {
         parent::__construct();
         $this->configuracion=basedetalleregistro('base_configuracion', ['id'=>1]);
+        $this->configuracion['logo'] = ($this->configuracion['logo'] == '') ? 'public/img/recursos/logo.png' : $this->configuracion['logo'];
         $this->load->helper('text');
         $this->load->model('genericomodelo', 'generico_modelo');
     }
@@ -17,7 +18,7 @@ class Sistema extends CI_Controller
         $this->session->sess_destroy();
 
         $this->load->view('bases/cabezera');
-        $this->load->view('sistema/login', ['funciones' => ['sistema/login']]);
+        $this->load->view('sistema/login', ['crear_contrasena' => false, 'funciones' => ['sistema/login']]);
     }
 
     public function login()
@@ -97,6 +98,7 @@ class Sistema extends CI_Controller
 
     public function configuracion()
     {
+        $this->configuracion['dashboard'] = ($this->configuracion['dashboard'] == '') ? 'public/img/recursos/dashboard.jpg' : $this->configuracion['dashboard'];
         $datos = [
             'menu_text' => 'Sistema',
             'submenu_text' => 'Configuración',
@@ -177,5 +179,150 @@ class Sistema extends CI_Controller
         $this->load->view('sistema/auditoria', $datos);
         $this->load->view('bases/pie');
         $this->load->view('bases/funciones', ['funciones' => ['sistema/auditoria']]);
+    }
+
+    public function recuperar()
+    {
+        $correo=$this->input->post('correo');
+        $this->form_validation->set_rules('correo', 'correo', 'required|valid_email');
+        
+        if ($this->form_validation->run() == false) {
+            response(['message'=>'Parámetros incorrectos'], 500);
+        } else {
+            $registro = basedetalleregistro('base_usuario', ['estado'=>'1','correo'=>$correo]);
+            if (count((array)$registro) > 0) {
+                if ($this->configuracion['send_email'] == 1) {
+                    $this->load->library('encryption');
+                    $this->encryption->initialize(array('driver' => 'openssl'));
+
+                    $fecha = date('Y-m-d H:i:s');
+                    $titulo = 'Notificación de recuperación de contraseña';
+                    $token = $this->encryption->encrypt($registro['username'] . '|' . $fecha);
+                    $token_64 = base64_encode($token);
+                    $enlace = base_url('sistema/validar/' . $token_64);
+
+                    $actualizado=baseactualizarregistro(['token'=>$token], 'base_usuario', ['id'=>$registro['id']], []);
+                    if ($actualizado) {
+                        $this->load->library('email');
+                        $datos  =[
+                            'titulo' =>$titulo,
+                            'texto' =>'Se solicitó la recuperación de contraseña para el usuario asociado al correo ' . $correo . ', se creó un enlace temporal que dura 3 horas:',
+                            'username' =>$registro['username'],
+                            'correo' =>$registro['correo'],
+                            'enlace' =>$enlace
+                        ];
+
+                        $this->email->set_newline("\r\n");
+                        $this->email->initialize(['mailtype'  => 'html']);
+                        $this->email->from('info@test.com', 'Test');
+                        $this->email->to($registro['correo']);
+                        $this->email->subject($titulo);
+                        $this->email->message($this->load->view('correo/recuperar', $datos, true));
+                        registro_auditoria([], "Solicitó la recuperación de contraseña");
+                        if ($this->email->send()) {
+                            $emailresp = 'Email enviado';
+                        } else {
+                            $emailresp = $this->email->print_debugger();
+                        }
+                        response(['message'=>$emailresp], 201);
+                    } else {
+                        response(['message'=>'Error al escribir en la BD'], 500);
+                    }
+                } else {
+                    response(['message'=>'Configuración de envío de correo desactivado'], 500);
+                }
+            } else {
+                response(['message'=>'Usuario incorrecto'], 500);
+            }
+        }
+    }
+
+    public function validar($token = null)
+    {
+        if (is_null($token)) {
+            show_error('Parámetros incorrectos', '400', 'Error');
+        } else {
+            $this->load->library('encryption');
+            $this->encryption->initialize(array('driver' => 'openssl'));
+            $token_og = base64_decode($token);
+            $data = explode('|', $this->encryption->decrypt($token_og));
+            $ahora = date('Y-m-d H:i:s');
+            $minutos = date_difference_minutes($data[1], $ahora);
+            if ($minutos <= 180) {
+                $registro = basedetalleregistro('base_usuario', ['estado'=>'1', 'username'=>$data[0], 'token'=>$token_og]);
+                if (count((array)$registro) > 0) {
+                    $datos = [
+                        'crear_contrasena' => true,
+                        'username' =>$registro['username'],
+                        'correo' =>$registro['correo'],
+                        'token' => $token,
+                        'funciones' => ['sistema/login'],
+                    ];
+                    $this->load->view('bases/cabezera');
+                    $this->load->view('sistema/login', $datos);
+                } else {
+                    show_error('El usuario o token no existen', '400', 'Error');
+                }
+            } else {
+                show_error('El enlace ha caducado', '400', 'Error');
+            }
+        }
+    }
+
+    public function crear()
+    {
+        $token=$this->input->post('token');
+        $password=$this->input->post('password');
+        $this->form_validation->set_rules('token', 'token', 'required');
+        $this->form_validation->set_rules('password', 'password', 'required');
+        
+        if ($this->form_validation->run() == false) {
+            response(['message'=>'Parámetros incorrectos'], 500);
+        } else {
+            $this->load->library('encryption');
+            $this->encryption->initialize(array('driver' => 'openssl'));
+            $token_og = base64_decode($token);
+            $data = explode('|', $this->encryption->decrypt($token_og));
+            $ahora = date('Y-m-d H:i:s');
+            $minutos = date_difference_minutes($data[1], $ahora);
+            if ($minutos <= 180) {
+                $registro_det = basedetalleregistro('base_usuario', ['estado'=>'1', 'username'=>$data[0], 'token'=>$token_og]);
+                if (count((array)$registro_det) > 0) {
+                    $where = ['id' => $registro_det['id']];
+                    $inputs['token'] = null;
+                    $inputs['password'] = password_hash($password, PASSWORD_DEFAULT);
+                    $registro = baseactualizarregistro($inputs, 'base_usuario', $where, []);
+                    if ($registro) {
+                        $this->load->library('email');
+                        $titulo = 'Notificación de creación de contraseña';
+                        $datos  =[
+                            'titulo' =>$titulo,
+                            'texto' =>'Se creó una nueva contraseña para el usuario asociado al correo ' . $registro['correo'] . ', si usted no lo hizo contáctese con el administrador del sistema.',
+                        ];
+
+                        $this->email->set_newline("\r\n");
+                        $this->email->initialize(['mailtype'  => 'html']);
+                        $this->email->from('info@test.com', 'Test');
+                        $this->email->to($registro['correo']);
+                        $this->email->subject($titulo);
+                        $this->email->message($this->load->view('correo/notificacion', $datos, true));
+                        registro_auditoria([], "Creó una nueva contraseña");
+                        if ($this->email->send()) {
+                            $emailresp = 'Email enviado';
+                        } else {
+                            $emailresp = $this->email->print_debugger();
+                        }
+                        
+                        response(['message'=>'Contraseña creada', 'redirect'=> base_url()], 201);
+                    } else {
+                        response(['message'=>'Error al escribir en la BD'], 500);
+                    }
+                } else {
+                    response(['message'=>'El usuario o token no existen'], 500);
+                }
+            } else {
+                response(['message'=>'El enlace ha caducado'], 500);
+            }
+        }
     }
 }
