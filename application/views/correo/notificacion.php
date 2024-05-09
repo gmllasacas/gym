@@ -75,7 +75,7 @@
                                                     <!-- ID:TXT VIEW BROWSER -->
                                                     <td align="left" style="padding:0 10px; color:#666666; font-family:'Open Sans',Arial,Helvetica,sans-serif; font-size:12px; font-weight:600; letter-spacing:1px;">
                                                         <a href="#" style="color:#ffffff; text-decoration:none;">
-                                                            RECUPERACIÓN DE CONTRASEÑA
+                                                            NOTIFICACIÓN
                                                         </a>
                                                     </td>
                                                 </tr>
@@ -142,7 +142,7 @@
             </tr>
         </table>
         <!-- MENU ENDS -->
-        
+
         <!-- ABOUT US STARTS -->
         <table border="0" width="100%" align="center" bgcolor="#333333" cellpadding="0" cellspacing="0" style="width:100%;max-width:100%;">
             <tr>
@@ -169,102 +169,6 @@
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td height="60" style="line-height:60px; mso-line-height-rule:exactly; font-size:0;">
-                                                        &nbsp;
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td align="center">
-                                                        <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%">
-                                                            <tr>
-                                                                <td align="center" width="280">
-                                                                    <!-- About Us Left Table -->
-                                                                    <table border="0" width="280" class="res-row" cellpadding="0" cellspacing="0" align="left" style="border-collapse:collapse; mso-table-lspace:0pt; mso-table-rspace:0pt;">
-                                                                        <tr>
-                                                                            <td align="left">
-                                                                                <table align="left" border="0" cellpadding="0" cellspacing="0" style="border-collapse:collapse; mso-table-lspace:0pt; mso-table-rspace:0pt;">
-                                                                                    <tr>
-                                                                                        <td align="left">
-                                                                                            <table align="left" border="0" cellpadding="0" cellspacing="0" style="border-collapse:collapse; mso-table-lspace:0pt; mso-table-rspace:0pt; width:auto !important;">
-                                                                                                <tr>
-                                                                                                    <td align="left" width="280" class="img-responsive">
-                                                                                                        <img src="<?php echo base_url(). 'public/img/recursos/recuperacion.jpg'?>" alt="280x280" width="280" height="280" style="width:100%; height:auto;">
-                                                                                                    </td>
-                                                                                                </tr>
-                                                                                            </table>
-                                                                                        </td>
-                                                                                    </tr>
-                                                                                </table>
-                                                                            </td>
-                                                                        </tr>
-                                                                    </table>
-                                                                    <!--[if gte mso 9]>
-                                                                </td>
-                                                                <td width="20">
-                                                            <![endif]-->
-                                                                    <!-- DUMMY TABLE -->
-                                                                    <table align="left" border="0" class="res-row" cellpadding="0" cellspacing="0" width="1" style="border-collapse:collapse; mso-table-lspace:0pt; mso-table-rspace:0pt; mso-hide:all;">
-                                                                        <tr>
-                                                                            <td height="20" style="line-height:20px; mso-line-height-rule:exactly; font-size:0;">
-                                                                                &nbsp;
-                                                                            </td>
-                                                                        </tr>
-                                                                    </table>
-                                                                    <!-- -->
-                                                                    <!--[if gte mso 9]>
-                                                                </td>
-                                                                <td width="280">
-                                                            <![endif]-->
-                                                                    <!-- About Us Right Table -->
-                                                                    <table border="0" width="280" class="res-row" cellpadding="0" cellspacing="0" align="right" style="border-collapse:collapse; mso-table-lspace:0pt; mso-table-rspace:0pt;">
-                                                                        <tr>
-                                                                            <td align="left">
-                                                                                <table align="left" border="0" cellpadding="0" cellspacing="0" style="border-collapse:collapse; mso-table-lspace:0pt; mso-table-rspace:0pt;">
-                                                                                    <tr>
-                                                                                        <!-- ID:TXT 2COL HEADING -->
-                                                                                        <td valign="middle" align="left" style="font-family:'Oswald',Arial,Helvetica,sans-serif; font-size:20px; line-height:30px; font-weight:500; color:#333333; letter-spacing:1px;">
-                                                                                            <?php echo $titulo;?>
-                                                                                        </td>
-                                                                                    </tr>
-                                                                                    <tr>
-                                                                                        <td height="5" style="font-size:0; mso-line-height-rule:exactly; line-height:5px;">
-                                                                                            &nbsp;
-                                                                                        </td>
-                                                                                    </tr>
-                                                                                    <tr>
-                                                                                        <!-- ID:TXT CONTENT -->
-                                                                                        <td align="left" style="color:#666666; font-family: 'Open Sans', Arial, Helvetica Neue, Helvetica, sans-serif; font-size:14px; line-height:24px; font-weight:400;">
-                                                                                            <?php echo $texto;?>
-                                                                                        </td>
-                                                                                    </tr>
-                                                                                    <tr>
-                                                                                        <td height="20" style="line-height:20px; mso-line-height-rule:exactly; font-size:0;">
-                                                                                            &nbsp;
-                                                                                        </td>
-                                                                                    </tr>
-                                                                                    <tr>
-                                                                                        <td align="left" class="button-width">
-                                                                                            <!-- ID:BTN COMMON BUTTON -->
-                                                                                            <table align="left" bgcolor="#5c90d2" border="0" cellpadding="0" cellspacing="0" style="border-radius:5px;">
-                                                                                                <tr>
-                                                                                                    <td align="center" style="color:#ffffff; font-family:'Open Sans',Arial,Helvetica,sans-serif; font-weight:700; padding:10px 12px; font-size:12px; letter-spacing:1px;">
-                                                                                                        <a href="<?php echo $enlace;?>" style="color:#ffffff; text-decoration:none;">ENLACE</a>
-                                                                                                    </td>
-                                                                                                </tr>
-                                                                                            </table>
-                                                                                        </td>
-                                                                                    </tr>
-                                                                                </table>
-                                                                            </td>
-                                                                        </tr>
-                                                                    </table>
-                                                                </td>
-                                                            </tr>
-                                                            <!-- -->
-                                                        </table>
-                                                    </td>
-                                                </tr>
-                                                <tr>
                                                     <td height="30" style="line-height:30px; mso-line-height-rule:exactly; font-size:0;">
                                                         &nbsp;
                                                     </td>
@@ -283,6 +187,87 @@
             </tr>
         </table>
         <!-- ABOUT US ENDS -->
+
+        <!-- HEADER STARTS -->
+        <table border="0" width="100%" align="center" bgcolor="#333333" cellpadding="0" cellspacing="0" style="width:100%;max-width:100%;">
+            <tr>
+                <td align="center" valign="middle">
+                    <!-- ID:BG HEADER OPTIONAL -->
+                    <table border="0" width="640" bgcolor="#ffffff" align="center" cellpadding="0" cellspacing="0" class="res-row" style="width:640px;max-width:640px;">
+                        <tr>
+                            <td align="center">
+                                <table border="0" width="100%" align="center" cellpadding="0" cellspacing="0" class="res-row" style="width:100%;max-width:100%;">
+                                    <tr>
+                                        <td align="center" valign="middle">
+                                            <!-- container -->
+                                            <table width="580" border="0" cellpadding="0" cellspacing="0" align="center" class="res-row" style="width:580px;max-width:580px;">
+                                                <tr>
+                                                    <td align="center" valign="middle" class="container-padding">
+                                                        <!-- Header Headline -->
+                                                        <table border="0" width="100%" cellpadding="0" cellspacing="0" align="center" style="width:100%; max-width:100%;">
+                                                            <tr>
+                                                                <td>
+                                                                    <!--[if (gte mso 9)|(IE)]>
+                                                            <table aria-hidden="true" border="0" cellspacing="0" cellpadding="0" align="left" width="100%" style="width: 100%;">
+                                                                <tr>
+                                                                    <td align="left" valign="top" width="580" style="width:580px;">
+                                                                        <![endif]-->
+                                                                    <table align="left" border="0" class="res-row" cellpadding="0" cellspacing="0" width="580" style="border-collapse:collapse; mso-table-lspace:0pt; mso-table-rspace:0pt;">
+                                                                        <tr>
+                                                                            <!-- ID:TXT HEADER SUBHEADING -->
+                                                                            <td align="left" style="color:#333333; font-family:'Oswald',Arial,Helvetica,sans-serif; font-size:20px; line-height:40px; font-weight:400; letter-spacing:1px;">
+                                                                                <?php echo $titulo;?>
+                                                                            </td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td height="10" style="line-height:10px; mso-line-height-rule:exactly; font-size:0;">
+                                                                                &nbsp;
+                                                                            </td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <!-- ID:TXT HEADER CONTENT -->
+                                                                            <td align="left" style="color:#666666; font-family:'Open Sans',Arial,Helvetica,sans-serif; font-size:14px; line-height:24px; font-weight:400; letter-spacing:1px;">
+                                                                                <?php echo $texto;?>
+                                                                            </td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td height="20" style="line-height:20px; mso-line-height-rule:exactly; font-size:0;">
+                                                                                &nbsp;
+                                                                            </td>
+                                                                        </tr>
+                                                                    </table>
+                                                                    <!--[if (gte mso 9)|(IE)]>
+                                                                    </td>
+                                                                    <td width="580">&nbsp;</td>
+                                                                </tr>
+                                                            </table>
+                                                            <![endif]-->
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td height="20" style="line-height:20px; mso-line-height-rule:exactly; font-size:0;">
+                                                                    &nbsp;
+                                                                </td>
+                                                            </tr>
+                                                        </table>
+                                                        <!-- Header Headline -->
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                            <!-- container -->
+                                        </td>
+                                    </tr>
+                                </table>
+                                <!-- Header-bg-image -->
+                                <!--[if (gte mso 9)|(IE)]></v:textbox></v:rect><![endif]-->
+                            </td>
+                        </tr>
+                    </table>
+                    <!-- bg-color -->
+                </td>
+            </tr>
+        </table>
+        <!-- HEADER ENDS -->
         
         <!-- FOOTER STARTS -->
         <table border="0" width="100%" align="center" bgcolor="#333333" cellpadding="0" cellspacing="0" style="width:100%;max-width:100%;">

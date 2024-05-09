@@ -27,19 +27,32 @@
                             <form class="form-horizontal push-10-t push-10" method="post" action="<?php echo base_url();?>generico/actualizarregistro" id="registro-form" autocomplete="off" enctype="multipart/form-data">
                                 <input type="hidden" name="id" value="1">
                                 <input type="hidden" name="table" value="base_configuracion">
+                                <h3 class="h5 font-w600 text-uppercase push-15"><i class="fa fa-info text-primary push-5-r"></i> Imágenes de sistema</h3>
                                 <div class="row">
                                     <div class="col-xs-12 col-sm-4 col-sm-offset-2 hidden">
                                         <a class="block block-bordered block-link-hover3 text-center" id="envio" role="button" data-texto="" data-table="base_configuracion" data-id="1" data-envio="<?php echo $configuracion['envio'];?>">
                                         </a>
                                     </div>
-                                    <div class="col-xs-12 col-sm-4 col-sm-offset-4">
+                                    <div class="col-xs-6 col-sm-4 col-xs-offset-3 col-sm-offset-0">
                                         <input class="hidden" type="file" name="logo" onchange="document.getElementById('logo').src = window.URL.createObjectURL(this.files[0])">
                                         <a class="block block-bordered" id="editarlogo" role="button">
-                                            <div class="block-content block-content-full text-center">
+                                            <div class="block-content block-content-mini text-center" style="padding-bottom: 5px;">
                                                 <div>
                                                     <img class="img-avatar" id="logo" src="<?php echo base_url().$configuracion['logo'];?>" alt="">
                                                 </div>
-                                                <div class="h5 push-15-t push-5">Logo principal</div>
+                                                <div class="push-10-t"><b>Logo principal</b></div>
+                                                <span class="small text-muted">Se recomienda una imagen cuadrada</span>
+                                            </div>
+                                        </a>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-8">
+                                        <input class="hidden" type="file" name="dashboard" onchange="document.getElementById('dashboard').style.backgroundImage='url('+window.URL.createObjectURL(this.files[0])+')'">
+                                        <a class="block block-bordered" id="editardashboard" role="button">
+                                            <div class="block-content block-content-mini text-center" style="padding-bottom: 5px;">
+                                                <div class="content bg-image" id="dashboard" style="background-image: url('<?php echo base_url().$configuracion['dashboard'];?>');">
+                                                </div>
+                                                <div class="push-10-t"><b>Imagen de dashboard</b></div>
+                                                <span class="small text-muted">Se recomienda una imagen rectangular</span>
                                             </div>
                                         </a>
                                     </div>

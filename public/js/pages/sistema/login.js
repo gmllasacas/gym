@@ -73,6 +73,9 @@ jQuery(function () {
         jQuery.validator.addClassRules('textoareainput', {
             maxlength: 1000,
         });
+        jQuery.validator.addClassRules('passwordinput', {
+            minlength: 8
+        });
         jQuery.validator.addClassRules('digits', {
             digits: true
         });
@@ -110,10 +113,9 @@ jQuery(function () {
 
     jQuery('.js-masked-ruc').mask('99999999999',{autoclear: false});
 
-    jQuery('#usuariobtn').click(function(){
-        reiniciarform('#form-login-user', formloginuserval);
-        jQuery('.nav-tabs a[href="#usuario"]').tab('show');
-    });
+    if (crear_contrasena == true) {
+        jQuery('.nav-tabs a[href="#crear_contrasena"]').tab('show');
+    }
 
     jQuery('#recuperacionbtn').click(function(){
         reiniciarform('#form-login-rec', formloginrecval);
@@ -126,7 +128,8 @@ jQuery(function () {
     });
 
     var modalrec = '#modal-rec';
-    var modaluser = '#modal-user';
+    var modalcrear = '#modal-crear';
+    var redirect = '';
 
     var formloginval=jQuery('#form-login').validate({
         rules: {
@@ -167,20 +170,16 @@ jQuery(function () {
         }
     });
 
-    var formloginuserval=jQuery('#form-login-user').validate({
+    var formlogincrearval=jQuery('#form-login-crear').validate({
         rules: {
-            'ruc': {
-            },
-            'username': {
+            'password2': {
+                equalTo: '#password3'
             },
         },
         messages: {
-            'ruc': {
-                required: 'Ingrese número de RUC',
+            'password2': {
+                equalTo: 'Contraseña ingresada diferente',
             },
-            'username': {
-                required: 'Ingrese usuario',
-            }
         },
         submitHandler: function(form) {
             jQuery.ajax({
@@ -193,33 +192,26 @@ jQuery(function () {
                     if(response.status=='500'){
                         notifytemplate('fa fa-times', response.message, 'danger');
                     }
-                    if(response.status=='200'){
-                        //notifytemplate('fa fa-check', 'Correcto', 'success');
-                        reiniciarform('#form-login-user',formloginuserval);
-                        jQuery(modaluser+' p b').text(response.correo);
-                        jQuery(modaluser).modal('toggle');
-                        jQuery('.nav-tabs a[href="#ingreso"]').tab('show');
+                    if(response.status=='201'){
+                        notifytemplate('fa fa-check', response.message, 'success');
+                        reiniciarform('#form-login-crear', formlogincrearval);
+                        jQuery(modalcrear).modal('toggle');
+                        redirect = response.redirect;
                     }
                 }
             });
         }
     });
 
+    jQuery(modalcrear).on('hidden.bs.modal', function (e) {
+        blockpage('<h1><i class="fa fa-cog fa-spin fa-fw"></i> Redireccionando</h1>');
+        setTimeout(function(){
+            window.location.href = redirect;
+            ajaxflagunblock = true;
+        }, 1500);
+    })
+
     var formloginrecval=jQuery('#form-login-rec').validate({
-        rules: {
-            'ruc': {
-            },
-            'username': {
-            },
-        },
-        messages: {
-            'ruc': {
-                required: 'Ingrese número de RUC',
-            },
-            'username': {
-                required: 'Ingrese usuario',
-            }
-        },
         submitHandler: function(form) {
             jQuery.ajax({
                 url: form.action,

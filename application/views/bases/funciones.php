@@ -217,6 +217,9 @@
                     jQuery.validator.addClassRules('textoinputcorta', {
                         maxlength: 2
                     });
+                    jQuery.validator.addClassRules('passwordinput', {
+                        minlength: 8
+                    });
                     jQuery.validator.addClassRules('textoareainput', {
                         maxlength: 1000,
                     });

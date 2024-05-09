@@ -7,7 +7,7 @@ $config['base_url'] = getenv('PROD_HOSTNAME');
 $config['log_threshold'] = 1;
 $config['sess_cookie_name'] = 'ci_session_gym';
 $config['csrf_protection'] = false;
-$config['composer_autoload'] = FCPATH.'vendor/autoload.php';
+$config['composer_autoload'] = false;
 
 #LOG
 $config['log_path'] = '';
@@ -48,11 +48,11 @@ $config['language'] = 'english';
 $config['charset'] = 'UTF-8';
 $config['enable_hooks'] = false;
 $config['subclass_prefix'] = 'MY_';
-$config['permitted_uri_chars'] = 'a-z 0-9~%.:_\-';
+$config['permitted_uri_chars'] = 'a-z 0-9~%.:_\-=+';
 $config['error_views_path'] = '';
 $config['cache_path'] = '';
 $config['cache_query_string'] = false;
-$config['encryption_key'] = '';
+$config['encryption_key'] = getenv('ENCRYPTION_KEY');
 $config['standardize_newlines'] = false;
 $config['global_xss_filtering'] = false;
 $config['compress_output'] = false;

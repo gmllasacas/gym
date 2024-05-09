@@ -4,12 +4,6 @@ defined('BASEPATH') or exit('No direct script access allowed');
 $active_group = 'default';
 $query_builder = true;
 
-#COMMON
-//$db['default']['hostname'] = getenv('PROD_DB_HOSTNAME');
-//$db['default']['username'] = getenv('PROD_USERNAME');
-//$db['default']['password'] = getenv('PROD_PASSWORD');
-//$db['default']['database'] = getenv('PROD_DATABASE');
-
 $url = getenv('JAWSDB_URL');
 $dbparts = parse_url($url);
 $db['default']['hostname'] = $dbparts['host'];

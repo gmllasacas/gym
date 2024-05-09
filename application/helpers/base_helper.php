@@ -238,7 +238,7 @@ if (! function_exists('basedetalleregistro')) {
         $query = $ci->db->select('*')->from($table)->where($where)->order_by($order['orderby'], $order['direction'])->get();
         $data = $query->row_array();
         if ($exception && count((array)$data) == 0) {
-            throw new Exception('No existe el registro');
+            throw new Exception('El registro no existe');
         }
 
         return $data;

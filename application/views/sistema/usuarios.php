@@ -215,7 +215,7 @@
                                             <div class="form-group">
                                                 <div class="col-xs-12">
                                                     <div class="input-group form-material form-material-info">
-                                                        <input class="form-control required textoinput" type="password" name="password" id="password" autocomplete="new-password" role="presentation">
+                                                        <input class="form-control required passwordinput" type="password" name="password" id="password3" autocomplete="new-password" role="presentation">
                                                         <label>Contraseña</label>
                                                         <span class="input-group-addon"><i class="si si-lock"></i></span>
                                                     </div>
@@ -226,7 +226,7 @@
                                             <div class="form-group">
                                                 <div class="col-xs-12">
                                                     <div class="input-group form-material form-material-info">
-                                                        <input class="form-control required textoinput" type="password" name="password2" id="password2" autocomplete="new-password" role="presentation">
+                                                        <input class="form-control required passwordinput" type="password" name="password2" id="password2" autocomplete="new-password" role="presentation">
                                                         <label>Confirmar contraseña</label>
                                                         <span class="input-group-addon"><i class="si si-lock"></i></span>
                                                     </div>
