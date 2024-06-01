@@ -47,44 +47,44 @@ class Proceso extends CI_Controller
         $ventas_diario = $this->db->query(
             "SELECT COALESCE(SUM(proceso_venta.total),0) as ventas 
             FROM proceso_venta
-            WHERE proceso_venta.estado REGEXP ? AND (DATE(proceso_venta.fecha_registro) = ?);",
+            WHERE proceso_venta.estado REGEXP ? AND (DATE(proceso_venta.fecha) = ?);",
             array('^['.$estado.']',$date)
         )->row_array();
                 
         $ventas_diario_credito = $this->db->query(
             "SELECT COALESCE(SUM(proceso_venta.total),0) as ventas 
             FROM proceso_venta
-            WHERE proceso_venta.estado REGEXP ? AND proceso_venta.tipo_venta_pago = 1 AND (DATE(proceso_venta.fecha_registro) = ?);",
+            WHERE proceso_venta.estado REGEXP ? AND proceso_venta.tipo_venta_pago = 1 AND (DATE(proceso_venta.fecha) = ?);",
             array('^['.$estado.']',$date)
         )->row_array();
 
         $ventas_diario_contado = $this->db->query(
             "SELECT COALESCE(SUM(proceso_venta.total),0) as ventas 
             FROM proceso_venta
-            WHERE proceso_venta.estado REGEXP ? AND proceso_venta.tipo_venta_pago = 2 AND (DATE(proceso_venta.fecha_registro) = ?);",
+            WHERE proceso_venta.estado REGEXP ? AND proceso_venta.tipo_venta_pago = 2 AND (DATE(proceso_venta.fecha) = ?);",
             array('^['.$estado.']',$date)
         )->row_array();
 
         $ventas_semana = $this->db->query(
             "SELECT COALESCE(SUM(proceso_venta.total),0) as ventas 
             FROM proceso_venta
-            WHERE proceso_venta.estado REGEXP ? AND (DATE(proceso_venta.fecha_registro) BETWEEN ? AND ?);",
+            WHERE proceso_venta.estado REGEXP ? AND (DATE(proceso_venta.fecha) BETWEEN ? AND ?);",
             array('^['.$estado.']',$dateinisemana,$datefinsemana)
         )->row_array();
 
         $ventas_mes = $this->db->query(
             "SELECT COALESCE(SUM(proceso_venta.total),0) as ventas 
             FROM proceso_venta
-            WHERE proceso_venta.estado REGEXP ? AND (DATE(proceso_venta.fecha_registro) BETWEEN ? AND ?);",
+            WHERE proceso_venta.estado REGEXP ? AND (DATE(proceso_venta.fecha) BETWEEN ? AND ?);",
             array('^['.$estado.']',$dateinimes,$datefinmes)
         )->row_array();
 
         $ventas_mes_anual = $this->db->query(
             "SELECT base_meses.id AS periodo, SUM(IFNULL(total_mes.total, 0)) AS total
             FROM (
-                SELECT IFNULL(proceso_venta.total, 0) as total, MONTH(proceso_venta.fecha_registro) as mdate
+                SELECT IFNULL(proceso_venta.total, 0) as total, MONTH(proceso_venta.fecha) as mdate
                 FROM proceso_venta
-                WHERE proceso_venta.estado REGEXP ? AND (DATE(proceso_venta.fecha_registro) BETWEEN ? AND ?)
+                WHERE proceso_venta.estado REGEXP ? AND (DATE(proceso_venta.fecha) BETWEEN ? AND ?)
             ) total_mes
             RIGHT OUTER JOIN base_meses on total_mes.mdate = base_meses.id
             GROUP BY base_meses.mes
@@ -112,44 +112,44 @@ class Proceso extends CI_Controller
         $pagos_diario = $this->db->query(
             "SELECT COALESCE(SUM(proceso_pago.pago),0) as pagos 
             FROM proceso_pago
-            WHERE proceso_pago.estado REGEXP ? AND (DATE(proceso_pago.fecha_registro) = ?);",
+            WHERE proceso_pago.estado REGEXP ? AND (DATE(proceso_pago.fecha) = ?);",
             array('^['.$estado.']',$date)
         )->row_array();
                 
         $pagos_diario_efectivo = $this->db->query(
             "SELECT COALESCE(SUM(proceso_pago.pago),0) as pagos 
             FROM proceso_pago
-            WHERE proceso_pago.estado REGEXP ? AND proceso_pago.tipo_pago = 1 AND (DATE(proceso_pago.fecha_registro) = ?);",
+            WHERE proceso_pago.estado REGEXP ? AND proceso_pago.tipo_pago = 1 AND (DATE(proceso_pago.fecha) = ?);",
             array('^['.$estado.']',$date)
         )->row_array();
                 
         $pagos_diario_deposito = $this->db->query(
             "SELECT COALESCE(SUM(proceso_pago.pago),0) as pagos 
             FROM proceso_pago
-            WHERE proceso_pago.estado REGEXP ? AND proceso_pago.tipo_pago = 2 AND (DATE(proceso_pago.fecha_registro) = ?);",
+            WHERE proceso_pago.estado REGEXP ? AND proceso_pago.tipo_pago = 2 AND (DATE(proceso_pago.fecha) = ?);",
             array('^['.$estado.']',$date)
         )->row_array();
 
         $pagos_semana = $this->db->query(
             "SELECT COALESCE(SUM(proceso_pago.pago),0) as pagos 
             FROM proceso_pago
-            WHERE proceso_pago.estado REGEXP ? AND (DATE(proceso_pago.fecha_registro) BETWEEN ? AND ?);",
+            WHERE proceso_pago.estado REGEXP ? AND (DATE(proceso_pago.fecha) BETWEEN ? AND ?);",
             array('^['.$estado.']',$dateinisemana,$datefinsemana)
         )->row_array();
 
         $pagos_mes = $this->db->query(
             "SELECT COALESCE(SUM(proceso_pago.pago),0) as pagos 
             FROM proceso_pago
-            WHERE proceso_pago.estado REGEXP ? AND (DATE(proceso_pago.fecha_registro) BETWEEN ? AND ?);",
+            WHERE proceso_pago.estado REGEXP ? AND (DATE(proceso_pago.fecha) BETWEEN ? AND ?);",
             array('^['.$estado.']',$dateinimes,$datefinmes)
         )->row_array();
 
         $pagos_mes_anual = $this->db->query(
             "SELECT base_meses.id AS periodo, SUM(IFNULL(total_mes.total, 0)) AS total
             FROM (
-                SELECT IFNULL(proceso_pago.pago, 0) as total, MONTH(proceso_pago.fecha_registro) as mdate
+                SELECT IFNULL(proceso_pago.pago, 0) as total, MONTH(proceso_pago.fecha) as mdate
                 FROM proceso_pago
-                WHERE proceso_pago.estado REGEXP ? AND (DATE(proceso_pago.fecha_registro) BETWEEN ? AND ?)
+                WHERE proceso_pago.estado REGEXP ? AND (DATE(proceso_pago.fecha) BETWEEN ? AND ?)
             ) total_mes
             RIGHT OUTER JOIN base_meses on total_mes.mdate = base_meses.id
             GROUP BY base_meses.mes
@@ -229,7 +229,7 @@ class Proceso extends CI_Controller
             "SELECT COALESCE(SUM(proceso_venta.total),0) as ventas, proceso_cliente.nombre_o_razon_social
             FROM proceso_venta
             INNER JOIN proceso_cliente ON proceso_venta.cliente=proceso_cliente.id
-            WHERE proceso_venta.estado REGEXP ? AND (DATE(proceso_venta.fecha_registro) BETWEEN ? AND ?)
+            WHERE proceso_venta.estado REGEXP ? AND (DATE(proceso_venta.fecha) BETWEEN ? AND ?)
             GROUP BY proceso_venta.cliente
             ORDER BY ventas DESC
             LIMIT 8;",
@@ -275,6 +275,7 @@ class Proceso extends CI_Controller
     public function clientes()
     {
         $tipos_documento = $this->generico_modelo->listado('proceso_tipo_documento', '1');
+        $provincias = $this->generico_modelo->listado('proceso_provincia', '1', ['where' => ['iddepartamento' => 2]]);
 
         $datos = [
             'menu_text' => 'Inventario',
@@ -282,7 +283,9 @@ class Proceso extends CI_Controller
             'titulo_text' => 'Clientes',
             'export_text' => 'Listado de clientes',
             'registro_text' => 'cliente',
-            'tipos'=>$tipos_documento,
+            'tipos' => $tipos_documento,
+            'departamento' => 2,
+            'provincias' => $provincias,
         ];
 
         $this->load->view('bases/cabezera');
@@ -314,15 +317,19 @@ class Proceso extends CI_Controller
     public function productos()
     {
         $estados = $this->generico_modelo->listado('base_estado', '1');
-        $tipos = $this->generico_modelo->listado('proceso_categoria_producto', '1');
+        $tipos = $this->generico_modelo->listado('proceso_tipo_producto', '1');
+        $unidades = $this->generico_modelo->listado('proceso_unidad', '1');
+        $duracion_unidades = $this->generico_modelo->listado('proceso_duracion_unidad', '1');
 
         $datos = [
             'menu_text' => 'Inventario',
-            'submenu_text' => 'Productos',
-            'titulo_text' => 'Productos',
-            'export_text' => 'Listado de productos',
-            'registro_text' => 'producto',
+            'submenu_text' => 'Productos y Servicios',
+            'titulo_text' => 'Productos  y Servicio',
+            'export_text' => 'Listado de productos y servicios',
+            'registro_text' => 'producto o servicio',
             'tipos'=>$tipos,
+            'duracion_unidades'=>$duracion_unidades,
+            'unidades'=>$unidades,
             'estados'=>$estados,
         ];
         

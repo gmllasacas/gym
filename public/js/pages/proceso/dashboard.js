@@ -96,6 +96,9 @@ jQuery(function () {
                 line: {
                     dataLabels: {
                         enabled: true,
+                        style: {
+                            textOutline: 'none'
+                        },
                         formatter: function () {
                             return "S/ " + Highcharts.numberFormat(this.y, 2);
                         }
@@ -141,6 +144,9 @@ jQuery(function () {
                 line: {
                     dataLabels: {
                         enabled: true,
+                        style: {
+                            textOutline: 'none'
+                        },
                         formatter: function () {
                             return "S/ " + Highcharts.numberFormat(this.y, 2);
                         }
@@ -190,6 +196,9 @@ jQuery(function () {
                 line: {
                     dataLabels: {
                         enabled: true,
+                        style: {
+                            textOutline: 'none'
+                        },
                         formatter: function () {
                             return Highcharts.numberFormat(this.y, 2) + " unid.";
                         }
@@ -213,6 +222,7 @@ jQuery(function () {
 
     if (pie1.length) {
         pie1.highcharts({
+            credits: false,
             chart: {
                 plotBackgroundColor: null,
                 plotBorderWidth: null,
@@ -230,6 +240,9 @@ jQuery(function () {
                     center: ['25%', '50%'],
                     dataLabels: {
                         enabled: true,
+                        style: {
+                            textOutline: 'none'
+                        },
                         format: '<b>{point.name}</b><br>Porcentaje: {point.percentage:.2f} %<br>Ventas: S/ {point.y:.2f}',
                     },
                     showInLegend: true

@@ -1,9 +1,6 @@
 
 jQuery(function () {
-    
-    jQuery('.js-masked-codigo').mask('aaa99',{autoclear: false});
     var date = new Date(); 
-    var lastmonthDay = new Date(date.getFullYear(), date.getMonth() - 1, 1); 
     var firstDay = new Date(date.getFullYear(), date.getMonth(), 1); 
     var lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0); 
     switch (perfil) {
@@ -18,18 +15,12 @@ jQuery(function () {
             jQuery('[name=fechafin]').datepicker("setDate", date);
             break;
     }
-    jQuery('[name="fecha_registro"]').data("DateTimePicker").minDate(lastmonthDay);
-    jQuery('[name="fecha_registro"]').data("DateTimePicker").maxDate(date);	
-    jQuery('[name="fecha_registro"]').on('dp.change', function(e){ 
-        if($(this).valid()) $(this).parents('.form-group').removeClass('has-error');
-    })
 
     var busquedaform= '#busqueda-form';
     var registromodal= '#registro-modal';
     var registroform= '#registro-form';
     var anulacionform= '#anulacion-form';
     var nuevoregistro= '.nuevoregistro';
-    var editarregistro= '.editarregistro';
     var detalleregistro= '.detalleregistro';
     var anularregistro= '.anularregistro';
     var tablelist= '#table-list';
@@ -53,6 +44,7 @@ jQuery(function () {
             url: base_url + "generico/listado",
             data: {
                 table: 'proceso_producto',
+                tipos: [1],
                 estado: '^5',
             },
             dataType: 'json',
@@ -69,9 +61,10 @@ jQuery(function () {
                     jQuery(registroform+' [name="counter"]').val(0);
                     jQuery(tabledetalles+' tbody').html('');
                     var options = '<option value=""></option>';
+                    var text = '';
                     jQuery.each(response.data, function(index, item) {
-                        if(item.existencias>0){ var text = item.existencias+' unid. | '+item.unidades_docenas; }
-                        else{ var text = 'Sin existencias'; }
+                        if(item.existencias>0) { text = item.existencias+' '+item.abreviatura; }
+                        else { text = 'Sin existencias'; }
                         options += '<option value="'+item.id+'">'+item.codigo+' - '+item.descripcion+' ('+text+')</option>';
                     });
                     jQuery(registroform+' [name="producto_sel"]').html(options).trigger('change');
@@ -79,12 +72,8 @@ jQuery(function () {
                     jQuery(registroform+' .producto-div').show();
                     jQuery(registroform+' [name="proveedor"]').prop('disabled',false);
                     jQuery(registroform+' [name="proveedor"] option:eq(0)').prop('selected',true).trigger('change');
-                    jQuery(registroform+' [name="tipo_comprobante"]').prop('disabled',false);
+                    jQuery(registroform+' [name="tipo_comprobante"]').prop('disabled',false).val(null).trigger('change');
                     jQuery(registroform+' [name="comprobante"]').prop('disabled',false);
-                    var datenow = new Date();
-                    jQuery(registroform+' [name="fecha_registro"]').prop('disabled',false);
-                    jQuery(registroform+' [name="fecha_registro"]').data("DateTimePicker").maxDate(datenow);
-                    jQuery(registroform+' [name="fecha_registro"]').data("DateTimePicker").date(datenow);
                     jQuery(registroform+' [name="datos_adicionales"]').prop('disabled',false);
                     jQuery(registromodal).modal('toggle');
                 }
@@ -114,12 +103,8 @@ jQuery(function () {
                         }
                     });
                     jQuery(registroform+' [name="proveedor"]').prop('disabled',true);
-                    jQuery(registroform+' [name="tipo_comprobante"]').prop('disabled',true);
+                    jQuery(registroform+' [name="tipo_comprobante"]').prop('disabled',true).trigger('change');
                     jQuery(registroform+' [name="comprobante"]').prop('disabled',true);
-                    var datenow = new Date();
-                    jQuery(registroform+' [name="fecha_registro"]').prop('disabled',true);
-                    jQuery(registroform+' [name="fecha_registro"]').data("DateTimePicker").maxDate(datenow);
-                    jQuery(registroform+' [name="fecha_registro"]').data("DateTimePicker").date(response.registro.fecha_registro);
                     jQuery(registroform+' [name="datos_adicionales"]').prop('disabled',true);
                     jQuery(tabledetalles+' tbody').html('');
                     var counter = 1;
@@ -130,7 +115,7 @@ jQuery(function () {
                                             counter+
                                         '</td>'+
                                         '<td>'+
-                                            '<div class="form-group"><div class="col-xs-12"><input style="text-align:right" class="form-control" type="number" step="1" min="0" value="'+item.cantidad+'" readonly></div></div>'+
+                                            '<div class="form-group"><div class="col-xs-12"><div class="input-group"><input class="form-control" type="number" value="'+item.cantidad+'" readonly><span class="input-group-addon">'+item.abreviatura+'</span></div></div></div>'+
                                         '</td>'+
                                         '<td class="text-center">'+
                                             item.codigo+
@@ -201,10 +186,6 @@ jQuery(function () {
                     jQuery(registroform+' [name="proveedor"]').prop('disabled',true);
                     jQuery(registroform+' [name="tipo_comprobante"]').prop('disabled',true);
                     jQuery(registroform+' [name="comprobante"]').prop('disabled',true);
-                    var datenow = new Date();
-                    jQuery(registroform+' [name="fecha_registro"]').prop('disabled',true);
-                    jQuery(registroform+' [name="fecha_registro"]').data("DateTimePicker").maxDate(datenow);
-                    jQuery(registroform+' [name="fecha_registro"]').data("DateTimePicker").date(response.registro.fecha_registro);
                     jQuery(registroform+' [name="datos_adicionales"]').prop('disabled',true);
                     jQuery(tabledetalles+' tbody').html('');
                     var counter = 1;
@@ -215,7 +196,7 @@ jQuery(function () {
                                             counter+
                                         '</td>'+
                                         '<td>'+
-                                            '<div class="form-group"><div class="col-xs-12"><input style="text-align:right" class="form-control" type="number" step="1" min="0" value="'+item.cantidad+'" readonly></div></div>'+
+                                            '<div class="form-group"><div class="col-xs-12"><div class="input-group"><input class="form-control" type="number" value="'+item.cantidad+'" readonly><span class="input-group-addon">'+item.abreviatura+'</span></div></div></div>'+
                                         '</td>'+
                                         '<td class="text-center">'+
                                             item.codigo+
@@ -315,7 +296,7 @@ jQuery(function () {
             }
         },
         columns: [
-            { data: 'fecha_registro' },
+            { data: 'fecha' },
             { data: 'proveedordesc' },
             { data: 'username' },
             { data: 'estadostr' },
@@ -412,7 +393,7 @@ jQuery(function () {
             if($(this).valid()) $(this).closest('.form-group').removeClass('has-error');
             
             var precio = parseFloat($(this).closest('tr').find('.input-precio').val());
-            var subtotal = (precio/12)*cantidad;
+            var subtotal = precio*cantidad;
             var saldo = cantidad+stock;
             subtotal = (isNaN(subtotal) ? 0 : subtotal.toFixed(2));
             $(this).closest('tr').find('.input-subtotal').val(subtotal).trigger('change');
@@ -426,7 +407,7 @@ jQuery(function () {
         $(this).closest('tr').find('.input-precio').val(precio);
         
         var cantidad = parseInt($(this).closest('tr').find('.input-cantidad').val());
-        var subtotal = (precio/12)*cantidad;
+        var subtotal = precio*cantidad;
         subtotal = (isNaN(subtotal) ? 0 : subtotal.toFixed(2));
         $(this).closest('tr').find('.input-subtotal').val(subtotal).trigger('change');
     });
@@ -469,10 +450,11 @@ jQuery(function () {
                             var tr = '<tr>'+
                                             '<td>'+
                                                 '<input type="hidden" class="input-id" name="producto['+counter+'][id]" value="'+response.registro.id+'">'+
-                                                '<input type="hidden" class="input-id" name="producto['+counter+'][productodesc]" value="'+response.registro.codigo+' - '+response.registro.descripcion+'">'+
+                                                '<input type="hidden" name="producto['+counter+'][productodesc]" value="'+response.registro.codigo+' - '+response.registro.descripcion+'">'+
+                                                '<input type="hidden" name="producto['+counter+'][tipo]" value="'+response.registro.tipo+'">'+
                                             '</td>'+
                                             '<td>'+
-                                                '<div class="form-group"><div class="col-xs-12"><input style="text-align:center" class="form-control input-cantidad required" type="number" step="1" min="0" name="producto['+counter+'][cantidad]" value=""></div></div>'+
+                                                '<div class="form-group"><div class="col-xs-12"><div class="input-group"><input class="form-control input-cantidad required" type="number" step="1" min="0" name="producto['+counter+'][cantidad]" value=""><span class="input-group-addon">'+response.registro.abreviatura+'</span></div></div></div>'+
                                             '</td>'+
                                             '<td class="text-center">'+
                                                 response.registro.codigo+
@@ -481,13 +463,13 @@ jQuery(function () {
                                                 response.registro.descripcion+
                                             '</td>'+
                                             '<td>'+
-                                                '<div class="form-group"><div class="col-xs-12"><div class="input-group"><input style="text-align:center" class="form-control input-stock" type="text" value="'+response.registro.existencias+'" readonly tabindex="-1"></div></div></div>'+
+                                                '<div class="form-group"><div class="col-xs-12"><div class="input-group"><input class="form-control input-stock" type="text" value="'+response.registro.existencias+'" readonly tabindex="-1"><span class="input-group-addon">'+response.registro.abreviatura+'</span></div></div></div>'+
                                             '</td>'+
                                             '<td>'+
-                                                '<div class="form-group"><div class="col-xs-12"><div class="input-group"><span class="input-group-addon">S/</span><input style="text-align:center" class="form-control input-precio required" type="number" step="0.01" min="0" type="text" name="producto['+counter+'][precio]" value="'+response.registro.precio+'"></div></div></div>'+
+                                                '<div class="form-group"><div class="col-xs-12"><div class="input-group"><span class="input-group-addon">S/</span><input class="form-control input-precio required" type="number" step="0.01" min="0" name="producto['+counter+'][precio]" value="'+response.registro.precio+'"></div></div></div>'+
                                             '</td>'+
                                             '<td>'+
-                                                '<div class="form-group"><div class="col-xs-12"><div class="input-group"><input style="text-align:center" class="form-control input-saldo" type="text" value="'+response.registro.existencias+'" readonly tabindex="-1"></div></div></div>'+
+                                                '<div class="form-group"><div class="col-xs-12"><div class="input-group"><input class="form-control input-saldo" type="text" value="'+response.registro.existencias+'" readonly tabindex="-1"><span class="input-group-addon">'+response.registro.abreviatura+'</span></div></div></div>'+
                                             '</td>'+											
                                             '<td>'+
                                                 '<div class="input-group"><span class="input-group-addon">S/</span><input style="text-align:right" class="form-control input-subtotal required" type="text" name="producto['+counter+'][subtotal]" readonly tabindex="-1"></div>'+

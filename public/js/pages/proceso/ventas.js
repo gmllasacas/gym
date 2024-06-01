@@ -1,9 +1,6 @@
 
 jQuery(function () {
-    
-    jQuery('.js-masked-codigo').mask('aaa99',{autoclear: false});
     var date = new Date(); 
-    var lastmonthDay = new Date(date.getFullYear(), date.getMonth() - 1, 1); 
     var firstDay = new Date(date.getFullYear(), date.getMonth(), 1); 
     var lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0); 
     switch (perfil) {
@@ -18,19 +15,12 @@ jQuery(function () {
             jQuery('[name=fechafin]').datepicker("setDate", date);
             break;
     }
-    jQuery('[name="fecha_registro"]').data("DateTimePicker").minDate(lastmonthDay);
-    jQuery('[name="fecha_registro"]').data("DateTimePicker").maxDate(date);
-    jQuery('[name="fecha_registro"]').on('dp.change', function(e){ 
-        if($(this).valid()) $(this).parents('.form-group').removeClass('has-error');
-    })
     
     var busquedaform= '#busqueda-form';
     var registromodal= '#registro-modal';
     var registroform= '#registro-form';
     var anulacionform= '#anulacion-form';
     var nuevoregistro= '.nuevoregistro';
-    var editarregistro= '.editarregistro';
-    var completarregistro= '.completarregistro';
     var detalleregistro= '.detalleregistro';
     var anularregistro= '.anularregistro';
     var tablelist= '#table-list';
@@ -38,12 +28,9 @@ jQuery(function () {
 
     function calcular_total() {
         var subtotales = jQuery(tabledetalles+' .input-subtotal');
-        var subtotalesc = jQuery(tabledetalles+' .input-subtotalc');
         var igv_percent = parseFloat(jQuery(registroform+' [name="igv"]').data('igv'));
         var igv = 0;
-        var igvc = 0;
         var total = 0;
-        var totalc = 0;
         
         /**Total venta */
             jQuery.each(subtotales, function(index, item) {
@@ -62,25 +49,6 @@ jQuery(function () {
             total = (isNaN(total) ? 0 : total.toFixed(2));
             jQuery(registroform+' [name="total"]').val(total);
         /**Total venta */
-
-        /**Total costo */
-            jQuery.each(subtotalesc, function(index, item) {
-                var subtotalc = parseFloat(jQuery(item).val());
-                totalc = totalc + subtotalc; 
-            });
-            
-            subtotalc = totalc*(100/(igv_percent+100));
-            subtotalc = (isNaN(subtotalc) ? 0 : subtotalc.toFixed(2));
-            jQuery(registroform+' [name="subtotalc"]').val(subtotalc);
-
-            igvc = totalc-subtotalc;
-            igvc = (isNaN(igvc) ? 0 : igvc.toFixed(2));
-            jQuery(registroform+' [name="igvc"]').val(igvc);
-
-            totalc = (isNaN(totalc) ? 0 : totalc.toFixed(2));
-            jQuery(registroform+' [name="totalc"]').val(totalc);
-        /**Total costo */
-
     }
 
     jQuery('body').on('click', nuevoregistro, function() {
@@ -104,177 +72,48 @@ jQuery(function () {
                     jQuery(registroform+' [name="id"]').val(null);
                     jQuery(registroform+' [name="estado"]').val(1);
                     jQuery(registroform+' [name="counter"]').val(0);
-                    jQuery(registroform+' [name="tipo_venta_pago"]').trigger('change');
                     jQuery(tabledetalles+' tbody').html('');
-                    var productos = '<option value=""></option>';
+                    var productos_selector = '<option value=""></option>';
+                    var servicios = '<optgroup label="Servicios">';
+                    var productos = '<optgroup label="Productos">';
                     jQuery.each(response.data.productos, function(index, item) {
-                        if(item.existencias>0){
-                            var text = item.existencias+' unid. | '+item.unidades_docenas;
-                            var disabled = '';
-                        }else{
-                            var text = 'Sin existencias';
-                            var disabled = 'disabled';
+                        var text = '';
+                        var disabled = '';
+                        switch (item.tipo) {
+                            case '1':
+                                if(item.existencias>0) {
+                                    text = item.existencias+' '+item.abreviatura;
+                                } else { 
+                                    text = 'Sin existencias';
+                                    disabled = 'disabled';
+                                }
+                                productos += '<option value="'+item.id+'" '+disabled+'>'+item.codigo+' - '+item.descripcion+' ('+text+')</option>';
+                                break;
+                            case '2':
+                                servicios += '<option value="'+item.id+'" '+disabled+'>'+item.codigo+' - '+item.descripcion+' ('+item.duracion+' '+item.duracion_unidad_desc+')</option>';
+                            default:
+                                break;
                         }
-                        productos += '<option value="'+item.id+'" '+disabled+'>'+item.codigo+' - '+item.descripcion+' ('+text+')</option>';
                     });
-                    jQuery(registroform+' [name="producto_sel"]').html(productos).trigger('change');
+                    ;
+                    productos_selector += servicios + '</optgroup>' + productos + '</optgroup>';
+                    jQuery(registroform+' [name="producto_sel"]').html(productos_selector).trigger('change');
 
                     var clientes = '<option value=""></option>';
                     jQuery.each(response.data.clientes, function(index, item) {
                         var disabled = (parseFloat(item.credito)<= 0 ? '' : 'disabled');
-                        clientes += '<option value="'+item.id+'" '+disabled+'>'+item.documento+' - '+item.nombre_o_razon_social+' (Crédito: S/ '+item.credito+')</option>';
+                        clientes += '<option value="'+item.id+'">'+item.documento+' - '+item.nombre_o_razon_social+'</option>';
                     });
                     jQuery(registroform+' [name="cliente"]').html(clientes).trigger('change');
 
                     jQuery(registroform+' button[type="submit"]').show();
-                    jQuery(registroform+' .btn-incompleto').show();
                     jQuery(registroform+' .producto-div').show();
                     jQuery(registroform+' [name="cliente"]').prop('disabled',false);
                     jQuery(registroform+' [name="tipo_comprobante"]').prop('disabled',false);
                     jQuery(registroform+' [name="comprobante"]').prop('disabled',false);
-                    jQuery(registroform+' [name="tipo_venta_pago"]').prop('disabled',false);
                     jQuery(registroform+' [name="tipo_pago"]').prop('disabled',false);
-                    var datenow = new Date();
-                    jQuery(registroform+' [name="fecha_registro"]').prop('disabled',false);
-                    jQuery(registroform+' [name="fecha_registro"]').data("DateTimePicker").maxDate(datenow);
-                    jQuery(registroform+' [name="fecha_registro"]').data("DateTimePicker").date(datenow);
                     jQuery(registroform+' [name="datos_adicionales"]').prop('disabled',false);
                     jQuery(registromodal).modal('toggle');
-                }
-            }
-        });
-    });
-
-    jQuery('body').on('click', completarregistro, function() {
-        var elemento = jQuery(this);
-        jQuery.ajax({
-            type: "POST",
-            url: base_url + "generico/listado",
-            data: {
-                table: 'proceso_producto_y_clientes',
-                estado: '^5',
-            },
-            dataType: 'json',
-            timeout: 60000,
-            success: function(responseouter) {
-                if(responseouter.status=='500'){
-                    notifytemplate('fa fa-times', responseouter.message, 'danger');
-                }
-                if(responseouter.status=='200'){
-                    jQuery.ajax({
-                        type: "POST",
-                        url: base_url + "generico/detalleregistro",
-                        data: 'table=' + elemento.data('table') + '&id=' + elemento.data('id'),
-                        dataType: 'json',
-                        timeout: 60000,
-                        success: function(response) {
-                            if(response.status=='500'){
-                                notifytemplate('fa fa-times', response.message, 'danger');
-                            }
-                            if(response.status=='200'){
-                                reiniciarform(registroform,registrovalidate,'generico/actualizarregistro','<i class="fa fa-edit push-5-r"></i> Completar venta');
-                                jQuery(registromodal+' .btn-print').hide();
-                                
-                                var productos = '<option value=""></option>';
-                                jQuery.each(responseouter.data.productos, function(index, item) {
-                                    if(item.existencias>0){
-                                        var text = item.existencias+' unid. | '+item.unidades_docenas;
-                                        var disabled = '';
-                                    }else{
-                                        var text = 'Sin existencias';
-                                        var disabled = 'disabled';
-                                    }
-                                    productos += '<option value="'+item.id+'" '+disabled+'>'+item.codigo+' - '+item.descripcion+' ('+text+')</option>';
-                                });
-                                jQuery(registroform+' [name="producto_sel"]').html(productos).trigger('change');
-                                var clientes = '<option value=""></option>';
-                                jQuery.each(responseouter.data.clientes, function(index, item) {
-                                    var disabled = (item.credito> 0 ? 'disabled' : '');
-                                    clientes += '<option value="'+item.id+'" '+disabled+'>'+item.documento+' - '+item.nombre_o_razon_social+' (Crédito: S/ '+item.credito+')</option>';
-                                });
-                                jQuery(registroform+' [name="cliente"]').html(clientes).trigger('change');
-
-                                jQuery.each(response.registro, function(index, item) {
-                                    var exclude = ['fecha_registro'];
-                                    if(jQuery(registroform+' [name='+index+']').length>0 && !exclude.includes(index)){
-                                        jQuery(registroform+' [name='+index+']').val(item).trigger("change");
-                                    }
-                                });
-                                jQuery(registroform+' [name="estado"]').val('1');
-                                jQuery(registroform+' [name="cliente"]').prop('disabled',true);
-                                jQuery(registroform+' [name="tipo_comprobante"]').prop('disabled',false);
-                                jQuery(registroform+' [name="comprobante"]').prop('disabled',false);
-                                jQuery(registroform+' [name="tipo_venta_pago"]').prop('disabled',false);
-                                jQuery(registroform+' [name="tipo_pago"]').prop('disabled',false);
-                                var datenow = new Date();
-                                jQuery(registroform+' [name="fecha_registro"]').prop('disabled',false);
-                                jQuery(registroform+' [name="fecha_registro"]').data("DateTimePicker").maxDate(datenow);
-                                jQuery(registroform+' [name="fecha_registro"]').data("DateTimePicker").date(response.registro.fecha_registro);
-                                jQuery(registroform+' [name="datos_adicionales"]').prop('disabled',false);
-                                jQuery(tabledetalles+' tbody').html('');
-                                var counter = 1;
-
-                                jQuery.each(response.registro.detalles, function(index, item) {
-                                    var tr = '<tr>'+
-                                                    '<td class="text-center">'+
-                                                        counter+
-                                                    '</td>'+
-                                                    '<td>'+
-                                                        '<div class="form-group"><div class="col-xs-12"><input style="text-align:center" class="form-control form-input input-cantidad" type="number" step="1" value="'+item.cantidad+'" readonly></div></div>'+
-                                                    '</td>'+
-                                                    '<td class="text-center">'+
-                                                        item.codigo+
-                                                    '</td>'+
-                                                    '<td>'+
-                                                        item.descripcion+
-                                                    '</td>'+
-                                                    '<td>'+
-                                                    '</td>'+
-                                                    '<td>'+
-                                                        '<div class="form-group"><div class="col-xs-12"><div class="input-group"><span class="input-group-addon">S/</span><input style="text-align:center" class="form-control form-input input-precio" type="number" step="0.01" value="'+item.precio+'" readonly></div></div></div>'+
-                                                    '</td>'+
-                                                    '<td>'+
-                                                        '<div class="form-group"><div class="col-xs-12"><div class="input-group"><span class="input-group-addon">S/</span><input style="text-align:center" class="form-control form-input input-precioc" type="number" step="0.01" value="'+item.precioc+'" readonly></div></div></div>'+
-                                                    '</td>'+										
-                                                    '<td>'+
-                                                        '<div class="form-group"><div class="col-xs-12"><div class="input-group"><span class="input-group-addon">S/</span><input style="text-align:center" class="form-control form-input input-subtotal" type="number" step="0.01" value="'+item.subtotal+'" readonly></div></div></div>'+
-                                                    '</td>'+
-                                                    '<td>'+
-                                                        '<div class="form-group"><div class="col-xs-12"><div class="input-group"><span class="input-group-addon">S/</span><input style="text-align:center" class="form-control form-input input-subtotalc" type="number" step="0.01" value="'+item.subtotalc+'" readonly></div></div></div>'+
-                                                    '</td>'+
-                                                    '<td>'+
-                                                    '</td>'+
-                                                '</tr>';
-                                    jQuery(tabledetalles+' tbody').append(tr);
-                                    counter++;
-                                });
-
-                                jQuery(registroform+' [name="subtotal"]').val(response.registro.subtotal);
-                                jQuery(registroform+' [name="igv"]').val(response.registro.igv);
-                                jQuery(registroform+' [name="total"]').val(response.registro.total);
-                                jQuery(registroform+' [name="subtotalc"]').val(response.registro.subtotalc);
-                                jQuery(registroform+' [name="igvc"]').val(response.registro.igvc);
-                                jQuery(registroform+' [name="totalc"]').val(response.registro.totalc);
-                                jQuery(registroform+' button[type="submit"]').show();
-                                jQuery(registroform+' .btn-incompleto').show();
-                                jQuery(registroform+' .producto-div').show();
-
-                                if(response.registro.anulacion && response.registro.anulacion.motivo){
-                                    jQuery(anulacionform+' [name=usuario]').val(response.registro.anulacion.usuario.username);
-                                    jQuery(anulacionform+' [name=fecha]').val(response.registro.anulacion.fecha);
-                                    jQuery(anulacionform+' [name=motivo]').val(response.registro.anulacion.motivo);
-                                    jQuery(anulacionform+' [name=motivo]').prop('readonly',true);
-                                    jQuery(anulacionform+' .datos').show();
-                                    jQuery(anulacionform).show();
-                                }else{
-                                    jQuery(anulacionform).hide();
-                                }
-                                jQuery(anulacionform+' .buttons').hide();
-
-                                jQuery(registromodal).modal('toggle');
-                            }
-                        }
-                    });
                 }
             }
         });
@@ -322,20 +161,14 @@ jQuery(function () {
                                 jQuery(registroform+' [name="cliente"]').html(clientes).trigger('change');
 
                                 jQuery.each(response.registro, function(index, item) {
-                                    var exclude = ['fecha_registro'];
-                                    if(jQuery(registroform+' [name='+index+']').length>0 && !exclude.includes(index)){
+                                    if(jQuery(registroform+' [name='+index+']').length>0){
                                         jQuery(registroform+' [name='+index+']').val(item).trigger("change");
                                     }
                                 });
                                 jQuery(registroform+' [name="cliente"]').prop('disabled',true);
                                 jQuery(registroform+' [name="tipo_comprobante"]').prop('disabled',true);
                                 jQuery(registroform+' [name="comprobante"]').prop('disabled',true);
-                                jQuery(registroform+' [name="tipo_venta_pago"]').prop('disabled',true);
                                 jQuery(registroform+' [name="tipo_pago"]').prop('disabled',true);
-                                var datenow = new Date();
-                                jQuery(registroform+' [name="fecha_registro"]').prop('disabled',true);
-                                jQuery(registroform+' [name="fecha_registro"]').data("DateTimePicker").maxDate(datenow);
-                                jQuery(registroform+' [name="fecha_registro"]').data("DateTimePicker").date(response.registro.fecha_registro);
                                 jQuery(registroform+' [name="datos_adicionales"]').prop('disabled',true);
                                 jQuery(tabledetalles+' tbody').html('');
                                 var counter = 1;
@@ -346,7 +179,7 @@ jQuery(function () {
                                                         counter+
                                                     '</td>'+
                                                     '<td>'+
-                                                        '<div class="form-group"><div class="col-xs-12"><input style="text-align:right" class="form-control" type="number" step="1" min="0" value="'+item.cantidad+'" readonly></div></div>'+
+                                                        '<div class="form-group"><div class="col-xs-12"><div class="input-group"><input class="form-control" type="number" value="'+item.cantidad+'" readonly><span class="input-group-addon">'+item.abreviatura+'</span></div></div></div>'+
                                                     '</td>'+
                                                     '<td class="text-center">'+
                                                         item.codigo+
@@ -358,15 +191,9 @@ jQuery(function () {
                                                     '</td>'+
                                                     '<td>'+
                                                         '<div class="form-group"><div class="col-xs-12"><div class="input-group"><span class="input-group-addon">S/</span><input style="text-align:right" class="form-control" type="number" step="0.01" value="'+item.precio+'" readonly></div></div></div>'+
-                                                    '</td>'+
-                                                    '<td>'+
-                                                        '<div class="form-group"><div class="col-xs-12"><div class="input-group"><span class="input-group-addon">S/</span><input style="text-align:right" class="form-control" type="number" step="0.01" value="'+item.precioc+'" readonly></div></div></div>'+
-                                                    '</td>'+										
+                                                    '</td>'+								
                                                     '<td>'+
                                                         '<div class="input-group"><span class="input-group-addon">S/</span><input style="text-align:right" class="form-control" type="text" value="'+item.subtotal+'" readonly></div>'+
-                                                    '</td>'+
-                                                    '<td>'+
-                                                        '<div class="input-group"><span class="input-group-addon">S/</span><input style="text-align:right" class="form-control" type="text" value="'+item.subtotalc+'" readonly></div>'+
                                                     '</td>'+
                                                     '<td>'+
                                                     '</td>'+
@@ -378,11 +205,7 @@ jQuery(function () {
                                 jQuery(registroform+' [name="subtotal"]').val(response.registro.subtotal);
                                 jQuery(registroform+' [name="igv"]').val(response.registro.igv);
                                 jQuery(registroform+' [name="total"]').val(response.registro.total);
-                                jQuery(registroform+' [name="subtotalc"]').val(response.registro.subtotalc);
-                                jQuery(registroform+' [name="igvc"]').val(response.registro.igvc);
-                                jQuery(registroform+' [name="totalc"]').val(response.registro.totalc);
                                 jQuery(registroform+' button[type="submit"]').hide();
-                                jQuery(registroform+' .btn-incompleto').hide();
                                 jQuery(registroform+' .producto-div').hide();
 
                                 if(response.registro.anulacion && response.registro.anulacion.motivo){
@@ -443,20 +266,14 @@ jQuery(function () {
                                 jQuery(registroform+' [name="cliente"]').html(clientes).trigger('change');
 
                                 jQuery.each(response.registro, function(index, item) {
-                                    var exclude = ['fecha_registro'];
-                                    if(jQuery(registroform+' [name='+index+']').length>0 && !exclude.includes(index)){
+                                    if(jQuery(registroform+' [name='+index+']').length>0){
                                         jQuery(registroform+' [name='+index+']').val(item).trigger("change");
                                     }
                                 });
                                 jQuery(registroform+' [name="cliente"]').prop('disabled',true);
                                 jQuery(registroform+' [name="tipo_comprobante"]').prop('disabled',true);
                                 jQuery(registroform+' [name="comprobante"]').prop('disabled',true);
-                                jQuery(registroform+' [name="tipo_venta_pago"]').prop('disabled',true);
                                 jQuery(registroform+' [name="tipo_pago"]').prop('disabled',true);
-                                var datenow = new Date();
-                                jQuery(registroform+' [name="fecha_registro"]').prop('disabled',true);
-                                jQuery(registroform+' [name="fecha_registro"]').data("DateTimePicker").maxDate(datenow);
-                                jQuery(registroform+' [name="fecha_registro"]').data("DateTimePicker").date(response.registro.fecha_registro);
                                 jQuery(registroform+' [name="datos_adicionales"]').prop('disabled',true);
                                 jQuery(tabledetalles+' tbody').html('');
                                 var counter = 1;
@@ -467,7 +284,7 @@ jQuery(function () {
                                                         counter+
                                                     '</td>'+
                                                     '<td>'+
-                                                        '<div class="form-group"><div class="col-xs-12"><input style="text-align:right" class="form-control" type="number" step="1" min="0" value="'+item.cantidad+'" readonly></div></div>'+
+                                                        '<div class="form-group"><div class="col-xs-12"><div class="input-group"><input class="form-control" type="number" value="'+item.cantidad+'" readonly><span class="input-group-addon">'+item.abreviatura+'</span></div></div></div>'+
                                                     '</td>'+
                                                     '<td class="text-center">'+
                                                         item.codigo+
@@ -481,13 +298,7 @@ jQuery(function () {
                                                         '<div class="form-group"><div class="col-xs-12"><div class="input-group"><span class="input-group-addon">S/</span><input style="text-align:right" class="form-control" type="number" step="0.01" value="'+item.precio+'" readonly></div></div></div>'+
                                                     '</td>'+
                                                     '<td>'+
-                                                        '<div class="form-group"><div class="col-xs-12"><div class="input-group"><span class="input-group-addon">S/</span><input style="text-align:right" class="form-control" type="number" step="0.01" value="'+item.precioc+'" readonly></div></div></div>'+
-                                                    '</td>'+										
-                                                    '<td>'+
                                                         '<div class="input-group"><span class="input-group-addon">S/</span><input style="text-align:right" class="form-control" type="text" value="'+item.subtotal+'" readonly></div>'+
-                                                    '</td>'+
-                                                    '<td>'+
-                                                        '<div class="input-group"><span class="input-group-addon">S/</span><input style="text-align:right" class="form-control" type="text" value="'+item.subtotalc+'" readonly></div>'+
                                                     '</td>'+
                                                     '<td>'+
                                                     '</td>'+
@@ -499,11 +310,7 @@ jQuery(function () {
                                 jQuery(registroform+' [name="subtotal"]').val(response.registro.subtotal);
                                 jQuery(registroform+' [name="igv"]').val(response.registro.igv);
                                 jQuery(registroform+' [name="total"]').val(response.registro.total);
-                                jQuery(registroform+' [name="subtotalc"]').val(response.registro.subtotalc);
-                                jQuery(registroform+' [name="igvc"]').val(response.registro.igvc);
-                                jQuery(registroform+' [name="totalc"]').val(response.registro.totalc);
                                 jQuery(registroform+' button[type="submit"]').hide();
-                                jQuery(registroform+' .btn-incompleto').hide();
                                 jQuery(registroform+' .producto-div').hide();
 
                                 reiniciarform(anulacionform,anulacionvalidate,'generico/actualizarregistro','<i class="fa fa-times push-5-r"></i> Anular');
@@ -543,14 +350,6 @@ jQuery(function () {
                                                                         '    </button>'+
                                                                         '</div>';
                                     break;
-                                case '4':
-                                    response.data[i]['totalstr'] = '<span class="text-warning">S/ '+response.data[i]['total']+'</span>';
-                                    response.data[i]['acciones']='<div class="btn-group">'+
-                                                                        '    <button class="btn btn-xs btn-warning completarregistro" data-toggle="tooltip" data-placement="top" title="Completar venta" data-id="'+response.data[i]['id']+'" data-table="proceso_venta">'+
-                                                                        '        <i class="fa fa-edit"></i>'+
-                                                                        '    </button>'+
-                                                                        '</div>';
-                                    break;
                                 case '1':
                                     response.data[i]['totalstr'] = '<span class="text-success">S/ '+response.data[i]['total']+'</span>';
                                     response.data[i]['acciones']='<div class="btn-group">'+
@@ -558,9 +357,6 @@ jQuery(function () {
                                                                         '        <i class="fa fa-bars"></i>'+
                                                                         '    </button>'+
                                                                         '    <a target="_new" class="btn btn-xs btn-success" href="'+base_url+'transaccion/comprobanteventa/'+response.data[i]['id']+'" data-toggle="tooltip" data-placement="top" title="Comprobante de venta">'+
-                                                                        '        <i class="si si-printer"></i>'+
-                                                                        '    </a>'+
-                                                                        '    <a target="_new" class="btn btn-xs btn-info" href="'+base_url+'transaccion/comprobantecosto/'+response.data[i]['id']+'" data-toggle="tooltip" data-placement="top" title="Comprobante de costo">'+
                                                                         '        <i class="si si-printer"></i>'+
                                                                         '    </a>';
                                     switch (perfil) {
@@ -599,12 +395,10 @@ jQuery(function () {
             }
         },
         columns: [
-            { data: 'fecha_registro' },
+            { data: 'fecha' },
             { data: 'clientedesc' },
             { data: 'totalstr' },
             { data: 'totalsum' },
-            { data: 'cantidadstr' },
-            { data: 'cantidadsum' },
             { data: 'tipodesc' },
             { data: 'comprobantestr' },
             { data: 'username' },
@@ -617,12 +411,12 @@ jQuery(function () {
                 className: 'dt-body-center'
             },
             {
-                targets: [3,5],
+                targets: [3],
                 className: 'notexport'
             },
             {	
                 visible: false, 
-                targets: [3,5]
+                targets: [3]
             },
         ],
         buttons: true,
@@ -654,21 +448,6 @@ jQuery(function () {
             }
                 
             $( api.column( 2 ).footer() ).html('<span class="text-info">S/ '+parseFloat(total).toFixed(2)+'</span>');
-
-            var cantidadtotal = 0;
-            if (api.column(5, {search:'applied'}).data().length>0) {
-                    cantidadtotal = api
-                        .column( 5, {search:'applied'} )
-                        .data()
-                        .reduce( function (a, b) {
-                            return intVal(a) + intVal(b);
-                        } );
-            } else {
-                cantidadtotal = 0;
-            }
-                
-            $( api.column( 4 ).footer() ).html('<span class="text-info">'+cantidadtotal+' unid. ('+unidades_docenas(cantidadtotal)+')</span>');
-
         }
     });	
     var buttons = new jQuery.fn.dataTable.Buttons(listdt, {
@@ -753,13 +532,9 @@ jQuery(function () {
             if($(this).valid()) $(this).closest('.form-group').removeClass('has-error');
             
             var precio = parseFloat($(this).closest('tr').find('.input-precio').val());
-            var precioc = parseFloat($(this).closest('tr').find('.input-precioc').val());
-            var subtotal = (precio/12)*cantidad;
-            var subtotalc = (precioc/12)*cantidad;
+            var subtotal = (precio)*cantidad;
             subtotal = (isNaN(subtotal) ? 0.00 : subtotal.toFixed(2));
-            subtotalc = (isNaN(subtotalc) ? 0.00 : subtotalc.toFixed(2));
             $(this).closest('tr').find('.input-subtotal').val(subtotal).trigger('change');
-            $(this).closest('tr').find('.input-subtotalc').val(subtotalc).trigger('change');
             calcular_total();
         }
     });
@@ -770,48 +545,10 @@ jQuery(function () {
         $(this).closest('tr').find('.input-precio').val(precio);
         
         var cantidad = parseFloat($(this).closest('tr').find('.input-cantidad').val());
-        var subtotal = (precio/12)*cantidad;
+        var subtotal = (precio)*cantidad;
         subtotal = (isNaN(subtotal) ? 0.00 : subtotal.toFixed(2));
         $(this).closest('tr').find('.input-subtotal').val(subtotal);
         calcular_total();
-    });
-
-    jQuery('body').on('change', tabledetalles+' .input-precioc', function() {
-        var precioc = parseFloat($(this).closest('tr').find('.input-precioc').val());
-        precioc = (precioc < 0 ? 0.00 : precioc.toFixed(2));
-        $(this).closest('tr').find('.input-precioc').val(precioc);
-        
-        var cantidad = parseFloat($(this).closest('tr').find('.input-cantidad').val());
-        var subtotalc = (precioc/12)*cantidad;
-        subtotalc = (isNaN(subtotalc) ? 0 : subtotalc.toFixed(2));
-        $(this).closest('tr').find('.input-subtotalc').val(subtotalc);
-        calcular_total();
-    });
-
-    jQuery('body').on('focusout', tabledetalles+' .input-subtotal', function() {
-        var subtotal = parseFloat($(this).closest('tr').find('.input-subtotal').val());
-        subtotal = (subtotal < 0 ? 0.00 : subtotal.toFixed(2));
-        $(this).closest('tr').find('.input-subtotal').val(subtotal);
-        if(subtotal>=0){
-            var cantidad = parseFloat($(this).closest('tr').find('.input-cantidad').val());
-            var precio = (subtotal*12)/cantidad;
-            precio = (isNaN(precio) ? 0.00 : precio.toFixed(2));
-            $(this).closest('tr').find('.input-precio').val(precio);
-            calcular_total();
-        }
-    });
-
-    jQuery('body').on('focusout', tabledetalles+' .input-subtotalc', function() {
-        var subtotalc = parseFloat($(this).closest('tr').find('.input-subtotalc').val());
-        subtotalc = (subtotalc < 0 ? 0.00 : subtotalc.toFixed(2));
-        $(this).closest('tr').find('.input-subtotalc').val(subtotalc);
-        if(subtotalc>=0){
-            var cantidad = parseFloat($(this).closest('tr').find('.input-cantidad').val());
-            var precioc = (subtotalc*12)/cantidad;
-            precioc = (isNaN(precioc) ? 0.00 : precioc.toFixed(2));
-            $(this).closest('tr').find('.input-precioc').val(precioc);
-            calcular_total();
-        }
     });
 
     /*jQuery('body').on('change', registroform+' [name="tipo_comprobante"]', function() {
@@ -840,10 +577,23 @@ jQuery(function () {
         var counter = jQuery(registroform+' [name="counter"]').val();
         if(producto_sel){
             var productos = jQuery(tabledetalles+' .input-id');
+            var producto_tipos = jQuery(tabledetalles+' .input-tipo');
             var flag = true;
+
             jQuery.each(productos, function(index, item) {
-                if(jQuery(item).val()==producto_sel) flag = false;
+                if(jQuery(item).val() == producto_sel) {
+                    flag = false;
+                    message = 'El producto ya se encuentra agregado';
+                }
             });
+
+            jQuery.each(producto_tipos, function(index, item) {
+                if(jQuery(item).val() == 2) { //servicio
+                    flag = false;
+                    message = 'Solo se puede agregar un servicio por venta';
+                }
+            });
+
             if(flag){
                 jQuery.ajax({
                     type: "POST",
@@ -859,31 +609,34 @@ jQuery(function () {
                             var tr = '<tr>'+
                                             '<td>'+
                                                 '<input type="hidden" class="input-id" name="producto['+counter+'][id]" value="'+response.registro.id+'">'+
-                                                '<input type="hidden" class="" name="producto['+counter+'][productodesc]" value="'+response.registro.codigo+' - '+response.registro.descripcion+'">'+
-                                            '</td>'+
-                                            '<td>'+
-                                                '<div class="form-group"><div class="col-xs-12"><input style="text-align:center" class="form-control input-cantidad required" type="number" step="1" min="0" max="'+response.registro.existencias+'" name="producto['+counter+'][cantidad]" value=""></div></div>'+
-                                            '</td>'+
+                                                '<input type="hidden" name="producto['+counter+'][productodesc]" value="'+response.registro.codigo+' - '+response.registro.descripcion+'">'+
+                                                '<input type="hidden" class="input-tipo" name="producto['+counter+'][tipo]" value="'+response.registro.tipo+'">'+
+                                           '</td>'+
+                                            '<td>';
+                            if (response.registro['tipo'] == 1) {
+                                        tr += '<div class="form-group"><div class="col-xs-12"><div class="input-group"><input class="form-control input-cantidad required" type="number" step="1" min="0" max="'+response.registro.existencias+'" name="producto['+counter+'][cantidad]" value=""><span class="input-group-addon">'+response.registro.abreviatura+'</span></div></div></div>';
+                            } else {
+                                        tr += '<div class="form-group"><div class="col-xs-12"><div class="input-group"><input class="form-control input-cantidad required" type="number" name="producto['+counter+'][cantidad]" value="1" readonly><span class="input-group-addon">'+response.registro.abreviatura+'</span></div></div></div>';
+                            }
+                                    tr += '</td>'+
                                             '<td>'+
                                                 response.registro.codigo+
                                             '</td>'+
                                             '<td>'+
                                                 response.registro.descripcion+
                                             '</td>'+
+                                            '<td>';
+                            if (response.registro['tipo'] == 1) {
+                                        tr += '<div class="form-group"><div class="col-xs-12"><div class="input-group"><input class="form-control" type="text" value="'+response.registro.existencias+'" readonly tabindex="-1"><span class="input-group-addon">'+response.registro.abreviatura+'</span></div></div></div>';
+                            } else {
+                                        tr += '<div class="form-group"><div class="col-xs-12"><div class="input-group"><input class="form-control" type="text" value="'+response.registro.duracion+'" readonly tabindex="-1"><span class="input-group-addon">'+response.registro.duracion_unidad_desc+'</span></div></div></div>';
+                            }
+                                    tr += '</td>'+
                                             '<td>'+
-                                                '<div class="form-group"><div class="col-xs-12"><div class="input-group"><input style="text-align:center" class="form-control" type="text" value="'+response.registro.existencias+'" readonly tabindex="-1"></div></div></div>'+
+                                                '<div class="form-group"><div class="col-xs-12"><div class="input-group"><span class="input-group-addon">S/</span><input class="form-control input-precio required" type="number" step="0.01" min="0" name="producto['+counter+'][precio]" value="'+response.registro.precio+'"></div></div></div>'+
                                             '</td>'+
                                             '<td>'+
-                                                '<div class="form-group"><div class="col-xs-12"><div class="input-group"><span class="input-group-addon">S/</span><input style="text-align:center" class="form-control input-precio required" type="number" step="0.01" min="0" name="producto['+counter+'][precio]" value="'+response.registro.precio+'"></div></div></div>'+
-                                            '</td>'+
-                                            '<td>'+
-                                                '<div class="form-group"><div class="col-xs-12"><div class="input-group"><span class="input-group-addon">S/</span><input style="text-align:center" class="form-control input-precioc required" type="number" step="0.01" min="0" name="producto['+counter+'][precioc]" value="'+response.registro.precio+'"></div></div></div>'+
-                                            '</td>'+
-                                            '<td>'+
-                                                '<div class="form-group"><div class="col-xs-12"><div class="input-group"><span class="input-group-addon">S/</span><input style="text-align:center" class="form-control input-subtotal required" type="number" step="0.01" min="0" name="producto['+counter+'][subtotal]" value="0.00"></div></div></div>'+
-                                            '</td>'+
-                                            '<td>'+
-                                                '<div class="form-group"><div class="col-xs-12"><div class="input-group"><span class="input-group-addon">S/</span><input style="text-align:center" class="form-control input-subtotalc required" type="number" step="0.01" min="0" name="producto['+counter+'][subtotalc]" value="0.00"></div></div></div>'+
+                                                '<div class="form-group"><div class="col-xs-12"><div class="input-group"><span class="input-group-addon">S/</span><input class="form-control input-subtotal required" type="text" name="producto['+counter+'][subtotal]" value="0.00" readonly></div></div></div>'+
                                             '</td>'+
                                             '<td>'+
                                                 '<a class="btn btn-xs btn-danger quitarfila" data-toggle="tooltip" data-placement="top" title="Eliminar detalle"><i class="fa fa-times"></i></a>'+
@@ -891,14 +644,13 @@ jQuery(function () {
                                         '</tr>';
                             jQuery(tabledetalles+' tbody').append(tr);
                             jQuery(registroform+' [name="producto['+counter+'][precio]"]').trigger('change');
-                            jQuery(registroform+' [name="producto['+counter+'][precioc]"]').trigger('change');
                             jQuery(registroform+' [name="counter"]').val( parseInt(counter)+1);
                             jQuery(registroform+' [name="producto_sel"]').val(null).trigger('change');
                         }
                     }
                 });
             }else{
-                notifytemplate('fa fa-times', 'El producto ya se encuentra agregado', 'danger');
+                notifytemplate('fa fa-times', message, 'danger');
             }
         }else{
             notifytemplate('fa fa-times', 'Seleccione un producto', 'danger');
@@ -981,5 +733,4 @@ jQuery(function () {
             });
         }
     });
-
 });

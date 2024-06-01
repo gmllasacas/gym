@@ -1,18 +1,3 @@
-            <style>
-                .table-condensed .input-group-addon {
-                    padding: 2px 4px;
-                    font-size: 12px;
-                }
-                .table-condensed .form-control {
-                    height: auto;
-                    padding: 2px 4px;
-                    font-size: 12px;
-                    line-height: 1;
-                }
-                #table-detalles .form-group{
-                    margin-bottom: 0px;
-                }
-            </style>
             <main id="main-container" >
                 <div class="content-mini-barra bg-gray-lighter">
                     <div class="row">
@@ -78,9 +63,9 @@
                                     </div>
                                     <div class="col-xs-12 col-sm-2">
                                         <div class="form-group">
-                                            <label class="col-xs-12"><br></label>
+                                            <label class="col-xs-12 hidden-xs"><br></label>
                                             <div class="col-xs-12">
-                                                <button class="btn btn-info" type="submit"><i class="fa fa-search push-5-r"></i>CONSULTAR</button>
+                                                <button class="btn btn-info width100" type="submit"><i class="fa fa-search push-5-r"></i>CONSULTAR</button>
                                             </div>
                                         </div>
                                     </div>
@@ -235,11 +220,11 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-xs-12 col-sm-3">
+                                        <div class="col-xs-12 col-sm-3 col-sm-offset-3">
                                             <div class="form-group">
                                                 <div class="col-xs-12">
                                                     <div class="input-group form-material form-material-info">
-                                                        <input class="form-control js-datetimepicker required" type="text" name="fecha_registro" data-locale="es" data-format="YYYY-MM-DD HH:mm:ss" data-show-today-button="true" data-side-by-side="true">
+                                                        <input class="form-control" type="text" name="fecha" disabled>
                                                         <label>Fecha</label>
                                                         <span class="input-group-addon"><i class="si si-calendar"></i></span>
                                                     </div>

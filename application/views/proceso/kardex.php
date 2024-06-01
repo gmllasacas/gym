@@ -1,14 +1,4 @@
             <style>
-                .table-condensed .input-group-addon {
-                    padding: 2px 4px;
-                    font-size: 12px;
-                }
-                .table-condensed .form-control {
-                    height: auto;
-                    padding: 2px 4px;
-                    font-size: 12px;
-                    line-height: 1;
-                }
                 .table-condensed .form-group{
                     margin-bottom: 0px;
                 }
@@ -80,9 +70,9 @@
                                     </div>
                                     <div class="col-xs-12 col-sm-2">
                                         <div class="form-group">
-                                            <label class="col-xs-12"><br></label>
+                                            <label class="col-xs-12 hidden-xs"><br></label>
                                             <div class="col-xs-12">
-                                                <button class="btn btn-info" type="submit"><i class="fa fa-search push-5-r"></i>CONSULTAR</button>
+                                                <button class="btn btn-info width100" type="submit"><i class="fa fa-search push-5-r"></i>CONSULTAR</button>
                                             </div>
                                         </div>
                                     </div>
@@ -103,13 +93,12 @@
                                     <tr>
                                         <th>Fecha de registro</th>
                                         <th>Tipo</th>
-                                        <th>Producto</th>
+                                        <th>Producto / Servicio</th>
                                         <th>Cantidad</th>
-                                        <th>Cantidad unid.</th>
+                                        <th>Tipo</th>
                                         <th>Precio</th>
                                         <th>Subtotal</th>
                                         <th>Saldo</th>
-                                        <th>Saldo unid.</th>
                                         <th class="text-center" style="width: 120px;">Acciones</th>
                                     </tr>
                                 </thead>
@@ -160,7 +149,7 @@
                                             <div class="form-group">
                                                 <div class="col-xs-12">
                                                     <div class="input-group form-material form-material-info">
-                                                        <input class="form-control js-datetimepicker required" type="text" name="fecha_registro" data-locale="es" data-format="YYYY-MM-DD HH:mm:ss" data-show-today-button="true" data-side-by-side="true">
+                                                        <input class="form-control" type="text" name="fecha">
                                                         <label>Fecha</label>
                                                         <span class="input-group-addon"><i class="si si-calendar"></i></span>
                                                     </div>
@@ -243,50 +232,39 @@
                                             <thead>
                                                 <tr>
                                                     <th width="3%" class="text-center">#</th>
-                                                    <th width="10%" class="text-center">Cantidad (Unid.)</th>
+                                                    <th width="12%" class="text-center">Cantidad</th>
                                                     <th width="8%" class="text-center">Código</th>
-                                                    <th width="21%">Descripción</th>
-                                                    <th width="7%" class="text-center">Exist.</th>
-                                                    <th width="12%" class="text-center">P. Venta (Doc.)</th>
-                                                    <th width="12%" class="text-center">P. Costo (Doc.)</th>
+                                                    <th width="35%">Descripción</th>
+                                                    <th width="15%" class="text-center">Exist. / Dur.</th>
+                                                    <th width="12%" class="text-center">P. Venta</th>
                                                     <th width="12%" class="text-center">Total</th>
-                                                    <th width="12%" class="text-center">Total Costo</th>
                                                     <th width="3%" class="text-center"></th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 <tr>
-                                                    <td colspan="10">Sin detalles</td>
+                                                    <td colspan="8">Sin detalles</td>
                                                 </tr>
                                             </tbody>
                                             <tfoot>
                                                 <tr>
-                                                    <th colspan="7" class="text-right">Subtotal</th>
+                                                    <th colspan="6" class="text-right">Subtotal</th>
                                                     <th>
                                                         <div class="input-group"><span class="input-group-addon">S/</span><input style="text-align:right" class="form-control" type="text" name="subtotal" readonly tabindex="-1"></div>
                                                     </th>
-                                                    <th>
-                                                        <div class="input-group"><span class="input-group-addon">S/</span><input style="text-align:right" class="form-control" type="text" name="subtotalc" readonly tabindex="-1"></div>
-                                                    </th>
                                                     <th></th>
                                                 </tr>
                                                 <tr>
-                                                    <th colspan="7" class="text-right">IGV</th>
+                                                    <th colspan="6" class="text-right">IGV</th>
                                                     <th>
                                                         <div class="input-group"><span class="input-group-addon">S/</span><input style="text-align:right" class="form-control" type="text" name="igv" readonly tabindex="-1" data-igv="<?php echo $this->configuracion['igv'];?>"></div>
                                                     </th>
-                                                    <th>
-                                                        <div class="input-group"><span class="input-group-addon">S/</span><input style="text-align:right" class="form-control" type="text" name="igvc" readonly tabindex="-1" data-igv="<?php echo $this->configuracion['igv'];?>"></div>
-                                                    </th>
                                                     <th></th>
                                                 </tr>
                                                 <tr>
-                                                    <th colspan="7" class="text-right">Total</th>
+                                                    <th colspan="6" class="text-right">Total</th>
                                                     <th>
                                                         <div class="input-group"><span class="input-group-addon">S/</span><input style="text-align:right" class="form-control" type="text" name="total" readonly tabindex="-1"></div>
-                                                    </th>
-                                                    <th>
-                                                        <div class="input-group"><span class="input-group-addon">S/</span><input style="text-align:right" class="form-control" type="text" name="totalc" readonly tabindex="-1"></div>
                                                     </th>
                                                     <th></th>
                                                 </tr>
@@ -363,11 +341,11 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-xs-12 col-sm-3">
+                                        <div class="col-xs-12 col-sm-3 col-sm-offset-3">
                                             <div class="form-group">
                                                 <div class="col-xs-12">
                                                     <div class="input-group form-material form-material-info">
-                                                        <input class="form-control js-datetimepicker required" type="text" name="fecha_registro" data-locale="es" data-format="YYYY-MM-DD HH:mm:ss" data-show-today-button="true" data-side-by-side="true">
+                                                        <input class="form-control" type="text" name="fecha">
                                                         <label>Fecha</label>
                                                         <span class="input-group-addon"><i class="si si-calendar"></i></span>
                                                     </div>
@@ -394,11 +372,11 @@
                                             <thead>
                                                 <tr>
                                                     <th width="5%" class="text-center">#</th>
-                                                    <th width="10%" class="text-center">Cantidad (Unid.)</th>
+                                                    <th width="10%" class="text-center">Cantidad</th>
                                                     <th width="8%" class="text-center">Código</th>
                                                     <th width="30%">Descripción</th>
                                                     <th width="7%" class="text-center">Exist.</th>
-                                                    <th width="12%" class="text-center">Precio (Doc.)</th>
+                                                    <th width="12%" class="text-center">Precio</th>
                                                     <th width="8%" class="text-center">Saldo</th>
                                                     <th width="15%" class="text-center">Total</th>
                                                     <th width="5%" class="text-center"></th>

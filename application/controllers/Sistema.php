@@ -18,7 +18,7 @@ class Sistema extends CI_Controller
         $this->session->sess_destroy();
 
         $this->load->view('bases/cabezera');
-        $this->load->view('sistema/login', ['crear_contrasena' => false, 'funciones' => ['sistema/login']]);
+        $this->load->view('sistema/login', ['crear_contrasena' => 'false', 'funciones' => ['sistema/login']]);
     }
 
     public function login()
@@ -48,7 +48,7 @@ class Sistema extends CI_Controller
                 $intentos = $registro['intentos'] + 1;
                 $ultimo_intento = is_null($registro['ultimo_intento']) ? date('Y-m-d H:i:s') : $registro['ultimo_intento'];
                 $ahora = date('Y-m-d H:i:s');
-                $minutos = date_difference_minutes($ultimo_intento, $ahora);
+                $minutos = date_difference($ultimo_intento, $ahora, '%R%i');
                 $flag = false;
                 if ($minutos > 15) {
                     $this->db->update('base_usuario', ['intentos' => 0, 'ultimo_intento' => $ahora], ['id' => $registro['id']]);
@@ -81,7 +81,7 @@ class Sistema extends CI_Controller
                         response(['message'=>'Contraseña incorrecta, tiene ' .  $restante . ' intento(s) restante(s)'], 500);
                     }
                 } else {
-                    response(['message'=>'Intentos de ingreso excedido (' . $intentos .'), por favor espere ' . (15 - $minutos) . ' minuto(s) para intentar nuevamente'], 500);
+                    response(['message'=>'Intentos de ingreso excedido (' . $registro['intentos'] .'), por favor espere ' . (15 - $minutos) . ' minuto(s) para intentar nuevamente'], 500);
                 }
             } else {
                 response(['message'=>'Usuario incorrecto'], 500);
@@ -247,12 +247,12 @@ class Sistema extends CI_Controller
             $token_og = base64_decode($token);
             $data = explode('|', $this->encryption->decrypt($token_og));
             $ahora = date('Y-m-d H:i:s');
-            $minutos = date_difference_minutes($data[1], $ahora);
+            $minutos = date_difference($data[1], $ahora, '%R%i');
             if ($minutos <= 180) {
                 $registro = basedetalleregistro('base_usuario', ['estado'=>'1', 'username'=>$data[0], 'token'=>$token_og]);
                 if (count((array)$registro) > 0) {
                     $datos = [
-                        'crear_contrasena' => true,
+                        'crear_contrasena' => 'true',
                         'username' =>$registro['username'],
                         'correo' =>$registro['correo'],
                         'token' => $token,
@@ -284,7 +284,7 @@ class Sistema extends CI_Controller
             $token_og = base64_decode($token);
             $data = explode('|', $this->encryption->decrypt($token_og));
             $ahora = date('Y-m-d H:i:s');
-            $minutos = date_difference_minutes($data[1], $ahora);
+            $minutos = date_difference($data[1], $ahora, '%R%i');
             if ($minutos <= 180) {
                 $registro_det = basedetalleregistro('base_usuario', ['estado'=>'1', 'username'=>$data[0], 'token'=>$token_og]);
                 if (count((array)$registro_det) > 0) {

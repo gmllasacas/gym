@@ -1,20 +1,27 @@
 
 jQuery(function () {
-    
-    //jQuery('.js-masked-codigo').mask('aaa99',{autoclear: false});
-
     var registromodal= '#registro-modal';
     var registroform= '#registro-form';
     var nuevoregistro= '.nuevoregistro';
     var editarregistro= '.editarregistro';
     var tablelist= '#table-list';
     var cambiadatoregistro= '.cambiadatoregistro';
+    var membresias = $.fn.dataTable.absoluteOrderNumber( [
+        {
+            value: '',
+            position: 'bottom'
+        }
+    ] );
 
     jQuery('body').on('click', nuevoregistro, function() {
         reiniciarform(registroform,registrovalidate,'generico/nuevoregistro','<i class="fa fa-plus push-5-r"></i> Registrar');
         jQuery(registroform+' [name="id"]').val(null);
         jQuery(registroform+' [name="estado"]').val(1);
         jQuery(registroform+' [name=cliente]').prop('disabled',false);
+        jQuery(registroform+' [name=tipo]').prop('disabled',false).val(1).trigger('change');
+        jQuery(registroform+' [name=unidad]').prop('disabled',false);
+        jQuery(registroform+' [name=duracion]').prop('disabled',false);
+        jQuery(registroform+' [name=duracion_unidad]').prop('disabled',false).val(1).trigger('change');
         jQuery(registromodal).modal('toggle');
     });
 
@@ -36,6 +43,10 @@ jQuery(function () {
                             jQuery(registroform+' [name='+index+']').val(item);
                         }
                     });
+                    jQuery(registroform+' [name=tipo]').prop('disabled',true).trigger('change');
+                    jQuery(registroform+' [name=unidad]').prop('disabled',true).trigger('change');
+                    jQuery(registroform+' [name=duracion]').prop('disabled',true).trigger('change');
+                    jQuery(registroform+' [name=duracion_unidad]').prop('disabled',true).trigger('change');
                     jQuery(registromodal).modal('toggle');
                 }
             }
@@ -77,16 +88,28 @@ jQuery(function () {
                                     response.data[i]['acciones']='';
                                     break;
                             }
-                            var color = '';
-                            if(response.data[i]['existencias']==0){
-                                color = 'danger';
-                            }else if(response.data[i]['existencias']<60){
-                                color = 'warning';
-                            }else{
-                                color = 'success';
+                            switch (response.data[i]['tipo']) {
+                                case '1':
+                                    var color = '';
+                                    if(response.data[i]['existencias']==0){
+                                        color = 'danger';
+                                    }else if(response.data[i]['existencias']<30){
+                                        color = 'warning';
+                                    }else{
+                                        color = 'success';
+                                    }
+                                    response.data[i]['existenciasstr'] = '<span class="text-'+color+'">'+response.data[i]['existencias']+' '+response.data[i]['abreviatura']+'</span>';
+                                    response.data[i]['duracionstr'] = '';
+                                    response.data[i]['tipodescstr']='<label class="label label-info">'+response.data[i]['tipodesc']+'</label>';
+                                    break;
+                                case '2':
+                                    response.data[i]['duracionstr'] = response.data[i]['duracion']+' '+response.data[i]['duracion_unidad_desc'];
+                                    response.data[i]['existenciasstr'] = '';
+                                    response.data[i]['tipodescstr']='<label class="label label-success">'+response.data[i]['tipodesc']+'</label>';
+                                default:
+                                    break;
                             }
-
-                            response.data[i]['existenciasstr'] = '<span class="text-'+color+'">'+response.data[i]['existencias']+' unid. ('+response.data[i]['unidades_docenas']+')</span>';
+                            
                             response.data[i]['preciostr']='S/ '+response.data[i]['precio'];
                             response.data[i]['estadostr']='<label class="label label-'+response.data[i]['estadocol']+'">'+response.data[i]['estadodesc']+'</label>';
                         }
@@ -106,28 +129,37 @@ jQuery(function () {
             { data: 'codigo' },
             { data: 'descripcion' },
             { data: 'tipodesc' },
+            { data: 'tipodescstr' },
             { data: 'preciostr' },
             { data: 'existenciasstr' },
-            { data: 'existencias' },
+            { data: 'duracionstr' },
             { data: 'fecha' },
             { data: 'estadostr' },
             { data: 'acciones' },
         ],
         columnDefs: [
             {	
-                targets: [4],
+                targets: [2],
                 visible: false, 
             },
             {
-                targets: [2,3,-2,-1],
+                targets: [3,4,5,6,-2,-1],
                 className: 'dt-body-center'
+            },
+            /*{
+                orderData: 4,
+                targets: 5
+            },*/
+            {
+                type: membresias,
+                targets: 5
             },
         ],
         buttons: true,
-        order: [[ 4, "desc" ]],
+        order: [[5, "desc"]],
         bAutoWidth: false,
         initComplete: function () {
-            //selectores();
+            selectores();
         },
     });	
     
@@ -160,11 +192,11 @@ jQuery(function () {
         ],
     }).container().appendTo(jQuery(tablelist).closest('.block-content').find('.options div:nth-child(1)'));
 
-    /*function selectores() { 
+    function selectores() { 
         jQuery(tablelist).closest('.block-content').find('.options div:nth-child(3)').empty();
-        listdt.columns([1]).every( function () {
+        listdt.columns([2]).every( function () {
             var column = this;
-            var select = jQuery('<select class="js-select2-filtro form-control" id="filtrado1" data-placeholder="Filtro por categoría" data-allow-clear="true"><option></option></select>')
+            var select = jQuery('<select class="js-select2-filtro form-control" id="filtrado1" data-placeholder="Filtro por tipo" data-allow-clear="true"><option></option></select>')
                 .appendTo(jQuery(tablelist).closest('.block-content').find('.options div:nth-child(3)'))
                 .on( 'change', function () {
                     var val = jQuery.fn.dataTable.util.escapeRegex(
@@ -179,12 +211,11 @@ jQuery(function () {
             } );
         } );
         jQuery('.js-select2-filtro').select2();
-    };*/
+    };
 
     jQuery('body').on('click', '#block-reload', function() {
-        //listdt.ajax.reload(selectores);
-        listdt.ajax.reload();
-    });
+        listdt.ajax.reload(selectores);
+   });
 
     
     jQuery('body').on('click', cambiadatoregistro, function() {
@@ -216,7 +247,7 @@ jQuery(function () {
                                     notifytemplate('fa fa-times', response.message, 'danger');
                                 }
                                 if(response.status=='201'){
-                                    listdt.ajax.reload();
+                                    listdt.ajax.reload(selectores);
                                 }
                             }
                         });
@@ -224,6 +255,26 @@ jQuery(function () {
                 }
             }
         });
+    });
+
+
+    jQuery('body').on('change', registroform+' [name="tipo"]', function(e) {
+        var tipo = jQuery(registroform+' [name="tipo"]').val();
+        switch (tipo) {
+            case '1':
+                jQuery('#producto').show();
+                jQuery('#servicio').hide();
+                jQuery(registroform+' [name="unidad"]').addClass('required');
+                jQuery(registroform+' [name="duracion"]').removeClass('required');
+                break;
+            case '2':
+                jQuery('#servicio').show();
+                jQuery('#producto').hide();
+                jQuery(registroform+' [name="duracion"]').addClass('required');
+                jQuery(registroform+' [name="unidad"]').removeClass('required');
+            default:
+                break;
+        }
     });
 
     var registrovalidate = jQuery(registroform).validate({
@@ -241,17 +292,16 @@ jQuery(function () {
                     }
                     if(response.status=='200'){
                         notifytemplate('fa fa-check', response.message, 'success');
-                        listdt.ajax.reload();
+                        listdt.ajax.reload(selectores);
                         jQuery(registromodal).modal('toggle');
                     }
                     if(response.status=='201'){
                         notifytemplate('fa fa-check', response.message, 'success');
-                        listdt.ajax.reload();
+                        listdt.ajax.reload(selectores);
                         jQuery(registromodal).modal('toggle');
                     }
                 }
             });
         }
     });
-
 });

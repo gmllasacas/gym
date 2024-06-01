@@ -1,13 +1,25 @@
 
 jQuery(function () {
-
+    var date = new Date(); 
+    var fecha_nacimiento = new Date(date.getFullYear() - 15, date.getMonth()); 
     var tablelist= '#table-list';
     var nuevoregistro= '.nuevoregistro';
     var editarregistro= '.editarregistro';
     var registromodal= '#registro-modal';
     var registroform= '#registro-form';
     var cambiadatoregistro= '.cambiadatoregistro';
-
+    var sin_membresias = $.fn.dataTable.absoluteOrderNumber( [
+        {
+            value: '',
+            position: 'bottom'
+        }
+    ] );
+    var fecha_fin = $.fn.dataTable.absoluteOrder( [
+        {
+            value: '',
+            position: 'bottom'
+        }
+    ] );
     var listdt = jQuery(tablelist).DataTable({
         ajax: {
             type: 'POST',
@@ -24,9 +36,6 @@ jQuery(function () {
                             switch (response.data[i]['estado']) {
                                 case '2':
                                     response.data[i]['acciones']='<div class="btn-group">'+
-                                                                            '    <button class="btn btn-xs btn-success detallecredito" data-toggle="tooltip" data-placement="top" title="Detalle de crédito" data-id="'+response.data[i]['id']+'" data-table="proceso_credito">'+
-                                                                            '        <i class="si si-wallet"></i>'+
-                                                                            '    </button>'+
                                                                             '    <button class="btn btn-xs btn-success cambiadatoregistro" data-toggle="tooltip" data-placement="top" title="Activar" data-id="' + response.data[i]['id'] + '" data-table="proceso_cliente" data-valor="1" data-campo="estado">' +
                                                                             '        <i class="fa fa-check"></i>'+
                                                                             '    </button>'+
@@ -37,9 +46,6 @@ jQuery(function () {
                                                                             '    <button class="btn btn-xs btn-info editarregistro" data-toggle="tooltip" data-placement="top" title="Detalles / Editar" data-id="'+response.data[i]['id']+'" data-table="proceso_cliente">'+
                                                                             '        <i class="fa fa-edit"></i>'+
                                                                             '    </button>'+
-                                                                            '    <button class="btn btn-xs btn-success detallecredito" data-toggle="tooltip" data-placement="top" title="Detalle de crédito" data-id="'+response.data[i]['id']+'" data-table="proceso_credito">'+
-                                                                            '        <i class="si si-wallet"></i>'+
-                                                                            '    </button>'+
                                                                             '    <button class="btn btn-xs btn-warning cambiadatoregistro" data-toggle="tooltip" data-placement="top" title="Desactivar" data-id="' + response.data[i]['id'] + '" data-table="proceso_cliente" data-valor="2" data-campo="estado">' +
                                                                             '        <i class="fa fa-ban"></i>'+
                                                                             '    </button>'+
@@ -49,18 +55,29 @@ jQuery(function () {
                                     response.data[i]['acciones']='';
                                     break;
                             }
-                            response.data[i]['contactostr'] = (response.data[i]['contacto']=='' ? '' : response.data[i]['contacto']) + (response.data[i]['telefono']=='' ? '' : ' ( '+response.data[i]['telefono']+' )');
                             var color = '';
-                            if(response.data[i]['credito']==0){
-                                color = 'success';
-                            }else{
-                                color = 'danger';
+                            var dias_filter = '';
+                            if(response.data[i]['dias'] === '') {
+                                color = 'info';
+                                dias_filter = 'Sin membresía';
+                                response.data[i]['diasstr'] = '';
+                            } else {
+                                if(response.data[i]['dias'] > 7) {
+                                    color = 'success';
+                                    dias_filter = 'Activa';
+                                } else if(response.data[i]['dias'] >= 0) {
+                                    color = 'warning';
+                                    dias_filter = 'Por vencer';
+                                } else if(response.data[i]['dias'] < 0) {
+                                    response.data[i]['dias'] = '&lt 0'; //< 0
+                                    color = 'danger';
+                                    dias_filter = 'Vencida';
+                                }
+                                response.data[i]['diasstr'] = '<span class="text-'+color+'">'+response.data[i]['dias']+'</span>';
                             }
-                            response.data[i]['creditostr'] = '<span class="text-'+color+'">S/ '+response.data[i]['credito']+'</span>';
+                            response.data[i]['etiqueta'] = '<label class="label label-'+color+'">'+dias_filter+'</label>';
+                            response.data[i]['dias_filter'] = dias_filter;
                             response.data[i]['estadostr'] = '<label class="label label-'+response.data[i]['estadocol']+'">'+response.data[i]['estadodesc']+'</label>';
-                            /*response.data[i]['acciones'] += '    <button class="btn btn-xs btn-danger cambiadatoregistro" data-toggle="tooltip" data-placement="top" title="Eliminar" data-id="' + response.data[i]['id'] + '" data-table="proceso_cliente" data-valor="5" data-campo="estado">' +
-                                                                    '        <i class="fa fa-times"></i>'+
-                                                                    '    </button>';*/
                         }
                         return response.data;
                         break;
@@ -75,27 +92,55 @@ jQuery(function () {
             }
         },
         columns: [
-            { data: 'tipodesc' },
-            { data: 'documento' },
-            { data: 'nombre_o_razon_social' },
-            { data: 'creditostr' },
-            { data: 'contactostr' },
-            { data: 'estadostr' },
-            { data: 'acciones' },
+            { data: 'codigo' },//0
+            { data: 'tipodesc' },//1
+            { data: 'documento' },//2
+            { data: 'nombre_o_razon_social' },//3
+            { data: 'productodesc' },//4
+            { data: 'fecha_fin' },//5
+            { data: 'diasstr' },//6
+            { data: 'etiqueta' },//7
+            { data: 'telefono' },//8
+            { data: 'correo' },//9
+            { data: 'provinciadesc' },//10
+            { data: 'distritodesc' },//11
+            { data: 'estadostr' },//12
+            { data: 'dias_filter' },//13
+            { data: 'acciones' },//14
         ],
         columnDefs: [
-            /*{	
+            {	
                 visible: false, 
-                targets: [-3 ]
-            },*/
+                targets: [1,2,8,9,10,11,13]
+            },
             {
-                targets: [3,4,-2,-1],
+                targets: [4,5,6,-3,-1],
                 className: 'dt-body-center'
+            },
+            {
+                targets: [7],
+                className: 'dt-body-center notexport'
+            },
+            {
+                searchable: false,
+                targets: [1,2,8,9,10,11]
+            },
+            {
+                type: fecha_fin,
+                targets: 5
+            },
+            {
+                type: sin_membresias,
+                targets: 6
             },
         ],
         buttons: true,
-        order: [[ 3, "desc" ]],
-        bAutoWidth: false
+        order: [[ 6, "desc" ]],
+        bAutoWidth: false,
+        //bFilter: false,
+        initComplete: function () {
+            selectores();
+        },
     });	
     var buttons = new jQuery.fn.dataTable.Buttons(listdt, {
         buttons: [
@@ -103,7 +148,7 @@ jQuery(function () {
                 extend: 'copy',
                 text: '<i class="fa fa-copy push-5-r"></i> Copiar',
                 exportOptions: {
-                    columns: ':not(:last-child)',
+                    columns: ':not(:last-child):not(.notexport)',
                 }
             },
             {
@@ -112,7 +157,7 @@ jQuery(function () {
                 title: reportetext,
                 filename: reportetext,
                 exportOptions: {
-                    columns: ':not(:last-child)',
+                    columns: ':not(:last-child):not(.notexport)',
                 }
             },
             {
@@ -120,22 +165,69 @@ jQuery(function () {
                 text: '<i class="si si-printer push-5-r"></i> Imprimir',
                 title: reportetext,
                 exportOptions: {
-                    columns: ':not(:last-child)',
+                    columns: ':not(:last-child):not(.notexport)',
                 }
             },
         ],
-    }).container().appendTo(jQuery(tablelist).closest('.block-content').find('.options div:nth-child(1)'));
+    }).container().appendTo(jQuery(tablelist).closest('.block-content').find('.options > div:nth-child(1)'));
+
+    jQuery('#table-list_filter').hide();
+
+    function selectores() { 
+        //jQuery(tablelist).closest('.block-content').find('.options div:nth-child(3)').empty();
+        listdt.columns().every(function () {
+            var column = this;
+            var title = column.footer().textContent;
+            if (column.index() == 14) {
+                var accion = '<div class="btn-group">'+
+                                '    <button class="btn btn-xs btn-danger limpiarfiltros" data-toggle="tooltip" data-placement="top" title="Limpiar filtros">' +
+                                '        <i class="fa fa-times"></i>'+
+                                '    </button>'+
+                                '</div>';
+                $(accion).appendTo($(column.footer()).empty());
+            } else {
+                jQuery('<div class="form-group" style="width: 100%;"><div class="input-group" style="width: 100%;"><input class="form-control table-custom-filter" type="text" placeholder="Buscar '+title+'" tabindex="-1"/></div></div>')
+                .appendTo($(column.footer()).empty()).on('keyup change clear', function () {
+                    if (column.search() !== jQuery(this).find('input').val()) {
+                        column.search(jQuery(this).find('input').val()).draw();
+                    }
+                });
+            }
+        });
+        
+        jQuery(tablelist).closest('.block-content').find('.options div:nth-child(3)').empty();
+        listdt.columns([13]).every( function () {
+            var column = this;
+            var select = jQuery('<select class="js-select2-filtro form-control table-custom-filter" data-placeholder="Filtro por etiqueta" data-allow-clear="true"><option></option></select>')
+                .appendTo(jQuery(tablelist).closest('.block-content').find('.options div:nth-child(3)'))
+                .on( 'change', function () {
+                    var val = jQuery.fn.dataTable.util.escapeRegex(
+                        jQuery(this).val()
+                    ); 
+                    column
+                        .search( val ? '^'+val+'$' : '', true, false )
+                        .draw();
+                } );
+            column.data().unique().sort().each( function ( d, j ) {
+                select.append( '<option value="'+d+'">'+d+'</option>' )
+            } );
+        } );
+        jQuery('.js-select2-filtro').select2();
+    };
 
     jQuery('body').on('click', '#block-reload', function() {
-        listdt.ajax.reload();
+        listdt.ajax.reload(selectores());
     });
-    
+
+    jQuery('body').on('click', '.limpiarfiltros', function() {
+        jQuery('.table-custom-filter').val(null).trigger('change');
+    });
+
     jQuery('body').on('click', nuevoregistro, function() {
         jQuery(registroform+' [name="id"]').val(null);
-        jQuery(registroform+' [name="credito"]').prop('disabled',false);
-        jQuery(registroform+' .credito-block').show();
+        jQuery(registroform+' [name="distrito"]').html('');
         reiniciarform(registroform,registrovalidate,'generico/nuevoregistro','<i class="fa fa-plus push-5-r"></i> Registrar');
-        jQuery(registroform+' [name="credito"]').val(0.00);
+        jQuery('[name=fecha_nacimiento]').datepicker("setDate", fecha_nacimiento);
         jQuery(registromodal).modal('toggle');
     });
 
@@ -157,8 +249,7 @@ jQuery(function () {
                             jQuery(registroform+' [name='+index+']').val(item);
                         }
                     });
-                    jQuery(registroform+' [name="credito"]').prop('disabled',true);
-                    jQuery(registroform+' .credito-block').hide();
+                    jQuery(registroform+' [name="provincia"]').trigger('change', response.registro.distrito);
                     jQuery(registromodal).modal('toggle');
                 }
             }
@@ -194,7 +285,7 @@ jQuery(function () {
                                     notifytemplate('fa fa-times', response.message, 'danger');
                                 }
                                 if(response.status=='201'){
-                                    listdt.ajax.reload();
+                                    listdt.ajax.reload(selectores());
                                 }
                             }
                         });
@@ -202,6 +293,38 @@ jQuery(function () {
                 }
             }
         });
+    });
+
+    jQuery('body').on('change', registroform+' [name="provincia"]', function(e, distrito) {
+        var provincia = jQuery(registroform+' [name="provincia"]').val();
+        if (provincia != null) {
+            jQuery.ajax({
+                type: "POST",
+                url: base_url + "generico/listado",
+                data: {
+                    table: 'proceso_distrito',
+                    provincia: provincia,
+                    estado: '^5',
+                },
+                dataType: 'json',
+                timeout: 60000,
+                success: function(response) {
+                    if(response.status=='500'){
+                        notifytemplate('fa fa-times', response.message, 'danger');
+                    }
+                    if(response.status=='200'){
+                        var options = '<option value=""></option>';
+                        jQuery.each(response.data, function(index, item) {
+                            options += '<option value="'+item.iddistrito+'">'+item.distrito+'</option>';
+                        });
+                        jQuery(registroform+' [name="distrito"]').html(options).trigger('change');
+                        if (distrito !== undefined) {
+                            jQuery(registroform+' [name="distrito"]').val(distrito).trigger('change');
+                        }
+                    }
+                }
+            });
+        }
     });
 
     var registrovalidate = jQuery(registroform).validate({
@@ -235,12 +358,12 @@ jQuery(function () {
                         }
                         if(response.status=='200'){
                             notifytemplate('fa fa-check', response.message, 'success');
-                            listdt.ajax.reload();
+                            listdt.ajax.reload(selectores());
                             jQuery(registromodal).modal('toggle');
                         }
                         if(response.status=='201'){
                             notifytemplate('fa fa-check', response.message, 'success');
-                            listdt.ajax.reload();
+                            listdt.ajax.reload(selectores());
                             jQuery(registromodal).modal('toggle');
                         }
                     }
@@ -317,7 +440,7 @@ jQuery(function () {
                 { data: 'tipodesc' },
                 { data: 'totalstr' },
                 { data: 'creditostr' },
-                { data: 'fecha_registro' },
+                { data: 'fecha' },
                 { data: 'estadostr' },
             ],
             columnDefs: [
@@ -330,7 +453,5 @@ jQuery(function () {
             order: [[0, "desc"]],
             bAutoWidth: false,
         });
-
     /**Credito */
-
 });

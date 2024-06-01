@@ -3,7 +3,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 #COMMON
 date_default_timezone_set('America/Lima');
-$config['base_url'] = 'http://localhost/gym/';
+$config['base_url'] = 'http://localhost/tahua/';
 $config['log_threshold'] = 1;
 $config['sess_cookie_name'] = 'ci_session_gym';
 $config['csrf_protection'] = false;

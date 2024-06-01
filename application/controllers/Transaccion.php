@@ -41,7 +41,7 @@ class Transaccion extends CI_Controller
     public function ventas()
     {
         $estados = $this->generico_modelo->listado('base_estado', '1');
-        $tipocomprobantes = $this->generico_modelo->listado('base_estado', '1', ['orderby'=>'id','direction'=>'asc']);
+        $tipocomprobantes = $this->generico_modelo->listado('proceso_tipo_comprobante', '1', ['orderby'=>'id','direction'=>'asc']);
         $tipo_venta_pagos = $this->generico_modelo->listado('proceso_tipo_venta_pago', '1', ['orderby'=>'id','direction'=>'asc']);
         $tipo_pagos = $this->generico_modelo->listado('proceso_tipo_pago', '1', ['orderby'=>'id','direction'=>'asc']);
 
@@ -70,7 +70,10 @@ class Transaccion extends CI_Controller
         $estados = $this->generico_modelo->listado('base_estado', '1');
         $clientes = $this->generico_modelo->listado('proceso_cliente', '1');
         $productos = $this->generico_modelo->listado('proceso_producto', '1');
-        $tipocomprobantes = $this->generico_modelo->listado('base_estado', '1', ['orderby'=>'id','direction'=>'asc']);
+        foreach ($productos as &$item) {
+            $item['codigo'] = spd($item['id'], 6, '0');
+        }
+        $tipocomprobantes = $this->generico_modelo->listado('proceso_tipo_comprobante', '1', ['orderby'=>'id','direction'=>'asc']);
         $tipo_venta_pagos = $this->generico_modelo->listado('proceso_tipo_venta_pago', '1', ['orderby'=>'id','direction'=>'asc']);
         $tipo_pagos = $this->generico_modelo->listado('proceso_tipo_pago', '1', ['orderby'=>'id','direction'=>'asc']);
         $proveedores = $this->generico_modelo->listado('proceso_proveedor', '1');
@@ -135,27 +138,10 @@ class Transaccion extends CI_Controller
             $this->load->library('Numero_letras');
             $letras = new Numero_letras();
             $registro['letras'] =$letras->convertir($registro['total']);
-            $datos  =array('registro'=>$registro);
-            $this->load->view('proceso/comprobante', $datos);
-        } else {
-            show_error('El comprobante no existe', '404', 'No encontrado');
-        }
-    }
-
-    public function comprobantecosto($id)
-    {
-        $registro=basedetalleregistro('proceso_venta', ['id'=>$id]);
-        if (count((array)$registro)>0) {
-            $registro['cliente_datos'] = basedetalleregistro('proceso_cliente', ['id'=>$registro['cliente']]);
-            $registro['cliente_datos']['tipo_documento_desc'] = basedetalleregistro('proceso_tipo_documento', ['id'=>$registro['cliente_datos']['tipo_documento']]);
-            $registro['tipo_comprobante_desc'] = basedetalleregistro('proceso_tipo_comprobante', ['id'=>$registro['tipo_comprobante']]);
-            $registro['detalles'] = $this->generico_modelo->listado('proceso_venta_detalle', '1', ['venta'=>$id]);
-            $registro['tipo'] = 'costo';
-            $this->load->library('Numero_letras');
-            $letras = new Numero_letras();
-            $registro['letras'] =$letras->convertir($registro['total']);
-            $datos  =array('registro'=>$registro);
-            $this->load->view('proceso/comprobante', $datos);
+            foreach ($registro['detalles'] as &$item) {
+                $item['codigo'] = spd($item['producto'], 6, '0');
+            }
+            $this->load->view('proceso/comprobante', ['registro' => $registro]);
         } else {
             show_error('El comprobante no existe', '404', 'No encontrado');
         }
