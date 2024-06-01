@@ -1,17 +1,4 @@
             <style>
-                .table-condensed .input-group-addon {
-                    padding: 2px 4px;
-                    font-size: 12px;
-                }
-                .table-condensed .form-control {
-                    height: auto;
-                    padding: 2px 4px;
-                    font-size: 12px;
-                    line-height: 1;
-                }
-                #table-detalles .form-group{
-                    margin-bottom: 0px;
-                }
                 .table > thead:first-child > tr:first-child > th {
                     vertical-align: middle;
                 }
@@ -67,9 +54,9 @@
                                     </div>
                                     <div class="col-xs-12 col-sm-2">
                                         <div class="form-group">
-                                            <label class="col-xs-12"><br></label>
+                                            <label class="col-xs-12 hidden-xs"><br></label>
                                             <div class="col-xs-12">
-                                                <button class="btn btn-info" type="submit"><i class="fa fa-search push-5-r"></i>CONSULTAR</button>
+                                                <button class="btn btn-info width100" type="submit"><i class="fa fa-search push-5-r"></i>CONSULTAR</button>
                                             </div>
                                         </div>
                                     </div>
@@ -137,7 +124,7 @@
                                             <div class="form-group">
                                                 <div class="col-xs-12">
                                                     <div class="input-group form-material form-material-info">
-                                                        <input class="form-control js-datetimepicker required" type="text" name="fecha" data-locale="es" data-format="YYYY-MM-DD HH:mm:ss" data-show-today-button="true" data-side-by-side="true" disabled>
+                                                        <input class="form-control" type="text" name="fecha" disabled>
                                                         <label>Fecha</label>
                                                         <span class="input-group-addon"><i class="si si-calendar"></i></span>
                                                     </div>
@@ -214,11 +201,11 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-xs-12 col-sm-3">
+                                        <div class="col-xs-12 col-sm-3 col-sm-offset-3">
                                             <div class="form-group">
                                                 <div class="col-xs-12">
                                                     <div class="input-group form-material form-material-info">
-                                                        <input class="form-control js-datetimepicker required" type="text" name="fecha_registro" data-locale="es" data-format="YYYY-MM-DD HH:mm:ss" data-show-today-button="true" data-side-by-side="true">
+                                                        <input class="form-control" type="text" name="fecha" disabled>
                                                         <label>Fecha</label>
                                                         <span class="input-group-addon"><i class="si si-calendar"></i></span>
                                                     </div>
@@ -249,7 +236,7 @@
                                                     </select>
                                                 </div>
                                                 <div class="col-md-2 text-center">
-                                                    <a class="btn btn-success btn-producto " type="button" data-toggle="tooltip" data-placement="top" title="Agregar detalle de venta"><i class="fa fa-plus"></i> Agregar</a>
+                                                    <a class="btn btn-success btn-producto width100" type="button" data-toggle="tooltip" data-placement="top" title="Agregar detalle de venta"><i class="fa fa-plus"></i> Agregar</a>
                                                 </div>
                                             </div>
                                         </div>
@@ -258,15 +245,15 @@
                                         <table class="table table-condensed table-hover table-bordered" id="table-detalles">
                                             <thead>
                                                 <tr>
-                                                    <th width="5%" class="text-center">#</th>
-                                                    <th width="10%" class="text-center">Cantidad (Unid.)</th>
+                                                    <th width="3%" class="text-center">#</th>
+                                                    <th width="12%" class="text-center">Cantidad</th>
                                                     <th width="8%" class="text-center">Código</th>
                                                     <th width="30%">Descripción</th>
-                                                    <th width="7%" class="text-center">Exist.</th>
-                                                    <th width="12%" class="text-center">Precio (Doc.)</th>
-                                                    <th width="8%" class="text-center">Saldo</th>
-                                                    <th width="15%" class="text-center">Total</th>
-                                                    <th width="5%" class="text-center"></th>
+                                                    <th width="10%" class="text-center">Exist.</th>
+                                                    <th width="12%" class="text-center">Precio</th>
+                                                    <th width="10%" class="text-center">Saldo</th>
+                                                    <th width="12%" class="text-center">Total</th>
+                                                    <th width="3%" class="text-center"></th>
                                                 </tr>
                                             </thead>
                                             <tbody>

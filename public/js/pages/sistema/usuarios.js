@@ -51,7 +51,6 @@ jQuery(function () {
     });
 
     jQuery('#passwordsw').on('change', function () {
-        console.log(this.checked);
         if(this.checked){
             jQuery(registroform+' [name=password]').val('').prop('disabled',false);
             jQuery(registroform+' [name=password2]').val('').prop('disabled',false);

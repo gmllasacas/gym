@@ -1,6 +1,5 @@
 
 jQuery(function () {
-
     var tablelist= '#table-list';
     var nuevoregistro= '.nuevoregistro';
     var editarregistro= '.editarregistro';
@@ -216,5 +215,4 @@ jQuery(function () {
             });
         }
     });
-
 });

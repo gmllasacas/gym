@@ -1,9 +1,6 @@
 
 jQuery(function () {
-    
-    jQuery('.js-masked-codigo').mask('aaa99',{autoclear: false});
     var date = new Date(); 
-    var lastmonthDay = new Date(date.getFullYear(), date.getMonth() - 1, 1); 
     var firstDay = new Date(date.getFullYear(), date.getMonth(), 1); 
     var lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0); 
     switch (perfil) {
@@ -18,11 +15,6 @@ jQuery(function () {
             jQuery('[name=fechafin]').datepicker("setDate", date);
             break;
     }
-    jQuery('[name="fecha_registro"]').data("DateTimePicker").minDate(lastmonthDay);
-    jQuery('[name="fecha_registro"]').data("DateTimePicker").maxDate(date);	
-    jQuery('[name="fecha_registro"]').on('dp.change', function(e){ 
-        if($(this).valid()) $(this).parents('.form-group').removeClass('has-error');
-    })
 
     var busquedaform= '#busqueda-form';
     var registromodal= '#registro-modal';
@@ -100,7 +92,7 @@ jQuery(function () {
             }
         },
         columns: [
-            { data: 'fecha_registro' },
+            { data: 'fecha' },
             { data: 'clientedesc' },
             { data: 'pagostr' },
             { data: 'pagosum' },
@@ -232,21 +224,16 @@ jQuery(function () {
                     jQuery(anulacionform).hide();
                     var clientes = '<option value=""></option>';
                     jQuery.each(response.data, function(index, item) {
-                        clientes += '<option value="'+item.id+'">'+item.documento+' - '+item.nombre_o_razon_social+' (Crédito: S/ '+item.credito+')</option>';
+                        clientes += '<option value="'+item.id+'">'+item.documento+' - '+item.nombre_o_razon_social+'</option>';
                     });
                     jQuery(registroform+' [name="cliente"]').html(clientes).trigger('change');
                     jQuery(registroform+' [name="id"]').val(null);
                     jQuery(registroform+' [name="cliente"]').prop('disabled',false);
                     jQuery(registroform+' [name="pago"]').prop('disabled',false);
                     jQuery(registroform+' [name="tipo_pago"]').prop('disabled',false);
-                    var datenow = new Date();
-                    jQuery(registroform+' [name="fecha_registro"]').prop('disabled',false);
-                    jQuery(registroform+' [name="fecha_registro"]').data("DateTimePicker").maxDate(datenow);
-                    jQuery(registroform+' [name="fecha_registro"]').data("DateTimePicker").date(datenow);
                     jQuery(registroform+' [name="observaciones"]').prop('disabled',false);
                     jQuery(registroform+' button[type="submit"]').show();
                     reiniciarform(registroform,registrovalidate,'generico/nuevoregistro','<i class="fa fa-plus push-5-r"></i> Registrar');
-                    jQuery(registroform+' [name="fecha_registro"]').data("DateTimePicker").date(moment(new Date ).subtract(10,"seconds").format('YYYY-MM-DD HH:mm:ss'));
                     jQuery(registroform+' [name="pago"]').val(0.00);
                     jQuery(registromodal).modal('toggle');
                 }
@@ -285,8 +272,7 @@ jQuery(function () {
                                 jQuery(anulacionform).hide();
                                 var clientes = '<option value=""></option>';
                                 jQuery.each(responseouter.data, function(index, item) {
-                                    console.log(item.credito);
-                                    clientes += '<option value="'+item.id+'">'+item.documento+' - '+item.nombre_o_razon_social+' (Crédito: S/ '+item.credito+')</option>';
+                                    clientes += '<option value="'+item.id+'">'+item.documento+' - '+item.nombre_o_razon_social+'</option>';
                                 });
                                 jQuery(registroform+' [name="cliente"]').html(clientes).trigger('change');
                                 jQuery.each(response.registro, function(index, item) {
@@ -295,10 +281,6 @@ jQuery(function () {
                                     }
                                 });
                                 jQuery(registroform+' [name="id"]').prop('disabled',false);
-                                var datenow = new Date();
-                                jQuery(registroform+' [name="fecha_registro"]').prop('disabled',false);
-                                jQuery(registroform+' [name="fecha_registro"]').data("DateTimePicker").maxDate(datenow);
-                                jQuery(registroform+' [name="fecha_registro"]').data("DateTimePicker").date(response.registro.fecha_registro);
                                 jQuery(registroform+' [name="observaciones"]').prop('disabled',false);
                                 jQuery(registroform+' [name="tipo_pago"]').prop('disabled',false);
                                 jQuery(registroform+' button[type="submit"]').show();
@@ -341,8 +323,7 @@ jQuery(function () {
                                 reiniciarform(registroform,registrovalidate,'generico/actualizarregistro','<i class="fa fa-edit push-5-r"></i> Editar');
                                 var clientes = '<option value=""></option>';
                                 jQuery.each(responseouter.data, function(index, item) {
-                                    console.log(item.credito);
-                                    clientes += '<option value="'+item.id+'">'+item.documento+' - '+item.nombre_o_razon_social+' (Crédito: S/ '+item.credito+')</option>';
+                                    clientes += '<option value="'+item.id+'">'+item.documento+' - '+item.nombre_o_razon_social+'</option>';
                                 });
                                 jQuery(registroform+' [name="cliente"]').html(clientes).trigger('change');
                                 jQuery.each(response.registro, function(index, item) {
@@ -350,10 +331,6 @@ jQuery(function () {
                                         jQuery(registroform+' [name='+index+']').val(item).prop('disabled',true).trigger("change");
                                     }
                                 });
-                                var datenow = new Date();
-                                jQuery(registroform+' [name="fecha_registro"]').prop('disabled',true);
-                                jQuery(registroform+' [name="fecha_registro"]').data("DateTimePicker").maxDate(datenow);
-                                jQuery(registroform+' [name="fecha_registro"]').data("DateTimePicker").date(response.registro.fecha_registro);
                                 jQuery(registroform+' button[type="submit"]').hide();
 
                                 if(response.registro.anulacion && response.registro.anulacion.motivo){
@@ -407,7 +384,6 @@ jQuery(function () {
                                 reiniciarform(registroform,registrovalidate,'generico/actualizarregistro','<i class="fa fa-edit push-5-r"></i> Editar');
                                 var clientes = '<option value=""></option>';
                                 jQuery.each(responseouter.data, function(index, item) {
-                                    console.log(item.credito);
                                     clientes += '<option value="'+item.id+'">'+item.documento+' - '+item.nombre_o_razon_social+' (Crédito: S/ '+item.credito+')</option>';
                                 });
                                 jQuery(registroform+' [name="cliente"]').html(clientes).trigger('change');
@@ -416,10 +392,6 @@ jQuery(function () {
                                         jQuery(registroform+' [name='+index+']').val(item).prop('disabled',true).trigger("change");
                                     }
                                 });
-                                var datenow = new Date();
-                                jQuery(registroform+' [name="fecha_registro"]').prop('disabled',true);
-                                jQuery(registroform+' [name="fecha_registro"]').data("DateTimePicker").maxDate(datenow);
-                                jQuery(registroform+' [name="fecha_registro"]').data("DateTimePicker").date(response.registro.fecha_registro);
                                 jQuery(registroform+' button[type="submit"]').hide();
 
                                 reiniciarform(anulacionform,anulacionvalidate,'generico/actualizarregistro','<i class="fa fa-times push-5-r"></i> Anular');

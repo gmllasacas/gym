@@ -1060,7 +1060,6 @@ var App = function() {
         jQuery('.js-masked-ssn').mask('999-99-9999');
         jQuery('.js-masked-pkey').mask('a*-999-a999');
         jQuery('.js-masked-time').mask('99:99');
-        jQuery('.js-masked-codigoproducto').mask('aaaa999');
     };
 
     /*

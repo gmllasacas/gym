@@ -3,6 +3,15 @@ if (! defined('BASEPATH')) {
     exit('No direct script access allowed');
 }
 
+if (! function_exists('dd')) {
+    function dd($variable)
+    {
+        echo '<pre>';
+        print_r($variable);
+        die();
+    }
+}
+
 if (! function_exists('permisos')) {
     function permisos($submenu)
     {
@@ -23,12 +32,13 @@ if (! function_exists('permisos')) {
     }
 }
 
-if (! function_exists('date_difference_minutes')) {
-    function date_difference_minutes($date_1, $date_2)
+if (! function_exists('date_difference')) {
+    function date_difference($date_1, $date_2, $format = '%a')
     {
-        $start = strtotime($date_1);
-        $end = strtotime($date_2);
-        return round(($end - $start) / 60);
+        $datetime1 = date_create($date_1);
+        $datetime2 = date_create($date_2);
+        $interval = date_diff($datetime1, $datetime2);
+        return $interval->format($format);
     }
 }
 
@@ -185,7 +195,7 @@ if (! function_exists('basenuevoregistro')) {
         }
         if ($ci->db->insert($table, $inputs, true)) {
             $id = $ci->db->insert_id();
-            $query = $ci->db->select('*')->from($table)->where(array('id'=>$id))->get();
+            $query = $ci->db->select('*')->from($table)->where(['id'=>$id])->get();
             $inputs['id'] = $id;
             registro_auditoria($inputs, "Creó un registro de '$table' con ID: " . $id);
             return $query->row_array();
@@ -279,5 +289,43 @@ if (! function_exists('registro_auditoria')) {
             'fecha' => date('Y-m-d H:i:s'),
         ];
         $ci->db->insert('proceso_auditoria', $inputs, true);
+    }
+}
+
+if (! function_exists('nuevo_kardex')) {
+    function nuevo_kardex($referencia, $item, $tipo_kardex)
+    {
+        $ci=& get_instance();
+        $ci->load->database();
+        $table = 'proceso_kardex';
+        $kardex = basedetalleregistro('proceso_kardex', ['estado' => '1', 'producto' => $item['id']]);
+        $saldo = (isset($kardex['saldo']) ? ($kardex['saldo'] > 0 ? $kardex['saldo'] : 0) : 0);
+        $inputs['tipo_kardex'] = $tipo_kardex;
+        $inputs['referencia'] = $referencia;
+        $inputs['producto'] = $item['id'];
+        $inputs['cantidad'] = $item['cantidad'];
+        $inputs['precio'] = $item['precio'];
+        $inputs['subtotal'] = $item['subtotal'];
+        $inputs['fecha'] = date('Y-m-d H:i:s');
+        $inputs_saldo = 0;
+        switch ($tipo_kardex) {
+            case 1:
+            case 4:
+                $inputs_saldo = ($saldo + $item['cantidad']);
+                break;
+            case 2:
+            case 3:
+                $inputs_saldo = ($saldo - $item['cantidad']);
+                break;
+            default:
+                break;
+        }
+        if ($item['tipo'] == 1) { //producto
+            $inputs['saldo'] = $inputs_saldo;
+        } else { //servicio
+            $inputs['saldo'] = 0;
+        }
+
+        basenuevoregistro($inputs, 'proceso_kardex', []);
     }
 }

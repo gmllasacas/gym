@@ -26,6 +26,7 @@
         <script src="<?php echo base_url();?>public/js/plugins/datatables/buttons.print.min.js"></script>
         <script src="<?php echo base_url();?>public/js/plugins/datatables/datatables_ini.js"></script>
         <script src="<?php echo base_url();?>public/js/plugins/datatables/dataTables.checkboxes.min.js"></script>
+        <script src="<?php echo base_url();?>public/js/plugins/datatables/absolute.min.js"></script>
         <script src="<?php echo base_url();?>public/js/plugins/highcharts/highcharts.js"></script>
         <script src="<?php echo base_url();?>public/js/plugins/highcharts/modules/drilldown.js"></script>
         <script src="<?php echo base_url();?>public/js/plugins/raphael/raphael.js"></script>
@@ -242,7 +243,7 @@
                     });
 
                     jQuery("select").on("select2:close", function (e) {  
-                        if($(this).valid()) $(this).parents('.form-group').removeClass('has-error');
+                        if($().data('validator') && $(this).valid()) $(this).parents('.form-group').removeClass('has-error');
                     });
                 /***Validate***/
 

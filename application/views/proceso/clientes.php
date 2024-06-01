@@ -1,4 +1,10 @@
 
+            <style>
+                table.dataTable thead>tr>th {
+                    vertical-align: middle;
+                    text-align: center;
+                }
+            </style>
             <main id="main-container" >
                 <div class="content-mini-barra bg-gray-lighter">
                     <div class="row">
@@ -34,17 +40,47 @@
                             <table class="table table-hover table-bordered table-header-bg" id="table-list">
                                 <thead>
                                     <tr>
-                                        <th>Tipo doc.</th>
-                                        <th>Documento</th>
-                                        <th>Nombre / Razón social</th>
-                                        <th>Crédito</th>
-                                        <th>Contacto</th>
-                                        <th>Estado</th>
-                                        <th class="text-center" style="width: 10%;">Acciones</th>
+                                        <th rowspan="2">Código</th>
+                                        <th rowspan="2">Tipo doc.</th>
+                                        <th rowspan="2">Documento</th>
+                                        <th rowspan="2">Nombre / Razón social</th>
+                                        <th rowspan="1" colspan="4" class="text-center">Membresía</th>
+                                        <th rowspan="2">Teléfono</th>
+                                        <th rowspan="2">Correo</th>
+                                        <th rowspan="2">Provincia</th>
+                                        <th rowspan="2">Distrito</th>
+                                        <th rowspan="2">Estado</th>
+                                        <th rowspan="2">Etiqueta</th>
+                                        <th rowspan="2" class="text-center" style="width: 10%;">Acciones</th>
+                                    </tr>
+                                    <tr>
+                                        <th>Membresía</th>
+                                        <th>Fecha de fin</th>
+                                        <th>Días por vencer</th>
+                                        <th>Etiqueta</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                 </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <th>Código</th>
+                                        <th>Tipo doc.</th>
+                                        <th>Documento</th>
+                                        <th>Nombre / Razón social</th>
+                                        <th>Membresía</th>
+                                        <th>Fecha de fin</th>
+                                        <th>Días por vencer</th>
+                                        <th>Etiqueta</th>
+                                        <th>Teléfono</th>
+                                        <th>Correo</th>
+                                        <th>Provincia</th>
+                                        <th>Distrito</th>
+                                        <th>Estado</th>
+                                        <th>Etiqueta</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </tfoot>
                             </table>
                         </div>
                     </div>
@@ -64,6 +100,7 @@
                                     <input type="hidden" name="id" value="">
                                     <input type="hidden" name="estado" value="1">
                                     <input type="hidden" name="table" value="proceso_cliente">
+                                    <input type="hidden" name="departamento" value="<?php echo $epartamento; ?>">
                                     <h3 class="h5 font-w600 text-uppercase push-15"><i class="fa fa-info text-primary push-5-r"></i> Datos generales</h3>
                                     <div class="row">
                                         <div class="col-xs-12 col-sm-3">
@@ -104,30 +141,44 @@
                                         </div>
                                     </div>
                                     <div class="row">
-                                        <div class="col-xs-12">
+                                        <div class="col-xs-12 col-sm-3">
                                             <div class="form-group">
                                                 <div class="col-xs-12">
-                                                    <div class="form-material">
-                                                        <textarea class="form-control" name="direccion_completa" rows="2"></textarea>
-                                                        <label>Dirección completa</label>
+                                                    <div class="form-material form-material-info">
+                                                        <select class="form-control select2" name="provincia" style="width: 100%;" data-placeholder="Seleccione provincia">
+                                                            <?php foreach ($provincias as $item) :?>
+                                                            <option value="<?php echo $item['idprovincia']; ?>" ><?php echo $item['provincia']; ?></option>
+                                                            <?php endforeach;?>
+                                                        </select>
+                                                        <label>Provincia</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-12 col-sm-3">
+                                            <div class="form-group">
+                                                <div class="col-xs-12">
+                                                    <div class="form-material form-material-info">
+                                                        <select class="form-control select2" name="distrito" style="width: 100%;" data-placeholder="Seleccione distrito">
+                                                        </select>
+                                                        <label>Distrito</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-12 col-sm-6">
+                                            <div class="form-group">
+                                                <div class="col-xs-12">
+                                                    <div class="input-group form-material form-material-info">
+                                                        <input class="form-control textoinput" type="text" name="direccion_completa">
+                                                        <label>Dirección</label>
+                                                        <span class="input-group-addon"><i class="si si-direction"></i></span>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <h3 class="h5 font-w600 text-uppercase push-15"><i class="fa fa-user text-primary push-5-r"></i> Datos de contacto</h3>
                                     <div class="row">
-                                        <div class="col-xs-12 col-sm-5">
-                                            <div class="form-group">
-                                                <div class="col-xs-12">
-                                                    <div class="input-group form-material form-material-info">
-                                                        <input class="form-control textoinput" type="text" name="contacto">
-                                                        <label>Nombres de contacto</label>
-                                                        <span class="input-group-addon"><i class="si si-user"></i></span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
                                         <div class="col-xs-12 col-sm-3">
                                             <div class="form-group">
                                                 <div class="col-xs-12">
@@ -150,18 +201,50 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <div class="col-xs-12 col-sm-3">
+                                            <div class="form-group">
+                                                <div class="col-xs-12">
+                                                    <div class="input-group form-material form-material-info">
+                                                        <input class="js-datepicker-inicio form-control" data-date-format="yyyy-mm-dd" type="text" name="fecha_nacimiento" placeholder="Fecha">
+                                                        <label>Fecha de nacimiento</label>
+                                                        <span class="input-group-addon"><i class="si si-calendar"></i></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="credito-block">
-                                        <h3 class="h5 font-w600 text-uppercase text-center push-15"><i class="fa fa-user text-primary push-5-r"></i> Datos de creditaje anterior</h3>
-                                        <div class="row">
-                                            <div class="col-xs-12 col-sm-2 col-sm-offset-5">
-                                                <div class="form-group">
-                                                    <div class="col-xs-12">
-                                                        <div class="input-group form-material form-material-info">
-                                                            <span class="input-group-addon">S/ </span>
-                                                            <input class="form-control required number" type="number" min="0" step="0.01" name="credito">
-                                                            <label>Crédito inicial</label>
-                                                        </div>
+                                    <div class="row">
+                                        <div class="col-xs-12">
+                                            <div class="form-group">
+                                                <div class="col-xs-12">
+                                                    <div class="form-material">
+                                                        <textarea class="form-control" name="notas" rows="2"></textarea>
+                                                        <label>Notas</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <h3 class="h5 font-w600 text-uppercase push-15"><i class="fa fa-user text-primary push-5-r"></i> Datos de contacto de emergencia</h3>
+                                    <div class="row">
+                                        <div class="col-xs-12 col-sm-5">
+                                            <div class="form-group">
+                                                <div class="col-xs-12">
+                                                    <div class="input-group form-material form-material-info">
+                                                        <input class="form-control textoinput" type="text" name="contacto">
+                                                        <label>Nombres de contacto</label>
+                                                        <span class="input-group-addon"><i class="si si-user"></i></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-12 col-sm-3">
+                                            <div class="form-group">
+                                                <div class="col-xs-12">
+                                                    <div class="input-group form-material form-material-info">
+                                                        <input class="form-control textoinput digits" type="text" name="contacto_telefono">
+                                                        <label>Teléfono de contacto</label>
+                                                        <span class="input-group-addon"><i class="fa fa-phone"></i></span>
                                                     </div>
                                                 </div>
                                             </div>

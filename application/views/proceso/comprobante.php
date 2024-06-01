@@ -100,7 +100,7 @@
                                     <td class="text-left" width="10%">CLIENTE:</td>
                                     <td class="text-left" width="60%"><?php echo $registro['cliente_datos']['nombre_o_razon_social']; ?></td>
                                     <td class="text-left" width="10%">FECHA:</td>
-                                    <td class="text-left" width="20%"><?php echo $registro['fecha_registro']; ?></td>
+                                    <td class="text-left" width="20%"><?php echo $registro['fecha']; ?></td>
                                 </tr>
                                 <tr>
                                     <td class="text-left" width="10%">DIRECCIÓN:</td>
@@ -131,48 +131,6 @@
                             </thead>
                             <?php
                             switch ($registro['tipo']) {
-                                case 'costo':
-                                    ?>
-                                <tbody>
-                                    <?php foreach ($registro['detalles'] as $item) :?>
-                                        <tr>
-                                            <td class="text-right"><?php echo $item['cantidad']; ?></td>
-                                            <td class="text-center">UNID.</td>
-                                            <td class="text-center"><?php echo $item['codigo']; ?></td>
-                                            <td class="text-left"><?php echo $item['descripcion']; ?></td>
-                                            <td class="text-right">S/ <?php echo $item['precioc']; ?></td>
-                                            <td class="text-right">S/ <?php echo $item['subtotalc']; ?></td>
-                                        </tr>
-                                    <?php endforeach;?>
-                                    <tr>
-                                        <td colspan="6"><br></td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="6"><br></td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="6">SON: <?php echo $registro['letras']; ?> SOLES</td>
-                                    </tr>
-                                <tbody>
-                                <tfoot>
-                                    <tr>
-                                        <td colspan="4" class="text-right"></td>
-                                        <td class="text-right">SUBTOTAL</td>
-                                        <td class="text-right">S/ <?php echo $registro['subtotalc']; ?></td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="4" class="text-right"></td>
-                                        <td class="text-right">IGV</td>
-                                        <td class="text-right">S/ <?php echo $registro['igvc']; ?></td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="4" class="text-right"></td>
-                                        <td class="text-right">TOTAL</td>
-                                        <td class="text-right">S/ <?php echo $registro['totalc']; ?></td>
-                                    </tr>
-                                </tfoot>
-                                    <?php
-                                    break;
                                 case 'venta':
                                     ?>
                                 <tbody>

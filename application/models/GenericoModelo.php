@@ -57,12 +57,22 @@ class GenericoModelo extends CI_Model
             case 'proceso_cliente':
                 $error = 'No existen clientes';
                 $query = $this->db->query(
-                    "SELECT proceso_cliente.*, base_estado.descripcion as estadodesc,
+                    "SELECT proceso_cliente.*,
+                    base_estado.descripcion as estadodesc,
                     base_estado.color as estadocol,
-                    proceso_tipo_documento.descripcion as tipodesc
+                    proceso_tipo_documento.descripcion as tipodesc,
+                    proceso_provincia.provincia as provinciadesc,
+                    proceso_distrito.distrito as distritodesc,
+                    proceso_cliente_servicio.fecha_fin,
+                    proceso_producto.descripcion as productodesc
                     FROM proceso_cliente 
                     INNER JOIN base_estado ON proceso_cliente.estado=base_estado.id
                     INNER JOIN proceso_tipo_documento ON proceso_cliente.tipo_documento=proceso_tipo_documento.id
+                    LEFT JOIN proceso_provincia ON proceso_cliente.provincia=proceso_provincia.idprovincia
+                    LEFT JOIN proceso_distrito ON proceso_cliente.distrito=proceso_distrito.iddistrito
+                    LEFT JOIN proceso_cliente_servicio ON proceso_cliente.membresia=proceso_cliente_servicio.id
+                    LEFT JOIN proceso_venta ON proceso_cliente_servicio.venta=proceso_venta.id
+                    LEFT JOIN proceso_producto ON proceso_cliente_servicio.producto=proceso_producto.id
                     WHERE proceso_cliente.estado REGEXP ?",
                     array('^['.$estado.']')
                 );
@@ -78,16 +88,21 @@ class GenericoModelo extends CI_Model
                 break;
             case 'proceso_producto':
                 $error = 'No existen productos';
+                $params = (empty($params) ? [1,2] : $params);
                 $query = $this->db->query(
                     "SELECT proceso_producto.*,
                     base_estado.descripcion as estadodesc,
                     base_estado.color as estadocol,
-                    proceso_categoria_producto.descripcion as tipodesc
-                    FROM proceso_producto 
+                    proceso_tipo_producto.descripcion as tipodesc,
+                    proceso_unidad.abreviatura,
+                    proceso_duracion_unidad.descripcion as duracion_unidad_desc
+                    FROM proceso_producto
                     INNER JOIN base_estado ON proceso_producto.estado=base_estado.id
-                    LEFT JOIN proceso_categoria_producto ON proceso_producto.tipo=proceso_categoria_producto.id
-                    WHERE proceso_producto.estado REGEXP ?",
-                    array('^['.$estado.']')
+                    LEFT JOIN proceso_tipo_producto ON proceso_producto.tipo=proceso_tipo_producto.id
+                    LEFT JOIN proceso_unidad ON proceso_producto.unidad=proceso_unidad.id
+                    LEFT JOIN proceso_duracion_unidad ON proceso_producto.duracion_unidad=proceso_duracion_unidad.id
+                    WHERE proceso_producto.estado REGEXP ? AND proceso_producto.tipo IN ?",
+                    array('^['.$estado.']',$params)
                 );
                 break;
             case 'proceso_ingreso':
@@ -123,7 +138,6 @@ class GenericoModelo extends CI_Model
             case 'proceso_venta_detalle':
                 $query = $this->db->query(
                     "SELECT proceso_venta_detalle.*,
-                    proceso_producto.codigo,
                     proceso_producto.descripcion
                     FROM proceso_venta_detalle 
                     INNER JOIN proceso_producto ON proceso_venta_detalle.producto=proceso_producto.id
@@ -134,10 +148,11 @@ class GenericoModelo extends CI_Model
             case 'proceso_ingreso_detalle':
                 $query = $this->db->query(
                     "SELECT proceso_ingreso_detalle.*,
-                    proceso_producto.codigo,
-                    proceso_producto.descripcion
+                    proceso_producto.descripcion,
+                    proceso_unidad.abreviatura
                     FROM proceso_ingreso_detalle 
                     INNER JOIN proceso_producto ON proceso_ingreso_detalle.producto=proceso_producto.id
+                    LEFT JOIN proceso_unidad ON proceso_producto.unidad=proceso_unidad.id
                     WHERE proceso_ingreso_detalle.estado REGEXP ? AND proceso_ingreso_detalle.ingreso = ?",
                     array('^['.$estado.']',$params['ingreso'])
                 );
@@ -221,7 +236,7 @@ class GenericoModelo extends CI_Model
                     INNER JOIN base_usuario ON base_usuario.id=proceso_venta.usuario $usuario_sesion
                     INNER JOIN proceso_tipo_venta_pago ON proceso_venta.tipo_venta_pago=proceso_tipo_venta_pago.id
                     INNER JOIN proceso_tipo_comprobante ON proceso_venta.tipo_comprobante=proceso_tipo_comprobante.id
-                    WHERE (DATE(proceso_venta.fecha_registro) BETWEEN ? AND ?) AND proceso_venta.estado REGEXP ?",
+                    WHERE (DATE(proceso_venta.fecha) BETWEEN ? AND ?) AND proceso_venta.estado REGEXP ?",
                     array('^['.$estado.']',$fechainicio,$fechafin,'^['.$estado.']')
                 );
                 break;
@@ -240,7 +255,7 @@ class GenericoModelo extends CI_Model
                     INNER JOIN base_estado ON proceso_ingreso.estado=base_estado.id
                     INNER JOIN proceso_proveedor ON proceso_ingreso.proveedor=proceso_proveedor.id
                     INNER JOIN base_usuario ON base_usuario.id=proceso_ingreso.usuario $usuario_sesion
-                    WHERE (DATE(proceso_ingreso.fecha_registro) BETWEEN ? AND ?) AND proceso_ingreso.estado REGEXP ?",
+                    WHERE (DATE(proceso_ingreso.fecha) BETWEEN ? AND ?) AND proceso_ingreso.estado REGEXP ?",
                     array($fechainicio,$fechafin,'^['.$estado.']')
                 );
                 break;
@@ -255,13 +270,17 @@ class GenericoModelo extends CI_Model
                     base_estado.descripcion as estadodesc,
                     base_estado.color as estadocol,
                     proceso_tipo_kardex.descripcion as tipodesc,
-                    proceso_producto.codigo,
-                    proceso_producto.descripcion
+                    proceso_producto.tipo as tipo_producto,
+                    proceso_producto.descripcion,
+                    proceso_unidad.abreviatura,
+                    proceso_duracion_unidad.descripcion as duracion_unidad_desc
                     FROM proceso_kardex 
                     INNER JOIN base_estado ON proceso_kardex.estado=base_estado.id
                     INNER JOIN proceso_tipo_kardex ON proceso_kardex.tipo_kardex=proceso_tipo_kardex.id
                     INNER JOIN proceso_producto ON proceso_kardex.producto=proceso_producto.id
-                    WHERE (DATE(proceso_kardex.fecha_registro) BETWEEN ? AND ?) AND proceso_kardex.estado REGEXP ? $con_producto",
+                    LEFT JOIN proceso_unidad ON proceso_producto.unidad=proceso_unidad.id
+                    LEFT JOIN proceso_duracion_unidad ON proceso_producto.duracion_unidad=proceso_duracion_unidad.id
+                    WHERE (DATE(proceso_kardex.fecha) BETWEEN ? AND ?) AND proceso_kardex.estado REGEXP ? $con_producto",
                     array($fechainicio,$fechafin,'^['.$estado.']')
                 );
                 break;
@@ -284,7 +303,7 @@ class GenericoModelo extends CI_Model
                     INNER JOIN proceso_cliente ON proceso_pago.cliente=proceso_cliente.id
                     INNER JOIN base_usuario ON proceso_pago.usuario=base_usuario.id $usuario_sesion
                     INNER JOIN proceso_tipo_pago ON proceso_pago.tipo_pago=proceso_tipo_pago.id
-                    WHERE (DATE(proceso_pago.fecha_registro) BETWEEN ? AND ?) AND proceso_pago.estado REGEXP ? $con_where",
+                    WHERE (DATE(proceso_pago.fecha) BETWEEN ? AND ?) AND proceso_pago.estado REGEXP ? $con_where",
                     array($fechainicio,$fechafin,'^['.$estado.']')
                 );
                 break;
@@ -309,7 +328,24 @@ class GenericoModelo extends CI_Model
             FROM base_usuario
             INNER JOIN base_cliente_sistema ON base_usuario.cliente_sistema=base_cliente_sistema.id AND base_cliente_sistema.ruc=? 
             WHERE base_usuario.estado REGEXP ? AND base_usuario.username=?",
-            array($params['ruc'],'^['.$params['estado'].']',$params['username'])
+            [$params['ruc'], '^['.$params['estado'].']', $params['username']]
+        );
+
+        return $query->row_array();
+    }
+
+    public function membresia($params)
+    {
+        $query = $this->db->query(
+            "SELECT proceso_cliente_servicio.fecha_fin, proceso_producto.descripcion
+            FROM proceso_cliente
+            INNER JOIN proceso_cliente_servicio ON proceso_cliente.membresia=proceso_cliente_servicio.id
+            INNER JOIN proceso_venta ON proceso_cliente_servicio.venta=proceso_venta.id AND proceso_venta.cliente = ?
+            INNER JOIN proceso_producto ON proceso_cliente_servicio.producto=proceso_producto.id
+            WHERE proceso_cliente_servicio.estado REGEXP ?
+            ORDER BY proceso_cliente_servicio.fecha DESC
+            LIMIT 1",
+            [$params['cliente'], '^['.$params['estado'].']']
         );
 
         return $query->row_array();

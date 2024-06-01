@@ -8,3 +8,6 @@ vendor/
 
 #Uploads
 public/uploads/*
+
+#Configuration
+application/config/production/*

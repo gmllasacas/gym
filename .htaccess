@@ -5,3 +5,5 @@
 	RewriteCond $1 !^(index\.php|public|robots\.txt)
 	RewriteRule .* index.php?/$0 [PT,L] 
 </IfModule>
+
+Options -Indexes
