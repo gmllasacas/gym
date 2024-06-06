@@ -1,18 +1,16 @@
 
 jQuery(function () {
-    jQuery('.js-masked-ruc').mask('99999999999',{autoclear: false});
-
     if (crear_contrasena == true) {
         jQuery('.nav-tabs a[href="#crear_contrasena"]').tab('show');
     }
 
     jQuery('#recuperacionbtn').click(function(){
-        reiniciarform('#form-login-rec', formloginrecval);
+        reiniciarform('#form-login-rec', formloginrecval, 'sistema/recuperar','<i class="si si-envelope push-5-r"></i>Enviar correo');
         jQuery('.nav-tabs a[href="#recuperacion"]').tab('show');
     });
 
     jQuery('.ingresobtn').click(function(){
-        reiniciarform('#form-login', formloginval);
+        reiniciarform('#form-login', formloginval, 'sistema/login','<i class="si si-login push-5-r"></i>Ingresar');
         jQuery('.nav-tabs a[href="#ingreso"]').tab('show');
     });
 
@@ -81,7 +79,6 @@ jQuery(function () {
                     }
                     if(response.status=='201'){
                         notifytemplate('fa fa-check', response.message, 'success');
-                        reiniciarform('#form-login-crear', formlogincrearval);
                         jQuery(modalcrear).modal('toggle');
                         redirect = response.redirect;
                     }
@@ -110,7 +107,7 @@ jQuery(function () {
                         notifytemplate('fa fa-times', response.message, 'danger');
                     }
                     if(response.status=='201'){
-                        reiniciarform('#form-login-rec',formloginrecval);
+                        reiniciarform('#form-login-rec', formloginrecval, 'sistema/recuperar','<i class="si si-envelope push-5-r"></i>Enviar correo');
                         jQuery(modalrec).modal('toggle');
                         jQuery('.nav-tabs a[href="#ingreso"]').tab('show');
                     }

@@ -268,6 +268,8 @@ class Sistema extends CI_Controller
                     ];
                     $this->load->view('bases/cabezera');
                     $this->load->view('sistema/login', $datos);
+                    $this->load->view('bases/pie');
+                    $this->load->view('bases/funciones', ['funciones' => ['sistema/login']]);
                 } else {
                     show_error('El usuario o token no existen', '400', 'Error');
                 }
