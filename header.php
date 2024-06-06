@@ -9,8 +9,10 @@ $logo_meta = './assets/images/logo-meta.png';
 
 if ($environment === 'production') {
     $url = getenv('PROD_HOSTNAME');
+    $system = getenv('PROD_SYSTEM_HOSTNAME');
 } else {
     $url = '#';
+    $system = '/tahua/sistema';
 }
 $instagram = 'https://www.instagram.com/tahua_fitnessclub/';
 $instagram_embed = 'https://www.instagram.com/tahua_fitnessclub/embed';
