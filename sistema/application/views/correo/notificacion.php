@@ -119,7 +119,7 @@
                                                     <!-- ID:TXT MENU -->
                                                     <td align="center" style="line-height:0; font-size:0;">
                                                         <a href="#" style="text-decoration:none; color:#666666;">
-                                                            <img src="<?php echo base_url().$this->configuracion['logo'];?>" alt="Logo" width="150" height="150" style="color:#ffffff; margin:0; border:0; padding:0; display:block;" />
+                                                            <img src="<?php echo base_url().$this->configuracion['logo'];?>" alt="Logo" width="150" height="150" style="width:150px;color:#ffffff; margin:0; border:0; padding:0; display:block;" />
                                                         </a>
                                                     </td>
                                                 </tr>

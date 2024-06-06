@@ -203,7 +203,7 @@
                                     <p>
                                         Puede iniciar sesión con su nueva contraseña. Se envió un mensaje al correo registrado del usuario asociado.
                                         <br>
-                                        Revise su bandeja de entrada o de correo no deseado.
+                                        En unos minutos revise su bandeja de entrada o de correo no deseado.
                                     </p>
                                 </div>
                             </div>
@@ -239,7 +239,7 @@
                                     <p>
                                         Se envió un mensaje al correo registrado del usuario asociado.
                                         <br>
-                                        Revise su bandeja de entrada o de correo no deseado.
+                                        En unos minutos revise su bandeja de entrada o de correo no deseado.
                                     </p>
                                 </div>
                             </div>
