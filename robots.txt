@@ -1,0 +1,7 @@
+User-agent: *
+
+Disallow: /assets/
+Disallow: /beta/
+Disallow: /sistema/
+
+Sitemap: https://www.tahua.com/sitemap.xml
