@@ -1,13 +1,1 @@
-#Logs
-application/logs/*
-!application/logs/index.html
-!application/logs/.htaccess
-
-#Composer
-vendor/
-
-#Uploads
-public/uploads/*
-
-#Configuration
-application/config/production/*
+.htaccess
