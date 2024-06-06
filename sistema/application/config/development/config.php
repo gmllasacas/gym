@@ -8,6 +8,7 @@ $config['log_threshold'] = 1;
 $config['sess_cookie_name'] = 'ci_session_tahua';
 $config['csrf_protection'] = false;
 $config['composer_autoload'] = false;
+$config['file_version'] = '?v' . rand();
 
 #LOG
 $config['log_path'] = '';

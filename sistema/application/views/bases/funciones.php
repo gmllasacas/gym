@@ -269,7 +269,7 @@
             });
         </script>
         <?php foreach ($funciones as $item) { ?>
-        <script src="<?php echo base_url();?>public/js/pages/<?php echo $item;?>.js?v<?php echo rand();?>"></script>
+        <script src="<?php echo base_url();?>public/js/pages/<?php echo $item;?>.js<?php echo $this->config->item('file_version');?>"></script>
         <?php }?>
     </body>
 </html>

@@ -42,7 +42,7 @@
             
         <link rel="stylesheet" href="<?php echo base_url();?>public/css/bootstrap.min.css" media="all" />
         <link rel="stylesheet" href="<?php echo base_url();?>public/css/oneui.css" id="css-main">
-        <link rel="stylesheet" href="<?php echo base_url();?>public/css/custom.css?v<?php echo rand();?>">
+        <link rel="stylesheet" href="<?php echo base_url();?>public/css/custom.css<?php echo $this->config->item('file_version');?>">
 
     </head>
     <body>

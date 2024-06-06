@@ -183,3 +183,75 @@
                 </div>
             </div>
         </main>
+
+        <div class="modal fade in" id="modal-crear" role="dialog">
+            <div class="modal-dialog modal-dialog-popout">
+                <div class="modal-content">
+                    <div class="block block-themed block-transparent remove-margin-b">
+                        <div class="block-header bg-primary-dark">
+                            <ul class="block-options">
+                                <li>
+                                    <button data-dismiss="modal" type="button"><i class="si si-close"></i></button>
+                                </li>
+                            </ul>
+                            <h3 class="block-title">Creación de nueva contraseña</h3>
+                        </div>
+                        <div class="block-content">
+                            <div class="row">
+                                <div class="col-xs-12 animated fadeIn">
+                                    <h4 class="h3 font-w300 push-10 text-center"><i class="fa fa-check text-success push-5-r"></i> Nueva contraseña registrada correctamente</h4>
+                                    <p>
+                                        Puede iniciar sesión con su nueva contraseña. Se envió un mensaje al correo registrado del usuario asociado.
+                                        <br>
+                                        Revise su bandeja de entrada o de correo no deseado.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <div class="form-group">
+                            <div class="col-xs-12 text-center">
+                                <a class="btn btn-minw btn-square btn-muted" data-dismiss="modal"><i class="fa fa-times push-5-r"></i> Cerrar</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade in" id="modal-rec" role="dialog">
+            <div class="modal-dialog modal-dialog-popout">
+                <div class="modal-content">
+                    <div class="block block-themed block-transparent remove-margin-b">
+                        <div class="block-header bg-primary">
+                            <ul class="block-options">
+                                <li>
+                                    <button data-dismiss="modal" type="button"><i class="si si-close"></i></button>
+                                </li>
+                            </ul>
+                            <h3 class="block-title">Recuperación de contraseña</h3>
+                        </div>
+                        <div class="block-content">
+                            <div class="row">
+                                <div class="col-xs-12 animated fadeIn">
+                                    <h4 class="h3 font-w300 push-10 text-center"><i class="fa fa-check text-success push-5-r"></i> Recuperación realizada correctamente</h4>
+                                    <p>
+                                        Se envió un mensaje al correo registrado del usuario asociado.
+                                        <br>
+                                        Revise su bandeja de entrada o de correo no deseado.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <div class="form-group">
+                            <div class="col-xs-12 text-center">
+                                <a class="btn btn-minw btn-square btn-muted" data-dismiss="modal"><i class="fa fa-times push-5-r"></i> Cerrar</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
