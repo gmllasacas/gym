@@ -17,8 +17,16 @@ class Sistema extends CI_Controller
     {
         $this->session->sess_destroy();
 
+        $datos = [
+            'username' => '',
+            'correo' => '',
+            'token' => ''
+        ];
+
         $this->load->view('bases/cabezera');
-        $this->load->view('sistema/login', ['crear_contrasena' => 'false', 'funciones' => ['sistema/login']]);
+        $this->load->view('sistema/login', $datos);
+        $this->load->view('bases/pie');
+        $this->load->view('bases/funciones', ['funciones' => ['sistema/login']]);
     }
 
     public function login()
@@ -214,7 +222,7 @@ class Sistema extends CI_Controller
 
                         $this->email->set_newline("\r\n");
                         $this->email->initialize(['mailtype'  => 'html']);
-                        $this->email->from('info@test.com', 'Test');
+                        $this->email->from($this->config->item('system_email'), $this->config->item('system_username'));
                         $this->email->to($registro['correo']);
                         $this->email->subject($titulo);
                         $this->email->message($this->load->view('correo/recuperar', $datos, true));
@@ -260,6 +268,8 @@ class Sistema extends CI_Controller
                     ];
                     $this->load->view('bases/cabezera');
                     $this->load->view('sistema/login', $datos);
+                    $this->load->view('bases/pie');
+                    $this->load->view('bases/funciones', ['funciones' => ['sistema/login']]);
                 } else {
                     show_error('El usuario o token no existen', '400', 'Error');
                 }
@@ -302,7 +312,7 @@ class Sistema extends CI_Controller
 
                         $this->email->set_newline("\r\n");
                         $this->email->initialize(['mailtype'  => 'html']);
-                        $this->email->from('info@test.com', 'Test');
+                        $this->email->from($this->config->item('system_email'), $this->config->item('system_username'));
                         $this->email->to($registro['correo']);
                         $this->email->subject($titulo);
                         $this->email->message($this->load->view('correo/notificacion', $datos, true));

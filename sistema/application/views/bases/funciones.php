@@ -29,21 +29,22 @@
         <script src="<?php echo base_url();?>public/js/plugins/datatables/absolute.min.js"></script>
         <script src="<?php echo base_url();?>public/js/plugins/highcharts/highcharts.js"></script>
         <script src="<?php echo base_url();?>public/js/plugins/highcharts/modules/drilldown.js"></script>
-        <script src="<?php echo base_url();?>public/js/plugins/raphael/raphael.js"></script>
-        <script src="<?php echo base_url();?>public/js/plugins/circles/circles.js"></script>
         <script src="<?php echo base_url();?>public/js/plugins/jquery-blockui/jquery.blockUI.js"></script>
         <script src="<?php echo base_url();?>public/js/plugins/jquery-confirm/jquery-confirm.min.js"></script>
         <script>
             jQuery(function () {
-                App.initHelpers(['slick','datepicker','datetimepicker','maxlength', 'select2', 'tags-inputs', 'appear', 'appear-countTo', 'slimscroll','notify','table-tools','masked-inputs', 'rangeslider','magnific-popup']);
+                App.initHelpers(['slick','datepicker','datetimepicker','maxlength', 'select2', 'tags-inputs', 'slimscroll', 'notify', 'table-tools', 'masked-inputs', 'rangeslider', 'magnific-popup']);
             });
             var base_server ='<?php echo (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]";?>';
             var base_url ='<?php echo base_url();?>';
             var ajax_timeout ='<?php echo $this->config->item('ajax_timeout');?>';
             var perfil ='<?php echo $this->session->userdata('perfil'); ?>';
+            var crear_contrasena = <?php echo ($crear_contrasena ? $crear_contrasena : 'false'); ?>;
         </script>
         <script type="text/javascript">
             /***Funciones generales***/
+                var ajaxflagunblock = true;
+
                 function blockpage(mensaje) {
                     jQuery.blockUI({ 
                         css: { 
@@ -69,7 +70,8 @@
                     jQuery(idform+' button[type="submit"]').html(botonhtml);
                 }
 
-                function notifytemplate(icon, message, type,delay=2000) {
+                function notifytemplate(icon, message, type, delay = 2000, flag = true, z_index = 1051) {
+                    ajaxflagunblock = flag;
                     jQuery.notify({
                         icon: icon,
                         message: message
@@ -82,7 +84,7 @@
                         mouse_over: 'pause',
                         offset: 20,
                         spacing: 10,
-                        z_index: 1051,
+                        z_index: z_index,
                         delay: delay,
                         animate: {
                             enter: 'animated fadeIn',
@@ -252,18 +254,22 @@
                         blockpage('<h1><i class="fa fa-cog fa-spin fa-fw"></i> Procesando</h1>');
                     });
                     jQuery( document ).ajaxError(function(event, jqxhr, settings, thrownError) {
+                        ajaxflagunblock = true;
                         console.log(jqxhr.status+' - '+jqxhr.statusText+': '+settings.type+' "'+settings.url+'".');
                         jQuery.unblockUI();
-                        notifytemplate('fa fa-times', 'Sin conexión', 'danger');
+                        notifytemplate('fa fa-times', 'Error de la aplicación', 'danger');
                     });
                     jQuery( document ).ajaxSuccess(function() {
-                        jQuery.unblockUI();
+                        if(ajaxflagunblock){
+                            console.log('-' + ajaxflagunblock);
+                            jQuery.unblockUI();
+                        }
                     });
                 /***AJAX***/
             });
         </script>
         <?php foreach ($funciones as $item) { ?>
-        <script src="<?php echo base_url();?>public/js/pages/<?php echo $item;?>.js?v<?php echo rand();?>"></script>
+        <script src="<?php echo base_url();?>public/js/pages/<?php echo $item;?>.js<?php echo $this->config->item('file_version');?>"></script>
         <?php }?>
     </body>
 </html>

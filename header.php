@@ -70,5 +70,5 @@ $whatsapp = 'https://wa.me/51992171475';
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet" type="text/css">
     <link href="./assets/css/owl.carousel.min.css" rel="stylesheet" type="text/css">
     <link href="./assets/css/aos.min.css" rel="stylesheet" type="text/css">
-    <link href="./assets/css/style.css" rel="stylesheet" type="text/css">
+    <link href="./assets/css/style.css?v<?php echo rand();?>" rel="stylesheet" type="text/css">
 </head>
