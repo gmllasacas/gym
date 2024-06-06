@@ -17,8 +17,16 @@ class Sistema extends CI_Controller
     {
         $this->session->sess_destroy();
 
+        $datos = [
+            'username' => '',
+            'correo' => '',
+            'token' => ''
+        ];
+
         $this->load->view('bases/cabezera');
-        $this->load->view('sistema/login', ['crear_contrasena' => 'false', 'funciones' => ['sistema/login']]);
+        $this->load->view('sistema/login', $datos);
+        $this->load->view('bases/pie');
+        $this->load->view('bases/funciones', ['funciones' => ['sistema/login']]);
     }
 
     public function login()

@@ -28,7 +28,7 @@
                                             </div>
                                             <div class="block-content block-content-full block-content-narrow">
                                                 <img src="<?php echo base_url().$this->configuracion['logo'];?>" class="animated fadeIn" style="max-width: 50%;">
-                                                <h1 class="h2 font-w600 push-30-t push-5 text-logo" data-toggle="appear" data-timeout="250" data-class="animated fadeIn"><b><?php echo $this->configuracion['titulo'];?></b></h1>
+                                                <h1 class="h2 font-w600 push-30-t push-5 text-logo"><b><?php echo $this->configuracion['titulo'];?></b></h1>
                                                 <h1 class="h3 font-w400 push-30-t push-5 text-logo" >SISTEMA DE CONTROL DE INVENTARIO</h1>
                                                 <form class="form-horizontal push-30-t push-30" id="form-login" action="<?php echo base_url();?>sistema/login" method="post">
                                                     <div class="row">
@@ -59,7 +59,7 @@
                                                     </div>
                                                     <div class="form-group">
                                                         <div class="col-xs-12 col-sm-6 col-sm-offset-3">
-                                                            <button class="btn btn-block btn-primary" data-toggle="appear" data-timeout="500" data-class="animated fadeIn" type="submit"><i class="si si-login push-5-r"></i>Ingresar</button>
+                                                            <button class="btn btn-block btn-primary" type="submit"><i class="si si-login push-5-r"></i>Ingresar</button>
                                                         </div>
                                                     </div>
                                                 </form>
@@ -101,7 +101,7 @@
                                                     </div>
                                                     <div class="form-group">
                                                         <div class="col-xs-12 col-xs-offset-0 col-sm-6 col-sm-offset-3">
-                                                            <button class="btn btn-block btn-danger" data-toggle="appear" data-timeout="500" data-class="animated fadeIn" type="submit"><i class="si si-envelope push-5-r"></i>Enviar correo</button>
+                                                            <button class="btn btn-block btn-danger" type="submit"><i class="si si-envelope push-5-r"></i>Enviar correo</button>
                                                         </div>
                                                     </div>
                                                 </form>
@@ -169,7 +169,7 @@
                                                     </div>
                                                     <div class="form-group">
                                                         <div class="col-xs-12 col-sm-6 col-sm-offset-3">
-                                                            <button class="btn btn-block btn-success" data-toggle="appear" data-timeout="500" data-class="animated fadeIn" type="submit"><i class="fa fa-edit push-5-r"></i>Guardar</button>
+                                                            <button class="btn btn-block btn-success" type="submit"><i class="fa fa-edit push-5-r"></i>Guardar</button>
                                                         </div>
                                                     </div>
                                                 </form>
@@ -183,120 +183,3 @@
                 </div>
             </div>
         </main>
-
-        <footer id="page-footer" class="content-mini content-mini-full font-s12 bg-gray-lighter clearfix hidden-print">
-            <div class="row">
-                <div class="col-xs-12 col-sm-6 text-left text-center-xs">
-                    <a class="font-w600"><?php echo $this->configuracion['titulo'];?> <?php echo $this->configuracion['version'];?></a> | <span><?php echo date('Y');?></span>
-                </div>
-                <div class="col-xs-12 col-sm-6 text-right text-center-xs">
-                    <?php echo $this->configuracion['copyright'];?>
-                </div>
-            </div>
-        </footer>
-
-        <div class="modal fade in" id="modal-crear" role="dialog">
-            <div class="modal-dialog modal-dialog-popout">
-                <div class="modal-content">
-                    <div class="block block-themed block-transparent remove-margin-b">
-                        <div class="block-header bg-primary-dark">
-                            <ul class="block-options">
-                                <li>
-                                    <button data-dismiss="modal" type="button"><i class="si si-close"></i></button>
-                                </li>
-                            </ul>
-                            <h3 class="block-title">Creación de nueva contraseña</h3>
-                        </div>
-                        <div class="block-content">
-                            <div class="row">
-                                <div class="col-xs-12 animated fadeIn">
-                                    <h4 class="h3 font-w300 push-10 text-center"><i class="fa fa-check text-success push-5-r"></i> Nueva contraseña registrada correctamente</h4>
-                                    <p>
-                                        Puede iniciar sesión con su nueva contraseña. Se envió un mensaje al correo registrado del usuario asociado.
-                                        <br>
-                                        Revise su bandeja de entrada o de correo no deseado.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <div class="form-group">
-                            <div class="col-xs-12 text-center">
-                                <a class="btn btn-minw btn-square btn-muted" data-dismiss="modal"><i class="fa fa-times push-5-r"></i> Cerrar</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="modal fade in" id="modal-rec" role="dialog">
-            <div class="modal-dialog modal-dialog-popout">
-                <div class="modal-content">
-                    <div class="block block-themed block-transparent remove-margin-b">
-                        <div class="block-header bg-primary">
-                            <ul class="block-options">
-                                <li>
-                                    <button data-dismiss="modal" type="button"><i class="si si-close"></i></button>
-                                </li>
-                            </ul>
-                            <h3 class="block-title">Recuperación de contraseña</h3>
-                        </div>
-                        <div class="block-content">
-                            <div class="row">
-                                <div class="col-xs-12 animated fadeIn">
-                                    <h4 class="h3 font-w300 push-10 text-center"><i class="fa fa-check text-success push-5-r"></i> Recuperación realizada correctamente</h4>
-                                    <p>
-                                        Se envió un mensaje al correo registrado del usuario asociado.
-                                        <br>
-                                        Revise su bandeja de entrada o de correo no deseado.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <div class="form-group">
-                            <div class="col-xs-12 text-center">
-                                <a class="btn btn-minw btn-square btn-muted" data-dismiss="modal"><i class="fa fa-times push-5-r"></i> Cerrar</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div id="login_message" style="display:none;"> 
-            Ingresando ...
-        </div> 
-
-        <script src="<?php echo base_url();?>public/js/core/jquery.min.js"></script>
-        <script src="<?php echo base_url();?>public/js/core/bootstrap.min.js"></script>
-        <script src="<?php echo base_url();?>public/js/core/jquery.slimscroll.min.js"></script>
-        <script src="<?php echo base_url();?>public/js/core/jquery.scrollLock.min.js"></script>
-        <script src="<?php echo base_url();?>public/js/core/jquery.appear.min.js"></script>
-        <script src="<?php echo base_url();?>public/js/core/jquery.placeholder.min.js"></script>
-        <script src="<?php echo base_url();?>public/js/core/js.cookie.min.js"></script>
-        <script src="<?php echo base_url();?>public/js/app.js"></script>
-
-        <script src="<?php echo base_url();?>public/js/plugins/jquery-validation/jquery.validate.min.js"></script>
-        <script src="<?php echo base_url();?>public/js/plugins/bootstrap-notify/bootstrap-notify.min.js"></script>
-        <script src="<?php echo base_url();?>public/js/plugins/masked-inputs/jquery.maskedinput.min.js"></script>
-        <script src="<?php echo base_url();?>public/js/plugins/bootstrap-datepicker/bootstrap-datepicker.min.js"></script>
-        <script src="<?php echo base_url();?>public/js/plugins/bootstrap-datepicker/locales/bootstrap-datepicker.es.min.js"></script>
-        <script src="<?php echo base_url();?>public/js/plugins/bootstrap-datetimepicker/moment.min.js"></script>
-        <script src="<?php echo base_url();?>public/js/plugins/jquery-blockui/jquery.blockUI.js"></script>
-
-        <script>
-            jQuery(function () {
-                App.initHelpers(['notify','masked-inputs','datepicker']);
-            });
-
-            var crear_contrasena = <?php echo $crear_contrasena;?>;
-        </script>
-        <?php foreach ($funciones as $item) { ?>
-        <script src="<?php echo base_url();?>public/js/pages/<?php echo $item;?>.js?v<?php echo rand();?>"></script>
-        <?php }?>
-    </body>
-</html>
