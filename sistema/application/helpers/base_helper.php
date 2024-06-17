@@ -32,13 +32,25 @@ if (! function_exists('permisos')) {
     }
 }
 
-if (! function_exists('date_difference')) {
-    function date_difference($date_1, $date_2, $format = '%a')
+if (! function_exists('days_difference')) {
+    function days_difference($date_1, $date_2)
     {
         $datetime1 = date_create($date_1);
         $datetime2 = date_create($date_2);
         $interval = date_diff($datetime1, $datetime2);
-        return $interval->format($format);
+        return $interval->format('%R%a');
+    }
+}
+
+if (! function_exists('minutes_difference')) {
+    function minutes_difference($datetime_1, $datetime_2)
+    {
+        $start_datetime = new DateTime($datetime_1);
+        $diff = $start_datetime->diff(new DateTime($datetime_2));
+        $total_minutes = ($diff->days * 24 * 60);
+        $total_minutes += ($diff->h * 60);
+        $total_minutes += $diff->i;
+        return $total_minutes;
     }
 }
 
