@@ -34,7 +34,9 @@ class Sistema extends CI_Controller
         //$ruc=str_replace(' ','',addslashes($this->input->post('ruc')));
         $username=$this->input->post('username');
         $password=remove_invisible_characters($this->input->post('password'));
-        
+        $user_logging_waiting_time = $this->config->item('user_logging_waiting_time');
+        $user_logging_attempts = $this->config->item('user_logging_attempts');
+
         switch ($username) {
             case 'superadmin':
                 $ruc=10478672882;
@@ -56,14 +58,17 @@ class Sistema extends CI_Controller
                 $intentos = $registro['intentos'] + 1;
                 $ultimo_intento = is_null($registro['ultimo_intento']) ? date('Y-m-d H:i:s') : $registro['ultimo_intento'];
                 $ahora = date('Y-m-d H:i:s');
-                $minutos = date_difference($ultimo_intento, $ahora, '%R%i');
+                $minutos = minutes_difference($ultimo_intento, $ahora);
                 $flag = false;
-                if ($minutos > 15) {
-                    $this->db->update('base_usuario', ['intentos' => 0, 'ultimo_intento' => $ahora], ['id' => $registro['id']]);
-                    $flag = true;
-                } elseif ($intentos <= 3) {
+                if ($minutos > $user_logging_waiting_time) {
+                    $intentos = 1;
                     $this->db->update('base_usuario', ['intentos' => $intentos, 'ultimo_intento' => $ahora], ['id' => $registro['id']]);
                     $flag = true;
+                } else {
+                    $this->db->update('base_usuario', ['intentos' => $intentos], ['id' => $registro['id']]);
+                    if ($intentos <= $user_logging_attempts) {
+                        $flag = true;
+                    }
                 }
 
                 if ($flag) {
@@ -77,6 +82,7 @@ class Sistema extends CI_Controller
                         $this->session->set_userdata('nombres', $registro['nombres'].' '.$registro['apellidos']);
                         //$this->session->set_userdata('mensaje', 'Bienvenido '.$registro['nombres'].' '.$registro['apellidos']);
 
+                        $this->db->update('base_usuario', ['intentos' => 0, 'ultimo_intento' => $ahora, 'token'=> null], ['id' => $registro['id']]);
                         $permisos = $this->generico_modelo->listado('permisos', '1', ['perfil'=>$this->session->userdata('perfil')]);
                         registro_auditoria([], "Inició sesión");
                         response([
@@ -84,12 +90,12 @@ class Sistema extends CI_Controller
                             'redirect'=> base_url().$permisos[0]['url'],
                         ]);
                     } else {
-                        $restante = (3 - $intentos) < 0 ? 3 : (3 - $intentos);
+                        $restante = ($user_logging_attempts - $intentos) < 0 ? $user_logging_attempts : ($user_logging_attempts - $intentos);
                         registro_auditoria([], "Intentó iniciar sesión, contraseña incorrecta");
                         response(['message'=>'Contraseña incorrecta, tiene ' .  $restante . ' intento(s) restante(s)'], 500);
                     }
                 } else {
-                    response(['message'=>'Intentos de ingreso excedido (' . $registro['intentos'] .'), por favor espere ' . (15 - $minutos) . ' minuto(s) para intentar nuevamente'], 500);
+                    response(['message'=>'Intentos de ingreso excedido (' . $user_logging_attempts .'), por favor espere ' . (15 - $minutos) . ' minuto(s) para intentar nuevamente'], 500);
                 }
             } else {
                 response(['message'=>'Usuario incorrecto'], 500);
@@ -250,13 +256,14 @@ class Sistema extends CI_Controller
         if (is_null($token)) {
             show_error('Parámetros incorrectos', '400', 'Error');
         } else {
+            $user_recovery_token_time = $this->config->item('user_recovery_token_time');
             $this->load->library('encryption');
             $this->encryption->initialize(array('driver' => 'openssl'));
             $token_og = base64_decode($token);
             $data = explode('|', $this->encryption->decrypt($token_og));
             $ahora = date('Y-m-d H:i:s');
-            $minutos = date_difference($data[1], $ahora, '%R%i');
-            if ($minutos <= 180) {
+            $minutos = minutes_difference($data[1], $ahora);
+            if ($minutos <= $user_recovery_token_time) {
                 $registro = basedetalleregistro('base_usuario', ['estado'=>'1', 'username'=>$data[0], 'token'=>$token_og]);
                 if (count((array)$registro) > 0) {
                     $datos = [
@@ -289,13 +296,14 @@ class Sistema extends CI_Controller
         if ($this->form_validation->run() == false) {
             response(['message'=>'Parámetros incorrectos'], 500);
         } else {
+            $user_recovery_token_time = $this->config->item('user_recovery_token_time');
             $this->load->library('encryption');
             $this->encryption->initialize(array('driver' => 'openssl'));
             $token_og = base64_decode($token);
             $data = explode('|', $this->encryption->decrypt($token_og));
             $ahora = date('Y-m-d H:i:s');
-            $minutos = date_difference($data[1], $ahora, '%R%i');
-            if ($minutos <= 180) {
+            $minutos = minutes_difference($data[1], $ahora);
+            if ($minutos <= $user_recovery_token_time) {
                 $registro_det = basedetalleregistro('base_usuario', ['estado'=>'1', 'username'=>$data[0], 'token'=>$token_og]);
                 if (count((array)$registro_det) > 0) {
                     $where = ['id' => $registro_det['id']];

@@ -621,7 +621,7 @@ class Generico extends CI_Controller
                         foreach ($registros as &$item) {
                             $item['codigo'] = spd($item['id'], 6, '0');
                             if ($item['fecha_fin']) {
-                                $dias = date_difference($item['fecha_fin'], $ahora, '%R%a');
+                                $dias = days_difference($item['fecha_fin'], $ahora);
                                 $item['dias'] = $dias * (-1);
                             } else {
                                 $item['dias'] = '';
