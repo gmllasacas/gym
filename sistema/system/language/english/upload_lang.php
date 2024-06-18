@@ -6,7 +6,7 @@
  *
  * This content is released under the MIT License (MIT)
  *
- * Copyright (c) 2014 - 2016, British Columbia Institute of Technology
+ * Copyright (c) 2019 - 2022, CodeIgniter Foundation
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,8 +29,9 @@
  * @package	CodeIgniter
  * @author	EllisLab Dev Team
  * @copyright	Copyright (c) 2008 - 2014, EllisLab, Inc. (https://ellislab.com/)
- * @copyright	Copyright (c) 2014 - 2016, British Columbia Institute of Technology (http://bcit.ca/)
- * @license	http://opensource.org/licenses/MIT	MIT License
+ * @copyright	Copyright (c) 2014 - 2019, British Columbia Institute of Technology (https://bcit.ca/)
+ * @copyright	Copyright (c) 2019 - 2022, CodeIgniter Foundation (https://codeigniter.com/)
+ * @license	https://opensource.org/licenses/MIT	MIT License
  * @link	https://codeigniter.com
  * @since	Version 1.0.0
  * @filesource
@@ -38,18 +39,18 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 $lang['upload_userfile_not_set'] = 'Unable to find a post variable called userfile.';
-$lang['upload_file_exceeds_limit'] = 'El archivo excede el máximo tamaño permitido (PHP).';
-$lang['upload_file_exceeds_form_limit'] = 'El archivo excede el máximo tamaño permitido (Form).';
-$lang['upload_file_partial'] = 'El archivo fue subido en parte.';
-$lang['upload_no_temp_directory'] = 'El folder temporal no existe.';
-$lang['upload_unable_to_write_file'] = 'El archivo no se puede escribir.';
-$lang['upload_stopped_by_extension'] = 'La subida fue abortada por la extensión.';
-$lang['upload_no_file_selected'] = 'Ningún archivo seleccionado.';
-$lang['upload_invalid_filetype'] = 'El archivo tiene un formato no permitido.';
-$lang['upload_invalid_filesize'] = 'El archivo excede el máximo tamaño permitido.';
+$lang['upload_file_exceeds_limit'] = 'The uploaded file exceeds the maximum allowed size in your PHP configuration file.';
+$lang['upload_file_exceeds_form_limit'] = 'The uploaded file exceeds the maximum size allowed by the submission form.';
+$lang['upload_file_partial'] = 'The file was only partially uploaded.';
+$lang['upload_no_temp_directory'] = 'The temporary folder is missing.';
+$lang['upload_unable_to_write_file'] = 'The file could not be written to disk.';
+$lang['upload_stopped_by_extension'] = 'The file upload was stopped by extension.';
+$lang['upload_no_file_selected'] = 'You did not select a file to upload.';
+$lang['upload_invalid_filetype'] = 'The filetype you are attempting to upload is not allowed.';
+$lang['upload_invalid_filesize'] = 'The file you are attempting to upload is larger than the permitted size.';
 $lang['upload_invalid_dimensions'] = 'The image you are attempting to upload doesn\'t fit into the allowed dimensions.';
-$lang['upload_destination_error'] = 'Ocurrió un problema al mover el archivo a su destino final.';
-$lang['upload_no_filepath'] = 'La ruta de subida es inválida.';
+$lang['upload_destination_error'] = 'A problem was encountered while attempting to move the uploaded file to the final destination.';
+$lang['upload_no_filepath'] = 'The upload path does not appear to be valid.';
 $lang['upload_no_file_types'] = 'You have not specified any allowed file types.';
 $lang['upload_bad_filename'] = 'The file name you submitted already exists on the server.';
-$lang['upload_not_writable'] = 'No se puede escribir en el folder destino.';
+$lang['upload_not_writable'] = 'The upload destination folder does not appear to be writable.';

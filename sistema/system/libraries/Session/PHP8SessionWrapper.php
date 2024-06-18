@@ -6,7 +6,7 @@
  *
  * This content is released under the MIT License (MIT)
  *
- * Copyright (c) 2019 - 2022, CodeIgniter Foundation
+ * Copyright (c) 2022, CodeIgniter Foundation
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,51 +28,73 @@
  *
  * @package	CodeIgniter
  * @author	EllisLab Dev Team
- * @copyright	Copyright (c) 2008 - 2014, EllisLab, Inc. (https://ellislab.com/)
- * @copyright	Copyright (c) 2014 - 2019, British Columbia Institute of Technology (https://bcit.ca/)
- * @copyright	Copyright (c) 2019 - 2022, CodeIgniter Foundation (https://codeigniter.com/)
+ * @copyright	Copyright (c) 2022, CodeIgniter Foundation (https://codeigniter.com/)
  * @license	https://opensource.org/licenses/MIT	MIT License
  * @link	https://codeigniter.com
- * @since	Version 1.0.0
+ * @since	Version 3.0.0
  * @filesource
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
- * Model Class
+ * PHP8SessionWrapper
  *
- * @package		CodeIgniter
+ * PHP 8 Session handler compatibility wrapper
+ *
+ * @package	CodeIgniter
  * @subpackage	Libraries
- * @category	Libraries
- * @author		EllisLab Dev Team
- * @link		https://codeigniter.com/userguide3/libraries/config.html
+ * @category	Sessions
+ * @author	Andrey Andreev
+ * @link	https://codeigniter.com/userguide3/libraries/sessions.html
  */
-#[\AllowDynamicProperties]
-class CI_Model {
+class CI_SessionWrapper implements SessionHandlerInterface, SessionUpdateTimestampHandlerInterface {
 
-	/**
-	 * Class constructor
-	 *
-	 * @link	https://github.com/bcit-ci/CodeIgniter/issues/5332
-	 * @return	void
-	 */
-	public function __construct() {}
+	protected CI_Session_driver_interface $driver;
 
-	/**
-	 * __get magic
-	 *
-	 * Allows models to access CI's loaded classes using the same
-	 * syntax as controllers.
-	 *
-	 * @param	string	$key
-	 */
-	public function __get($key)
+	public function __construct(CI_Session_driver_interface $driver)
 	{
-		// Debugging note:
-		//	If you're here because you're getting an error message
-		//	saying 'Undefined Property: system/core/Model.php', it's
-		//	most likely a typo in your model code.
-		return get_instance()->$key;
+		$this->driver = $driver;
 	}
 
+	public function open(string $save_path, string $name): bool
+	{
+		return $this->driver->open($save_path, $name);
+	}
+
+	public function close(): bool
+	{
+		return $this->driver->close();
+	}
+
+	#[\ReturnTypeWillChange]
+	public function read(string $id): mixed
+	{
+		return $this->driver->read($id);
+	}
+
+	public function write(string $id, string $data): bool
+	{
+		return $this->driver->write($id, $data);
+	}
+
+	public function destroy(string $id): bool
+	{
+		return $this->driver->destroy($id);
+	}
+
+	#[\ReturnTypeWillChange]
+	public function gc(int $maxlifetime): mixed
+	{
+		return $this->driver->gc($maxlifetime);
+	}
+
+	public function updateTimestamp(string $id, string$data): bool
+	{
+		return $this->driver->updateTimestamp($id, $data);
+	}
+
+	public function validateId(string $id): bool
+	{
+		return $this->driver->validateId($id);
+	}
 }

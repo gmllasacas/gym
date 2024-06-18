@@ -11,7 +11,7 @@
  *
  */
 
-class Numero_letras
+class NumberToLetters
 {
     private static $UNIDADES = [
         '',
@@ -61,7 +61,8 @@ class Numero_letras
         'NOVECIENTOS '
     ];
 
-    public static function convertir($number, $moneda = '', $centimos = '', $forzarCentimos = false){
+    public static function convertir($number, $moneda = '', $centimos = '', $forzarCentimos = false)
+    {
         $converted = '';
         $decimales = '';
 
@@ -69,7 +70,7 @@ class Numero_letras
             return 'No es posible convertir el numero a letras';
         }
 
-        $numberdiv = explode('.',$number);
+        $numberdiv = explode('.', $number);
         $div_decimales = str_pad($numberdiv[1], 2, '0', STR_PAD_LEFT);
 
        /* if(count($div_decimales) > 1){
@@ -125,7 +126,8 @@ class Numero_letras
         return $valor_convertido;
     }
 
-    private static function convertGroup($n){
+    private static function convertGroup($n)
+    {
         $output = '';
 
         if ($n == '100') {
@@ -134,12 +136,12 @@ class Numero_letras
             $output = self::$CENTENAS[$n[0] - 1];
         }
 
-        $k = intval(substr($n,1));
+        $k = intval(substr($n, 1));
 
         if ($k <= 20) {
             $output .= self::$UNIDADES[$k];
         } else {
-            if(($k > 30) && ($n[2] !== '0')) {
+            if (($k > 30) && ($n[2] !== '0')) {
                 $output .= sprintf('%sY %s', self::$DECENAS[intval($n[1]) - 2], self::$UNIDADES[intval($n[2])]);
             } else {
                 $output .= sprintf('%s%s', self::$DECENAS[intval($n[1]) - 2], self::$UNIDADES[intval($n[2])]);

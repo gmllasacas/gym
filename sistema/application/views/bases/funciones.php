@@ -39,7 +39,7 @@
             var base_url ='<?php echo base_url();?>';
             var ajax_timeout ='<?php echo $this->config->item('ajax_timeout');?>';
             var perfil ='<?php echo $this->session->userdata('perfil'); ?>';
-            var crear_contrasena = <?php echo ($crear_contrasena ? $crear_contrasena : 'false'); ?>;
+            var crear_contrasena = <?php echo ($crear_contrasena ?? 'false'); ?>;
         </script>
         <script type="text/javascript">
             /***Funciones generales***/
@@ -261,7 +261,6 @@
                     });
                     jQuery( document ).ajaxSuccess(function() {
                         if(ajaxflagunblock){
-                            console.log('-' + ajaxflagunblock);
                             jQuery.unblockUI();
                         }
                     });
