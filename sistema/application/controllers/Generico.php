@@ -3,6 +3,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 class Generico extends CI_Controller
 {
+    public $configuracion = [];
 
     public function __construct()
     {
@@ -469,7 +470,7 @@ class Generico extends CI_Controller
     {
         $table=addslashes($this->input->post('table'));
         $id=addslashes($this->input->post('id'));
-        $exception=(strip_tags($this->input->post('exception')) == null ? true : false);
+        $exception=($this->input->post('exception') == null ? true : false);
         $date_format_mysql_full = $this->config->item('date_format_mysql_full');
         $date_format_mysql = $this->config->item('date_format_mysql');
         
@@ -566,9 +567,9 @@ class Generico extends CI_Controller
 
     public function listado()
     {
-        $table = strip_tags($this->input->post('table'));
-        $estado = strip_tags($this->input->post('estado'));
-        $exception = (strip_tags($this->input->post('exception')) == null ? true : false);
+        $table = $this->input->post('table');
+        $estado = $this->input->post('estado');
+        $exception = ($this->input->post('exception') == null ? true : false);
 
         $this->form_validation->set_rules('table', 'table', 'trim|required');
         $this->form_validation->set_rules('estado', 'estado', 'trim|required');

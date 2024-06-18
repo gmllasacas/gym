@@ -281,7 +281,8 @@ if (! function_exists('response')) {
     function response($data = [], $status = 200)
     {
         $respuesta = ['status' => $status];
-
+        
+        header('Content-Type: application/json; charset=utf-8');
         echo json_encode(array_merge($respuesta, $data));
         exit();
     }

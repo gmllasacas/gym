@@ -4110,6 +4110,7 @@ class TCPDF {
 			// SHY character will not be printed
 			return (0);
 		}
+        $char = (int) $char;
 		if (isset($this->CurrentFont['cw'][$char])) {
 			$w = $this->CurrentFont['cw'][$char];
 		} elseif (isset($this->CurrentFont['dw'])) {
@@ -7808,9 +7809,9 @@ class TCPDF {
 		$alias['u'][] = TCPDF_STATIC::_escape($u);
 		if ($this->isunicode) {
 			$alias['u'][] = TCPDF_STATIC::_escape(TCPDF_FONTS::UTF8ToLatin1($u, $this->isunicode, $this->CurrentFont));
-			$alias['u'][] = TCPDF_STATIC::_escape(TCPDF_FONTS::utf8StrRev($u, false, $this->tmprtl, $this->isunicode, $this->CurrentFont));
+			$alias['u'][] = TCPDF_STATIC::_escape(TCPDF_FONTS::utf8StrRev($u ?? '', false, $this->tmprtl ?? false, $this->isunicode, $this->CurrentFont));
 			$alias['a'][] = TCPDF_STATIC::_escape(TCPDF_FONTS::UTF8ToLatin1($a, $this->isunicode, $this->CurrentFont));
-			$alias['a'][] = TCPDF_STATIC::_escape(TCPDF_FONTS::utf8StrRev($a, false, $this->tmprtl, $this->isunicode, $this->CurrentFont));
+			$alias['a'][] = TCPDF_STATIC::_escape(TCPDF_FONTS::utf8StrRev($a ?? '', false, $this->tmprtl ?? false, $this->isunicode, $this->CurrentFont));
 		}
 		$alias['a'][] = TCPDF_STATIC::_escape($a);
 		return $alias;
@@ -15827,7 +15828,7 @@ class TCPDF {
 	 * @see setHtmlVSpace()
 	 */
 	public function fixHTMLCode($html, $default_css='', $tagvs='', $tidy_options='') {
-		return TCPDF_STATIC::fixHTMLCode($html, $default_css, $tagvs, $tidy_options, $this->tagvspaces);
+		return TCPDF_STATIC::fixHTMLCode($html, $this->tagvspaces, $default_css, $tagvs, $tidy_options);
 	}
 
 	/**
@@ -16897,10 +16898,10 @@ class TCPDF {
 					if (($dom[$key]['value'] == 'pre') OR ($dom[$key]['value'] == 'tt')) {
 						$dom[$key]['fontname'] = $this->default_monospaced_font;
 					}
-					if (!empty($dom[$key]['value']) AND ($dom[$key]['value'][0] == 'h') AND (intval($dom[$key]['value']{1}) > 0) AND (intval($dom[$key]['value']{1}) < 7)) {
+					if (!empty($dom[$key]['value']) AND ($dom[$key]['value'][0] == 'h') AND (intval($dom[$key]['value'][1]) > 0) AND (intval($dom[$key]['value'][1]) < 7)) {
 						// headings h1, h2, h3, h4, h5, h6
 						if (!isset($dom[$key]['attribute']['size']) AND !isset($dom[$key]['style']['font-size'])) {
-							$headsize = (4 - intval($dom[$key]['value']{1})) * 2;
+							$headsize = (4 - intval($dom[$key]['value'][1])) * 2;
 							$dom[$key]['fontsize'] = $dom[0]['fontsize'] + $headsize;
 						}
 						if (!isset($dom[$key]['style']['font-weight'])) {

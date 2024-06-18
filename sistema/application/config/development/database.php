@@ -8,7 +8,8 @@ $query_builder = true;
 $db['default']['hostname'] = 'localhost';
 $db['default']['username'] = 'root';
 $db['default']['password'] = '';
-$db['default']['database'] = 'gym';
+$db['default']['database'] = 'tahua';
+$db['default']['port'] = 3308;
 
 #GENERAL
 $db['default']['dsn'] = '';
@@ -26,4 +27,3 @@ $db['default']['compress'] = false;
 $db['default']['stricton'] = false;
 $db['default']['failover'] = array();
 $db['default']['save_queries'] = true;
-$db['default']['port'] = 3307;

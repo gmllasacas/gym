@@ -3,6 +3,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 class Sistema extends CI_Controller
 {
+    public $configuracion = [];
 
     public function __construct()
     {

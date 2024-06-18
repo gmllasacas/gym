@@ -3,6 +3,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 class Transaccion extends CI_Controller
 {
+    public $configuracion = [];
 
     public function __construct()
     {
@@ -135,8 +136,8 @@ class Transaccion extends CI_Controller
             $registro['tipo_comprobante_desc'] = basedetalleregistro('proceso_tipo_comprobante', ['id'=>$registro['tipo_comprobante']]);
             $registro['detalles'] = $this->generico_modelo->listado('proceso_venta_detalle', '1', ['venta'=>$id]);
             $registro['tipo'] = 'venta';
-            $this->load->library('Numero_letras');
-            $letras = new Numero_letras();
+            $this->load->library('NumberToLetters');
+            $letras = new NumberToLetters();
             $registro['letras'] =$letras->convertir($registro['total']);
             foreach ($registro['detalles'] as &$item) {
                 $item['codigo'] = spd($item['producto'], 6, '0');

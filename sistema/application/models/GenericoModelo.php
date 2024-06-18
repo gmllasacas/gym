@@ -262,7 +262,7 @@ class GenericoModelo extends CI_Model
             case 'proceso_kardex':
                 $fechainicio = $params['fechainicio'];
                 $fechafin = $params['fechafin'];
-                $producto = $params['producto'];
+                $producto = $this->db->escape($params['producto']);
                 $estado = $params['estado'];
                 $con_producto = $producto != '0' ? 'AND proceso_kardex.producto="'.$producto.'"' : '';
                 $query = $this->db->query(
@@ -287,7 +287,7 @@ class GenericoModelo extends CI_Model
             case 'proceso_pago':
                 $fechainicio = $params['fechainicio'];
                 $fechafin = $params['fechafin'];
-                $cliente = $params['cliente'];
+                $cliente = $this->db->escape($params['cliente']);
                 $estado = $params['estado'];
                 $con_where = $cliente != '0' ? 'AND proceso_pago.cliente="'.$cliente.'"' : '';
                 $usuario_sesion = $this->session->userdata('perfil') > 2 ? 'AND base_usuario.id="'.$this->session->userdata('id').'"' : '';
