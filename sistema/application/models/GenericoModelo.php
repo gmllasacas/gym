@@ -44,15 +44,27 @@ class GenericoModelo extends CI_Model
                 );
                 break;
             case 'permisos':
-                $query = $this->db->query(
-                    "SELECT base_menu_perfil.*,menu1.padre AS menu_padre, menu1.url, menu1.icono, menu1.descripcion, menu2.descripcion AS padre_descripcion, menu2.icono as padre_icono
-                    FROM base_menu_perfil 
-                    LEFT JOIN base_menu menu1 ON base_menu_perfil.menu=menu1.id 
-                    LEFT JOIN base_menu menu2 ON menu1.padre=menu2.id 
-                    WHERE base_menu_perfil.estado REGEXP ? AND base_menu_perfil.perfil = ?
-                    ORDER BY menu_padre ASC, base_menu_perfil.id ASC",
-                    array('^['.$estado.']',$params['perfil'])
-                );
+                $perfil = (int) $params['perfil'];
+                if ($perfil == 1) {
+                    $query = $this->db->query(
+                        "SELECT menu1.estado, 1 AS perfil, menu1.id AS menu, 1 AS visible, menu1.padre AS menu_padre, menu1.url, menu1.icono, menu1.descripcion, menu2.descripcion AS padre_descripcion, menu2.icono as padre_icono
+                        FROM base_menu AS menu1 
+                        LEFT JOIN base_menu menu2 ON menu1.padre=menu2.id 
+                        WHERE menu1.estado REGEXP ? and menu1.padre <> 0 
+                        ORDER BY menu_padre ASC, menu1.id ASC",
+                        array('^['.$estado.']')
+                    );
+                } else {
+                    $query = $this->db->query(
+                        "SELECT base_menu_perfil.*,menu1.padre AS menu_padre, menu1.url, menu1.icono, menu1.descripcion, menu2.descripcion AS padre_descripcion, menu2.icono as padre_icono
+                        FROM base_menu_perfil 
+                        LEFT JOIN base_menu menu1 ON base_menu_perfil.menu=menu1.id 
+                        LEFT JOIN base_menu menu2 ON menu1.padre=menu2.id 
+                        WHERE base_menu_perfil.estado REGEXP ? AND base_menu_perfil.perfil = ?
+                        ORDER BY menu_padre ASC, base_menu_perfil.id ASC",
+                        array('^['.$estado.']',$perfil)
+                    );
+                }
                 break;
             case 'proceso_cliente':
                 $error = 'No existen clientes';
@@ -262,9 +274,9 @@ class GenericoModelo extends CI_Model
             case 'proceso_kardex':
                 $fechainicio = $params['fechainicio'];
                 $fechafin = $params['fechafin'];
-                $producto = $this->db->escape($params['producto']);
+                $producto = $params['producto'];
                 $estado = $params['estado'];
-                $con_producto = $producto != '0' ? 'AND proceso_kardex.producto="'.$producto.'"' : '';
+                $con_producto = (empty($producto) ? '' : 'AND proceso_kardex.producto = '.$producto);
                 $query = $this->db->query(
                     "SELECT proceso_kardex.*,
                     base_estado.descripcion as estadodesc,
@@ -287,10 +299,10 @@ class GenericoModelo extends CI_Model
             case 'proceso_pago':
                 $fechainicio = $params['fechainicio'];
                 $fechafin = $params['fechafin'];
-                $cliente = $this->db->escape($params['cliente']);
+                $cliente = $params['cliente'];
                 $estado = $params['estado'];
-                $con_where = $cliente != '0' ? 'AND proceso_pago.cliente="'.$cliente.'"' : '';
-                $usuario_sesion = $this->session->userdata('perfil') > 2 ? 'AND base_usuario.id="'.$this->session->userdata('id').'"' : '';
+                $con_where = (empty($cliente) ? '' : 'AND proceso_pago.cliente = '.$cliente);
+                $usuario_sesion = $this->session->userdata('perfil') > 2 ? 'AND base_usuario.id = "'.$this->session->userdata('id').'"' : '';
                 $query = $this->db->query(
                     "SELECT proceso_pago.*,
                     base_estado.descripcion as estadodesc,
@@ -304,6 +316,30 @@ class GenericoModelo extends CI_Model
                     INNER JOIN base_usuario ON proceso_pago.usuario=base_usuario.id $usuario_sesion
                     INNER JOIN proceso_tipo_pago ON proceso_pago.tipo_pago=proceso_tipo_pago.id
                     WHERE (DATE(proceso_pago.fecha) BETWEEN ? AND ?) AND proceso_pago.estado REGEXP ? $con_where",
+                    array($fechainicio,$fechafin,'^['.$estado.']')
+                );
+                break;
+            case 'proceso_gasto':
+                match ((int) $params['tipo_gasto']) {
+                    1 => $referencia_table = 'proceso_proveedor',
+                };
+                $fechainicio = $params['fechainicio'];
+                $fechafin = $params['fechafin'];
+                $referencia = $params['referencia'];
+                $estado = $params['estado'];
+                $con_where = (empty($referencia) ? '' : 'AND proceso_gasto.referencia = '.$referencia);
+                $usuario_sesion = $this->session->userdata('perfil') > 2 ? 'AND base_usuario.id = "'.$this->session->userdata('id').'"' : '';
+                $query = $this->db->query(
+                    "SELECT proceso_gasto.*,
+                    base_estado.descripcion as estadodesc,
+                    base_estado.color as estadocol,
+                    $referencia_table.nombre_o_razon_social as referenciadesc,
+                    base_usuario.username
+                    FROM proceso_gasto 
+                    INNER JOIN base_estado ON proceso_gasto.estado=base_estado.id
+                    INNER JOIN $referencia_table ON proceso_gasto.referencia=$referencia_table.id
+                    INNER JOIN base_usuario ON proceso_gasto.usuario=base_usuario.id $usuario_sesion
+                    WHERE (DATE(proceso_gasto.fecha) BETWEEN ? AND ?) AND proceso_gasto.estado REGEXP ? $con_where",
                     array($fechainicio,$fechafin,'^['.$estado.']')
                 );
                 break;

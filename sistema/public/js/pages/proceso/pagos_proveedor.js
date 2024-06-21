@@ -44,7 +44,7 @@ jQuery(function () {
                                 case '3':
                                     response.data[i]['pagostr'] = '<span class="text-danger">S/ '+response.data[i]['pago']+'</span>';
                                     response.data[i]['acciones']='<div class="btn-group">'+
-                                                                        '    <button class="btn btn-xs btn-info detalleregistro" data-toggle="tooltip" data-placement="top" title="Detalles" data-id="'+response.data[i]['id']+'" data-table="proceso_pago">'+
+                                                                        '    <button class="btn btn-xs btn-info detalleregistro" data-toggle="tooltip" data-placement="top" title="Detalles" data-id="'+response.data[i]['id']+'" data-table="proceso_gasto">'+
                                                                         '        <i class="fa fa-bars"></i>'+
                                                                         '    </button>'+
                                                                         '</div>';
@@ -52,17 +52,17 @@ jQuery(function () {
                                 case '1':
                                     response.data[i]['pagostr'] = '<span class="text-success">S/ '+response.data[i]['pago']+'</span>';
                                     response.data[i]['acciones']='<div class="btn-group">'+
-                                                                        '    <button class="btn btn-xs btn-info detalleregistro" data-toggle="tooltip" data-placement="top" title="Detalles" data-id="'+response.data[i]['id']+'" data-table="proceso_pago">'+
+                                                                        '    <button class="btn btn-xs btn-info detalleregistro" data-toggle="tooltip" data-placement="top" title="Detalles" data-id="'+response.data[i]['id']+'" data-table="proceso_gasto">'+
                                                                         '        <i class="fa fa-bars"></i>'+
                                                                         '    </button>'+
-                                                                        '    <button class="btn btn-xs btn-info editarregistro" data-toggle="tooltip" data-placement="top" title="Editar" data-id="'+response.data[i]['id']+'" data-table="proceso_pago">'+
+                                                                        '    <button class="btn btn-xs btn-info editarregistro" data-toggle="tooltip" data-placement="top" title="Editar" data-id="'+response.data[i]['id']+'" data-table="proceso_gasto">'+
                                                                         '        <i class="fa fa-edit"></i>'+
                                                                         '    </button>';
                                     switch (perfil) {
                                         case '1':
                                         case '2':
                                         case '4':
-                                            response.data[i]['acciones']+='<button class="btn btn-xs btn-danger anularregistro" data-toggle="tooltip" data-placement="top" title="Anular" data-id="' + response.data[i]['id'] + '" data-table="proceso_pago">' +
+                                            response.data[i]['acciones']+='<button class="btn btn-xs btn-danger anularregistro" data-toggle="tooltip" data-placement="top" title="Anular" data-id="' + response.data[i]['id'] + '" data-table="proceso_gasto">' +
                                                                                 '        <i class="fa fa-times"></i>'+
                                                                                 '    </button>';
                                             break;
@@ -93,10 +93,9 @@ jQuery(function () {
         },
         columns: [
             { data: 'fecha' },
-            { data: 'clientedesc' },
+            { data: 'referenciadesc' },
             { data: 'pagostr' },
             { data: 'pagosum' },
-            { data: 'tipodesc' },
             { data: 'username' },
             { data: 'estadostr' },
             { data: 'acciones' },
@@ -178,27 +177,6 @@ jQuery(function () {
         ],
     }).container().appendTo(jQuery(tablelist).closest('.block-content').find('.options div:nth-child(1)'));
 
-    /*function selectores() { 
-        jQuery(tablelist).closest('.block-content').find('.options div:nth-child(3)').empty();
-        listdt.columns([1]).every( function () {
-            var column = this;
-            var select = jQuery('<select class="js-select2-filtro form-control" id="filtrado1" data-placeholder="Filtro por cliente" data-allow-clear="true"><option></option></select>')
-                .appendTo(jQuery(tablelist).closest('.block-content').find('.options div:nth-child(3)'))
-                .on( 'change', function () {
-                    var val = jQuery.fn.dataTable.util.escapeRegex(
-                        jQuery(this).val()
-                    ); 
-                    column
-                        .search( val ? '^'+val+'$' : '', true, false )
-                        .draw();
-                } );
-            column.data().unique().sort().each( function ( d, j ) {
-                select.append( '<option value="'+d+'">'+d+'</option>' )
-            } );
-        } );
-        jQuery('.js-select2-filtro').select2();
-    };*/
-
     var busquedavalidate = jQuery(busquedaform).validate({
         submitHandler: function(form) {
             listdt.ajax.reload();
@@ -210,7 +188,7 @@ jQuery(function () {
             type: "POST",
             url: base_url + "generico/listado",
             data: {
-                table: 'proceso_cliente',
+                table: 'proceso_proveedor',
                 estado: '1',
             },
             dataType: 'json',
@@ -222,15 +200,14 @@ jQuery(function () {
                 if(response.status=='200'){
                     reiniciarform(registroform,registrovalidate,'generico/nuevoregistro','<i class="fa fa-plus push-5-r"></i> Registrar');
                     jQuery(anulacionform).hide();
-                    var clientes = '<option value=""></option>';
+                    var proveedores = '<option value=""></option>';
                     jQuery.each(response.data, function(index, item) {
-                        clientes += '<option value="'+item.id+'">'+item.documento+' - '+item.nombre_o_razon_social+'</option>';
+                        proveedores += '<option value="'+item.id+'">'+item.ruc+' - '+item.nombre_o_razon_social+'</option>';
                     });
-                    jQuery(registroform+' [name="cliente"]').html(clientes).trigger('change');
+                    jQuery(registroform+' [name="proveedor"]').html(proveedores).trigger('change');
                     jQuery(registroform+' [name="id"]').val(null);
-                    jQuery(registroform+' [name="cliente"]').prop('disabled',false);
+                    jQuery(registroform+' [name="proveedor"]').prop('disabled',false);
                     jQuery(registroform+' [name="pago"]').prop('disabled',false);
-                    jQuery(registroform+' [name="tipo_pago"]').prop('disabled',false);
                     jQuery(registroform+' [name="observaciones"]').prop('disabled',false);
                     jQuery(registroform+' button[type="submit"]').show();
                     reiniciarform(registroform,registrovalidate,'generico/nuevoregistro','<i class="fa fa-plus push-5-r"></i> Registrar');
@@ -247,7 +224,7 @@ jQuery(function () {
             type: "POST",
             url: base_url + "generico/listado",
             data: {
-                table: 'proceso_cliente',
+                table: 'proceso_proveedor',
                 estado: '^5',
             },
             dataType: 'json',
@@ -270,11 +247,11 @@ jQuery(function () {
                             if(response.status=='200'){
                                 reiniciarform(registroform,registrovalidate,'generico/actualizarregistro','<i class="fa fa-edit push-5-r"></i> Editar');
                                 jQuery(anulacionform).hide();
-                                var clientes = '<option value=""></option>';
+                                var proveedores = '<option value=""></option>';
                                 jQuery.each(responseouter.data, function(index, item) {
-                                    clientes += '<option value="'+item.id+'">'+item.documento+' - '+item.nombre_o_razon_social+'</option>';
+                                    proveedores += '<option value="'+item.id+'">'+item.ruc+' - '+item.nombre_o_razon_social+'</option>';
                                 });
-                                jQuery(registroform+' [name="cliente"]').html(clientes).trigger('change');
+                                jQuery(registroform+' [name="proveedor"]').html(proveedores).trigger('change');
                                 jQuery.each(response.registro, function(index, item) {
                                     if(jQuery(registroform+' [name='+index+']').length>0){
                                         jQuery(registroform+' [name='+index+']').val(item).prop('disabled',true).trigger("change");
@@ -282,7 +259,6 @@ jQuery(function () {
                                 });
                                 jQuery(registroform+' [name="id"]').prop('disabled',false);
                                 jQuery(registroform+' [name="observaciones"]').prop('disabled',false);
-                                jQuery(registroform+' [name="tipo_pago"]').prop('disabled',false);
                                 jQuery(registroform+' button[type="submit"]').show();
                                 jQuery(registromodal).modal('toggle');
                             }
@@ -299,7 +275,7 @@ jQuery(function () {
             type: "POST",
             url: base_url + "generico/listado",
             data: {
-                table: 'proceso_cliente',
+                table: 'proceso_proveedor',
                 estado: '^5',
             },
             dataType: 'json',
@@ -321,11 +297,11 @@ jQuery(function () {
                             }
                             if(response.status=='200'){
                                 reiniciarform(registroform,registrovalidate,'generico/actualizarregistro','<i class="fa fa-edit push-5-r"></i> Editar');
-                                var clientes = '<option value=""></option>';
+                                var proveedores = '<option value=""></option>';
                                 jQuery.each(responseouter.data, function(index, item) {
-                                    clientes += '<option value="'+item.id+'">'+item.documento+' - '+item.nombre_o_razon_social+'</option>';
+                                    proveedores += '<option value="'+item.id+'">'+item.ruc+' - '+item.nombre_o_razon_social+'</option>';
                                 });
-                                jQuery(registroform+' [name="cliente"]').html(clientes).trigger('change');
+                                jQuery(registroform+' [name="proveedor"]').html(proveedores).trigger('change');
                                 jQuery.each(response.registro, function(index, item) {
                                     if(jQuery(registroform+' [name='+index+']').length>0){
                                         jQuery(registroform+' [name='+index+']').val(item).prop('disabled',true).trigger("change");
@@ -360,7 +336,7 @@ jQuery(function () {
             type: "POST",
             url: base_url + "generico/listado",
             data: {
-                table: 'proceso_cliente',
+                table: 'proceso_proveedor',
                 estado: '^5',
             },
             dataType: 'json',
@@ -382,11 +358,11 @@ jQuery(function () {
                             }
                             if(response.status=='200'){
                                 reiniciarform(registroform,registrovalidate,'generico/actualizarregistro','<i class="fa fa-edit push-5-r"></i> Editar');
-                                var clientes = '<option value=""></option>';
+                                var proveedores = '<option value=""></option>';
                                 jQuery.each(responseouter.data, function(index, item) {
-                                    clientes += '<option value="'+item.id+'">'+item.documento+' - '+item.nombre_o_razon_social+' (Crédito: S/ '+item.credito+')</option>';
+                                    proveedores += '<option value="'+item.id+'">'+item.ruc+' - '+item.nombre_o_razon_social+'</option>';
                                 });
-                                jQuery(registroform+' [name="cliente"]').html(clientes).trigger('change');
+                                jQuery(registroform+' [name="proveedor"]').html(proveedores).trigger('change');
                                 jQuery.each(response.registro, function(index, item) {
                                     if(jQuery(registroform+' [name='+index+']').length>0){
                                         jQuery(registroform+' [name='+index+']').val(item).prop('disabled',true).trigger("change");
@@ -504,4 +480,14 @@ jQuery(function () {
         });
     });
 
+    jQuery(busquedaform+' [name="proveedor"]').select2({
+        allowClear: true
+    }).on('select2:unselecting', function() {
+        jQuery(this).data('unselecting', true);
+    }).on('select2:opening', function(e) {
+        if (jQuery(this).data('unselecting')) {
+            jQuery(this).removeData('unselecting');
+            e.preventDefault();
+        }
+    });
 });

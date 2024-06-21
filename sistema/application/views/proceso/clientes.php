@@ -23,8 +23,8 @@
                         </script>
                         <div class="block-header bg-gray-lighter">
                             <div class="block-options-simple">
-                                <button class="btn btn-xs btn-success nuevoregistro" type="button"><i class="fa fa-plus push-5-r"></i><span class="hidden-xs">REGISTRAR <?php echo $registro_text;?></span></button>
-                                <button class="btn btn-xs btn-info push-10-l" type="button" title="Recargar" id="block-reload"><i class="si si-refresh push-5-r"></i><span class="hidden-xs">RECARGAR LISTADO</span></button>
+                                <button class="btn btn-xs btn-success nuevoregistro" type="button"><i class="fa fa-plus"></i><span class="hidden-xs push-5-l">REGISTRAR <?php echo $registro_text;?></span></button>
+                                <button class="btn btn-xs btn-info push-10-l" type="button" title="Recargar" id="block-reload"><i class="si si-refresh"></i><span class="hidden-xs push-5-l">RECARGAR LISTADO</span></button>
                             </div>
                             <h3 class="block-title"><?php echo $export_text;?></h3>
                         </div>
@@ -100,7 +100,7 @@
                                     <input type="hidden" name="id" value="">
                                     <input type="hidden" name="estado" value="1">
                                     <input type="hidden" name="table" value="proceso_cliente">
-                                    <input type="hidden" name="departamento" value="<?php echo $epartamento; ?>">
+                                    <input type="hidden" name="departamento" value="<?php echo $departamento; ?>">
                                     <h3 class="h5 font-w600 text-uppercase push-15"><i class="fa fa-info text-primary push-5-r"></i> Datos generales</h3>
                                     <div class="row">
                                         <div class="col-xs-12 col-sm-3">

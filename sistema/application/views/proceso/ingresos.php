@@ -24,7 +24,7 @@
                             <input type="hidden" name="estado" value="^5">
                             <div class="block-header bg-gray-lighter">
                                 <div class="block-options-simple">
-                                    <button class="btn btn-xs btn-success nuevoregistro" type="button"><i class="fa fa-plus push-5-r"></i><span class="hidden-xs">REGISTRAR <?php echo $registro_text;?></span></button>
+                                    <button class="btn btn-xs btn-success nuevoregistro" type="button"><i class="fa fa-plus"></i><span class="hidden-xs push-5-l">REGISTRAR <?php echo $registro_text;?></span></button>
                                 </div>
                                 <h3 class="block-title"><?php echo $export_text;?> por fecha</h3>
                             </div>

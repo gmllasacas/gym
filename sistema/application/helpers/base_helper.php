@@ -17,11 +17,11 @@ if (! function_exists('permisos')) {
     {
         $ci=& get_instance();
         $ci->load->model('generico_modelo');
-        $permisos = $ci->generico_modelo->listado('permisos', '1', ['perfil'=>$ci->session->userdata('perfil')]);
+        $permisos = $ci->generico_modelo->listado('permisos', '1', ['perfil' => $ci->session->userdata('perfil')]);
         $flag=false;
         foreach ($permisos as $item) {
-            if ($item['menu']==$submenu) {
-                $flag=true;
+            if ($item['menu'] == $submenu) {
+                $flag = true;
             }
         }
         if (!$flag) {

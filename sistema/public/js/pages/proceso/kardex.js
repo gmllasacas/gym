@@ -323,4 +323,15 @@ jQuery(function () {
         });
                 
     });
+
+    jQuery(busquedaform+' [name="producto"]').select2({
+        allowClear: true
+    }).on('select2:unselecting', function() {
+        jQuery(this).data('unselecting', true);
+    }).on('select2:opening', function(e) {
+        if (jQuery(this).data('unselecting')) {
+            jQuery(this).removeData('unselecting');
+            e.preventDefault();
+        }
+    });
 });
