@@ -102,7 +102,8 @@ class Transaccion extends CI_Controller
         $this->load->view('bases/funciones', ['funciones' => ['proceso/kardex']]);
     }
 
-    public function pagos()
+    // phpcs:ignore
+    public function pagos_cliente()
     {
         $estados = $this->generico_modelo->listado('base_estado', '1');
         $clientes = $this->generico_modelo->listado('proceso_cliente', '1');
@@ -110,10 +111,10 @@ class Transaccion extends CI_Controller
 
         $datos = [
             'menu_text' => 'Transacciones',
-            'submenu_text' => 'Pagos',
-            'titulo_text' => 'Pagos',
+            'submenu_text' => 'Pagos de clientes',
+            'titulo_text' => 'Pago de cliente',
             'export_text' => 'Listado de registros',
-            'registro_text' => 'pago',
+            'registro_text' => 'pago de cliente',
             'clientes'=>$clientes,
             'estados'=>$estados,
             'tipo_pagos'=>$tipo_pagos,
@@ -122,9 +123,35 @@ class Transaccion extends CI_Controller
         $this->load->view('bases/cabezera');
         $this->load->view('bases/menu', ['menu' =>3,'submenu' =>305]);
         $this->load->view('bases/barra');
-        $this->load->view('proceso/pagos', $datos);
+        $this->load->view('proceso/pagos_cliente', $datos);
         $this->load->view('bases/pie');
-        $this->load->view('bases/funciones', ['funciones' => ['proceso/pagos']]);
+        $this->load->view('bases/funciones', ['funciones' => ['proceso/pagos_cliente']]);
+    }
+
+    // phpcs:ignore
+    public function pagos_proveedor()
+    {
+        $estados = $this->generico_modelo->listado('base_estado', '1');
+        $clientes = $this->generico_modelo->listado('proceso_cliente', '1');
+        $proveedores = $this->generico_modelo->listado('proceso_proveedor', '1');
+        $tipo_pagos = $this->generico_modelo->listado('proceso_tipo_pago', '1', ['orderby'=>'id','direction'=>'asc']);
+
+        $datos = [
+            'menu_text' => 'Transacciones',
+            'submenu_text' => 'Pagos a proveedores',
+            'export_text' => 'Listado de pagos a proveedores',
+            'registro_text' => 'pago a proveedor',
+            'proveedores'=>$proveedores,
+            'estados'=>$estados,
+            'tipo_pagos'=>$tipo_pagos,
+        ];
+
+        $this->load->view('bases/cabezera');
+        $this->load->view('bases/menu', ['menu' =>3,'submenu' =>306]);
+        $this->load->view('bases/barra');
+        $this->load->view('proceso/pagos_proveedor', $datos);
+        $this->load->view('bases/pie');
+        $this->load->view('bases/funciones', ['funciones' => ['proceso/pagos_proveedor']]);
     }
 
     public function comprobanteventa($id)

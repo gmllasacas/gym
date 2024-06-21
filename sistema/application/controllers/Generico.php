@@ -236,6 +236,21 @@ class Generico extends CI_Controller
                         response(['message'=>'Error al escribir en la BD'], 500);
                     }
                     break;
+                case 'proceso_gasto':
+                    $tipo_gasto = $this->input->post('tipo_gasto');
+                    $referencia = $this->input->post('proveedor');
+                    $inputs['tipo_gasto'] = $tipo_gasto;
+                    $inputs['referencia'] = $referencia;
+                    $inputs['usuario'] = $this->session->userdata('id');
+                    $inputs['fecha'] = date('Y-m-d H:i:s');
+                    $exclude = ['id', 'table', 'proveedor'];
+                    $registro = basenuevoregistro($inputs, $table, $exclude);
+                    if ($registro) {
+                        response(['message'=>'Registro correcto']);
+                    } else {
+                        response(['message'=>'Error al escribir en la BD'], 500);
+                    }
+                    break;
                 default:
                     $exclude=array('id','table');
                     $inputs['fecha']=date('Y-m-d H:i:s');
@@ -305,6 +320,26 @@ class Generico extends CI_Controller
                         $inputs_c['fecha']=date('Y-m-d H:i:s');
                         $registro_p=basenuevoregistro($inputs_c, 'proceso_credito', []);
                         /**Crédito de pago anulado*/
+                        response(['message'=>'Registro actualizado'], 201);
+                    } else {
+                        response(['message'=>'Error al escribir en la BD'], 500);
+                    }
+                    break;
+                case 'proceso_gasto_anulacion':
+                    $inputs['estado'] = 3;
+                    $exclude = ['id', 'table', 'motivo'];
+                    $where = ['id' => $id];
+                    $registro=baseactualizarregistro($inputs, 'proceso_gasto', $where, $exclude);
+                    if ($registro) {
+                        /**Anulacion de gasto */
+                        $inputs_a['referencia'] = $id;
+                        $inputs_a['motivo'] = $this->input->post('motivo');
+                        $inputs_a['usuario'] = $this->session->userdata('id');
+                        $inputs_a['fecha'] = date('Y-m-d H:i:s');
+                        $exclude = ['id','table','producto','total'];
+                        $registro_a = basenuevoregistro($inputs_a, 'proceso_gasto_anulacion', $exclude);
+                        /**Anulacion de gasto */
+
                         response(['message'=>'Registro actualizado'], 201);
                     } else {
                         response(['message'=>'Error al escribir en la BD'], 500);
@@ -519,7 +554,9 @@ class Generico extends CI_Controller
                             }
                         }
                         $registro['anulacion'] = basedetalleregistro('proceso_venta_anulacion', ['estado'=>'1','venta'=>$id]);
-                        $registro['anulacion']['usuario'] = basedetalleregistro('base_usuario', ['id'=>$registro['anulacion']['usuario']]);
+                        if ($registro['anulacion']) {
+                            $registro['anulacion']['usuario'] = basedetalleregistro('base_usuario', ['id'=>$registro['anulacion']['usuario']]);
+                        }
                         break;
                     case 'proceso_ingreso':
                         $where = array('id'=>$id);
@@ -529,7 +566,9 @@ class Generico extends CI_Controller
                             $item['codigo'] = spd($item['producto'], 6, '0');
                         }
                         $registro['anulacion'] = basedetalleregistro('proceso_ingreso_anulacion', ['estado'=>'1','ingreso'=>$id]);
-                        $registro['anulacion']['usuario'] = basedetalleregistro('base_usuario', ['estado'=>'1','id'=>$registro['anulacion']['usuario']]);
+                        if ($registro['anulacion']) {
+                            $registro['anulacion']['usuario'] = basedetalleregistro('base_usuario', ['estado'=>'1','id'=>$registro['anulacion']['usuario']]);
+                        }
                         break;
                     case 'proceso_auditoria':
                         $where = array('id'=>$id);
@@ -551,7 +590,21 @@ class Generico extends CI_Controller
                         $where = array('id'=>$id);
                         $registro = basedetalleregistro($table, $where, true);
                         $registro['anulacion'] = basedetalleregistro('proceso_pago_anulacion', ['estado'=>'1','pago'=>$id]);
-                        $registro['anulacion']['usuario'] = basedetalleregistro('base_usuario', ['id'=>$registro['anulacion']['usuario']]);
+                        if ($registro['anulacion']) {
+                            $registro['anulacion']['usuario'] = basedetalleregistro('base_usuario', ['id'=>$registro['anulacion']['usuario']]);
+                        }
+                        break;
+                    case 'proceso_gasto':
+                        $where = ['id' => $id];
+                        $registro = basedetalleregistro($table, $where, true);
+                        match ((int) $registro['tipo_gasto']) {
+                            1 => $registro['proveedor'] = $registro['referencia']
+                        };
+                        unset($registro['referencia']);
+                        $registro['anulacion'] = basedetalleregistro('proceso_gasto_anulacion', ['estado' => '1', 'referencia' => $id]);
+                        if ($registro['anulacion']) {
+                            $registro['anulacion']['usuario'] = basedetalleregistro('base_usuario', ['id' => $registro['anulacion']['usuario']]);
+                        }
                         break;
                     default:
                         $where = array('id' => $id);
@@ -690,6 +743,14 @@ class Generico extends CI_Controller
                         break;
                     case 'proceso_pago':
                         $params['cliente'] = $this->input->post('cliente');
+                        $registros = $this->generico_modelo->busqueda($table, $params);
+                        foreach ($registros as &$item) {
+                            $item['pagosum'] = ($item['estado']==3 ? 0 : $item['pago']);
+                        }
+                        break;
+                    case 'proceso_gasto':
+                        $params['tipo_gasto'] = $this->input->post('tipo_gasto');
+                        $params['referencia'] = $this->input->post('proveedor');
                         $registros = $this->generico_modelo->busqueda($table, $params);
                         foreach ($registros as &$item) {
                             $item['pagosum'] = ($item['estado']==3 ? 0 : $item['pago']);
