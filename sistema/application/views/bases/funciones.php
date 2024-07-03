@@ -106,10 +106,36 @@
                     return tabletemp;
                 }
 
-                function unidades_docenas(cantidad) {
-                    var docenas = parseInt(cantidad/12);
-                    var unidades = cantidad%12;
-                    return (docenas>0 ? docenas+' doc.' : '')+(unidades>0 ? ' '+unidades%12+' unid.' : '');
+                function formatMembresia(data) {
+                    var color = '';
+                    var dias_filter = '';
+                    var dias = data['dias'];
+                    var diasstr = '';
+
+                    if(dias == '') {
+                        color = 'info';
+                        dias_filter = 'Sin membresía';
+                    } else {
+                        if(dias > 7) {
+                            color = 'success';
+                            dias_filter = 'Activa';
+                        } else if(dias >= 0) {
+                            color = 'warning';
+                            dias_filter = 'Por vencer';
+                        } else if(dias < 0) {
+                            dias = '&lt 0'; //< 0
+                            color = 'danger';
+                            dias_filter = 'Vencida';
+                        }
+                        diasstr = '<span class="text-'+color+'">'+dias+'</span>';
+                    }
+                    
+                    return {
+                        'dias' : dias,
+                        'diasstr' : diasstr,
+                        'etiqueta' : '<label class="label label-'+color+'">'+dias_filter+'</label>',
+                        'dias_filter' : dias_filter
+                    }
                 }
 
             /***Funciones generales***/

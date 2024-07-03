@@ -63,6 +63,7 @@ class Generico extends CI_Controller
                 case 'proceso_cliente':
                     $registro_det=basedetalleregistro($table, ['documento'=>$this->input->post('documento')]);
                     if (count((array)$registro_det)==0) {
+                        $inputs['usuario'] = $this->session->userdata('id');
                         $inputs['fecha']=date('Y-m-d H:i:s');
                         $exclude=array('id','table');
                         $registro=basenuevoregistro($inputs, $table, $exclude);
@@ -655,7 +656,6 @@ class Generico extends CI_Controller
                             $item['codigo'] = spd($item['id'], 6, '0');
                             $kardex = basedetalleregistro('proceso_kardex', ['estado'=>'1','producto'=>$item['id']]);
                             $item['existencias'] = (isset($kardex['saldo']) ? ($kardex['saldo']>0 ? $kardex['saldo'] : 0) : 0);
-                            $item['unidades_docenas'] = (isset($kardex['saldo']) ? ($kardex['saldo']>0 ? unidades_docenas($kardex['saldo']) : 0) : 0);
                         }
                         $clientes = $this->generico_modelo->listado('proceso_cliente', $estado, [], true);
                         foreach ($clientes as &$item) {
@@ -670,8 +670,9 @@ class Generico extends CI_Controller
                         ];
                         break;
                     case 'proceso_cliente':
-                        $registros = $this->generico_modelo->listado($table, $estado, [], true);
                         $ahora = date('Y-m-d');
+                        $params['fecha'] = $this->input->post('inactive') ? $ahora : null;
+                        $registros = $this->generico_modelo->listado($table, $estado, $params, true);
                         foreach ($registros as &$item) {
                             $item['codigo'] = spd($item['id'], 6, '0');
                             if ($item['fecha_fin']) {
@@ -725,7 +726,6 @@ class Generico extends CI_Controller
                         $registros = $this->generico_modelo->busqueda($table, $params);
                         foreach ($registros as &$item) {
                             $item['totalsum'] = (($item['estado']==3 || $item['estado']==4) ? 0 : $item['total']);
-                            $item['cantidad_docenas'] = (isset($item['cantidad']) ? ($item['cantidad']>0 ? unidades_docenas($item['cantidad']) : 0) : 0);
                         }
                         break;
                     case 'proceso_ingreso':
@@ -754,6 +754,12 @@ class Generico extends CI_Controller
                         $registros = $this->generico_modelo->busqueda($table, $params);
                         foreach ($registros as &$item) {
                             $item['pagosum'] = ($item['estado']==3 ? 0 : $item['pago']);
+                        }
+                        break;
+                    case 'proceso_cliente':
+                        $registros = $this->generico_modelo->busqueda($table, $params);
+                        foreach ($registros as &$item) {
+                            $item['codigo'] = spd($item['id'], 6, '0');
                         }
                         break;
                     default:

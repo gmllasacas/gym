@@ -210,9 +210,9 @@ class Proceso extends CI_Controller
             array('^['.$estado.']',$dateini,$datefin)
         )->result_array();
 
-        $contadores['ingresos_diario'] = $ingresos_diario['ingresos'].' unid. ('.(isset($ingresos_diario['ingresos']) ? ($ingresos_diario['ingresos']>0 ? unidades_docenas($ingresos_diario['ingresos']) : 0) : 0).')';
-        $contadores['ingresos_semana'] = $ingresos_semana['ingresos'].' unid. ('.(isset($ingresos_semana['ingresos']) ? ($ingresos_semana['ingresos']>0 ? unidades_docenas($ingresos_semana['ingresos']) : 0) : 0).')';
-        $contadores['ingresos_mes'] = $ingresos_mes['ingresos'].' unid. ('.(isset($ingresos_mes['ingresos']) ? ($ingresos_mes['ingresos']>0 ? unidades_docenas($ingresos_mes['ingresos']) : 0) : 0).')';
+        $contadores['ingresos_diario'] = $ingresos_diario['ingresos'].' unid. ('.(isset($ingresos_diario['ingresos']) ? ($ingresos_diario['ingresos']>0 ? ($ingresos_diario['ingresos']) : 0) : 0).')';
+        $contadores['ingresos_semana'] = $ingresos_semana['ingresos'].' unid. ('.(isset($ingresos_semana['ingresos']) ? ($ingresos_semana['ingresos']>0 ? ($ingresos_semana['ingresos']) : 0) : 0).')';
+        $contadores['ingresos_mes'] = $ingresos_mes['ingresos'].' unid. ('.(isset($ingresos_mes['ingresos']) ? ($ingresos_mes['ingresos']>0 ? ($ingresos_mes['ingresos']) : 0) : 0).')';
         $data_graph_ingresos = '[';
 
         foreach ($ingresos_mes_anual as $item) {

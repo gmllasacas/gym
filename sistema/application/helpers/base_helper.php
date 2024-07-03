@@ -267,16 +267,6 @@ if (! function_exists('basedetalleregistro')) {
     }
 }
 
-if (! function_exists('unidades_docenas')) {
-    function unidades_docenas($cantidad)
-    {
-        $docenas = intval($cantidad/12);
-        $unidades = $cantidad%12;
-        $return=($docenas>0 ? $docenas.' doc.' : '').($unidades>0 ? ' '.$unidades%12 .' unid.' : '');
-        return $return;
-    }
-}
-
 if (! function_exists('response')) {
     function response($data = [], $status = 200)
     {

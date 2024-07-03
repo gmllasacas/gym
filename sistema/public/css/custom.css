@@ -76,6 +76,9 @@
 .side-header > span, .side-header > a {
 	line-height: 40px;
 }
+.block-title{
+	font-family: "Source Sans Pro", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
 .block-title i{
 	font-size: 12px;
 }
