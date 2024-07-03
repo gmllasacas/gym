@@ -55,28 +55,12 @@ jQuery(function () {
                                     response.data[i]['acciones']='';
                                     break;
                             }
-                            var color = '';
-                            var dias_filter = '';
-                            if(response.data[i]['dias'] === '') {
-                                color = 'info';
-                                dias_filter = 'Sin membresía';
-                                response.data[i]['diasstr'] = '';
-                            } else {
-                                if(response.data[i]['dias'] > 7) {
-                                    color = 'success';
-                                    dias_filter = 'Activa';
-                                } else if(response.data[i]['dias'] >= 0) {
-                                    color = 'warning';
-                                    dias_filter = 'Por vencer';
-                                } else if(response.data[i]['dias'] < 0) {
-                                    response.data[i]['dias'] = '&lt 0'; //< 0
-                                    color = 'danger';
-                                    dias_filter = 'Vencida';
-                                }
-                                response.data[i]['diasstr'] = '<span class="text-'+color+'">'+response.data[i]['dias']+'</span>';
-                            }
-                            response.data[i]['etiqueta'] = '<label class="label label-'+color+'">'+dias_filter+'</label>';
-                            response.data[i]['dias_filter'] = dias_filter;
+
+                            var fomartted = formatMembresia(response.data[i]);
+                            response.data[i]['dias'] = fomartted.dias;
+                            response.data[i]['diasstr'] = fomartted.diasstr;
+                            response.data[i]['etiqueta'] = fomartted.etiqueta;
+                            response.data[i]['dias_filter'] = fomartted.dias_filter;
                             response.data[i]['estadostr'] = '<label class="label label-'+response.data[i]['estadocol']+'">'+response.data[i]['estadodesc']+'</label>';
                         }
                         return response.data;

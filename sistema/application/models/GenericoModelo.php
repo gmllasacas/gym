@@ -68,6 +68,7 @@ class GenericoModelo extends CI_Model
                 break;
             case 'proceso_cliente':
                 $error = 'No existen clientes';
+                $con_fecha = empty($params['fecha']) ? '' :  "AND (DATE(proceso_cliente_servicio.fecha_fin) < '" . $params['fecha'] . "' OR proceso_cliente_servicio.fecha_fin IS NULL)";
                 $query = $this->db->query(
                     "SELECT proceso_cliente.*,
                     base_estado.descripcion as estadodesc,
@@ -76,7 +77,8 @@ class GenericoModelo extends CI_Model
                     proceso_provincia.provincia as provinciadesc,
                     proceso_distrito.distrito as distritodesc,
                     proceso_cliente_servicio.fecha_fin,
-                    proceso_producto.descripcion as productodesc
+                    proceso_producto.descripcion as productodesc,
+                    base_usuario.username
                     FROM proceso_cliente 
                     INNER JOIN base_estado ON proceso_cliente.estado=base_estado.id
                     INNER JOIN proceso_tipo_documento ON proceso_cliente.tipo_documento=proceso_tipo_documento.id
@@ -85,7 +87,8 @@ class GenericoModelo extends CI_Model
                     LEFT JOIN proceso_cliente_servicio ON proceso_cliente.membresia=proceso_cliente_servicio.id
                     LEFT JOIN proceso_venta ON proceso_cliente_servicio.venta=proceso_venta.id
                     LEFT JOIN proceso_producto ON proceso_cliente_servicio.producto=proceso_producto.id
-                    WHERE proceso_cliente.estado REGEXP ?",
+                    INNER JOIN base_usuario ON proceso_cliente.usuario=base_usuario.id
+                    WHERE proceso_cliente.estado REGEXP ? $con_fecha",
                     array('^['.$estado.']')
                 );
                 break;
@@ -341,6 +344,33 @@ class GenericoModelo extends CI_Model
                     INNER JOIN base_usuario ON proceso_gasto.usuario=base_usuario.id $usuario_sesion
                     WHERE (DATE(proceso_gasto.fecha) BETWEEN ? AND ?) AND proceso_gasto.estado REGEXP ? $con_where",
                     array($fechainicio,$fechafin,'^['.$estado.']')
+                );
+                break;
+            case 'proceso_cliente':
+                $fechainicio = $params['fechainicio'];
+                $fechafin = $params['fechafin'];
+                $estado = $params['estado'];
+                $query = $this->db->query(
+                    "SELECT proceso_cliente.*,
+                    base_estado.descripcion as estadodesc,
+                    base_estado.color as estadocol,
+                    proceso_tipo_documento.descripcion as tipodesc,
+                    proceso_provincia.provincia as provinciadesc,
+                    proceso_distrito.distrito as distritodesc,
+                    proceso_cliente_servicio.fecha_fin,
+                    proceso_producto.descripcion as productodesc,
+                    base_usuario.username
+                    FROM proceso_cliente 
+                    INNER JOIN base_estado ON proceso_cliente.estado=base_estado.id
+                    INNER JOIN proceso_tipo_documento ON proceso_cliente.tipo_documento=proceso_tipo_documento.id
+                    LEFT JOIN proceso_provincia ON proceso_cliente.provincia=proceso_provincia.idprovincia
+                    LEFT JOIN proceso_distrito ON proceso_cliente.distrito=proceso_distrito.iddistrito
+                    LEFT JOIN proceso_cliente_servicio ON proceso_cliente.membresia=proceso_cliente_servicio.id
+                    LEFT JOIN proceso_venta ON proceso_cliente_servicio.venta=proceso_venta.id
+                    LEFT JOIN proceso_producto ON proceso_cliente_servicio.producto=proceso_producto.id
+                    INNER JOIN base_usuario ON proceso_cliente.usuario=base_usuario.id
+                    WHERE (DATE(proceso_cliente.fecha) BETWEEN ? AND ?) AND proceso_cliente.estado REGEXP ?",
+                    [$fechainicio, $fechafin, '^['.$estado.']']
                 );
                 break;
             default:
