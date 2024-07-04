@@ -178,27 +178,6 @@ jQuery(function () {
         ],
     }).container().appendTo(jQuery(tablelist).closest('.block-content').find('.options div:nth-child(1)'));
 
-    /*function selectores() { 
-        jQuery(tablelist).closest('.block-content').find('.options div:nth-child(3)').empty();
-        listdt.columns([1]).every( function () {
-            var column = this;
-            var select = jQuery('<select class="js-select2-filtro form-control" id="filtrado1" data-placeholder="Filtro por cliente" data-allow-clear="true"><option></option></select>')
-                .appendTo(jQuery(tablelist).closest('.block-content').find('.options div:nth-child(3)'))
-                .on( 'change', function () {
-                    var val = jQuery.fn.dataTable.util.escapeRegex(
-                        jQuery(this).val()
-                    ); 
-                    column
-                        .search( val ? '^'+val+'$' : '', true, false )
-                        .draw();
-                } );
-            column.data().unique().sort().each( function ( d, j ) {
-                select.append( '<option value="'+d+'">'+d+'</option>' )
-            } );
-        } );
-        jQuery('.js-select2-filtro').select2();
-    };*/
-
     var busquedavalidate = jQuery(busquedaform).validate({
         submitHandler: function(form) {
             listdt.ajax.reload();
@@ -222,7 +201,7 @@ jQuery(function () {
                 if(response.status=='200'){
                     reiniciarform(registroform,registrovalidate,'generico/nuevoregistro','<i class="fa fa-plus push-5-r"></i> Registrar');
                     jQuery(anulacionform).hide();
-                    var clientes = '<option value=""></option>';
+                    var clientes = '<option value="">Seleccione</option>';
                     jQuery.each(response.data, function(index, item) {
                         clientes += '<option value="'+item.id+'">'+item.documento+' - '+item.nombre_o_razon_social+'</option>';
                     });
@@ -504,9 +483,7 @@ jQuery(function () {
         });
     });
 
-    jQuery(busquedaform+' [name="cliente"]').select2({
-        allowClear: true
-    }).on('select2:unselecting', function() {
+    jQuery(busquedaform+' [name="cliente"]').on('select2:unselecting', function() {
         jQuery(this).data('unselecting', true);
     }).on('select2:opening', function(e) {
         if (jQuery(this).data('unselecting')) {

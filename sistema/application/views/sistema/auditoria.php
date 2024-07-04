@@ -17,7 +17,7 @@
                         </script>
                         <div class="block-header bg-gray-lighter">
                             <div class="block-options-simple">
-                                <button class="btn btn-xs btn-info push-10-l" type="button" title="Recargar" id="block-reload"><i class="si si-refresh push-5-r"></i><span class="hidden-xs">RECARGAR LISTADO</span></button>
+                                <button class="btn btn-xs btn-info push-10-l" type="button" title="Recargar" id="block-reload"><i class="si si-refresh"></i><span class="hidden-xs push-5-l">RECARGAR LISTADO</span></button>
                             </div>
                             <h3 class="block-title"><?php echo $export_text;?></h3>
                         </div>

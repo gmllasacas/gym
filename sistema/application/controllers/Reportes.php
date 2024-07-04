@@ -21,9 +21,8 @@ class Reportes extends CI_Controller
         $provincias = $this->generico_modelo->listado('proceso_provincia', '1', ['where' => ['iddepartamento' => 2]]);
 
         $datos = [
-            'menu_text' => 'Transacciones',
-            'submenu_text' => 'Kardex',
-            'titulo_text' => 'Kardex',
+            'menu_text' => 'Reportes',
+            'submenu_text' => 'Clientes',
             'export_text' => 'Clientes nuevos por fecha de registro',
             'export_text_2' => 'Clientes inactivos (Sin membresía)',
             'registro_text' => 'kardex',

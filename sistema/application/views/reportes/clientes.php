@@ -16,7 +16,7 @@
                 </div>
                 <div class="content">
                     <div class="block push-10">
-                        <ul class="nav nav-tabs" data-toggle="tabs">
+                        <ul class="nav nav-tabs nav-justified" data-toggle="tabs">
                             <li class="active">
                                 <a href="#clientes_nuevos" class="block-title"><?php echo $export_text;?></a>
                             </li>
@@ -29,12 +29,12 @@
                                 <script type="text/javascript">
                                     var reportetext='<?php echo $export_text;?>';
                                 </script>
-                                <form class="form-horizontal" method="post" action="" id="busqueda-form" autocomplete="off">
+                                <form class="form-horizontal push-15" method="post" action="" id="busqueda-form" autocomplete="off">
                                     <input type="hidden" name="table" value="proceso_cliente">
                                     <input type="hidden" name="estado" value="^5">
                                     <div class="row">
                                         <div class="col-xs-12 col-sm-2 col-sm-offset-3">
-                                            <div class="form-group">
+                                            <div class="form-group push-5">
                                                 <label class="col-xs-12">Fecha de inicio</label>
                                                 <div class="col-xs-12">
                                                     <div class="input-group">
@@ -45,7 +45,7 @@
                                             </div>
                                         </div>
                                         <div class="col-xs-12 col-sm-2">
-                                            <div class="form-group">
+                                            <div class="form-group push-5">
                                                 <label class="col-xs-12">Fecha de fin</label>
                                                 <div class="col-xs-12">
                                                     <div class="input-group">
@@ -56,7 +56,7 @@
                                             </div>
                                         </div>
                                         <div class="col-xs-12 col-sm-2">
-                                            <div class="form-group">
+                                            <div class="form-group push-5">
                                                 <label class="col-xs-12"><br></label>
                                                 <div class="col-xs-12">
                                                     <button class="btn btn-info width100" type="submit"><i class="fa fa-search push-5-r"></i>CONSULTAR</button>

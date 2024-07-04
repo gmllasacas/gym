@@ -4,15 +4,10 @@
                 }
             </style>
             <main id="main-container" >
-                <div class="content-mini bg-gray-lighter">
-                    <div class="row push-10">
-                        <div class="col-sm-6">
-                            <h1 class="page-heading">
-                                <?php echo $titulo_text;?>
-                            </h1>
-                        </div>
-                        <div class="col-sm-6 text-right hidden-xs">
-                            <ol class="breadcrumb push-10-t">
+                <div class="content-mini-barra bg-gray-lighter">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <ol class="breadcrumb">
                                 <li><?php echo $menu_text;?></li>
                                 <li><a class="link-effect" href="#"><?php echo $submenu_text;?></a></li>
                             </ol>
@@ -59,7 +54,7 @@
                                             <label class="col-xs-12">Producto</label>
                                             <div class="col-xs-12">
                                                 <select class="form-control select2" name="producto" style="width: 100%;" data-placeholder="Todos los productos" data-allow-clear="true">
-                                                    <option value=""></option>
+                                                    <option value="">Seleccione</option>
                                                     <?php foreach ($productos as $item) :?>
                                                     <option value="<?php echo $item['id']; ?>" ><?php echo $item['codigo'].' - '.$item['descripcion']; ?></option>
                                                     <?php endforeach;?>

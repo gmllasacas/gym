@@ -73,7 +73,7 @@ jQuery(function () {
                     jQuery(registroform+' [name="estado"]').val(1);
                     jQuery(registroform+' [name="counter"]').val(0);
                     jQuery(tabledetalles+' tbody').html('');
-                    var productos_selector = '<option value=""></option>';
+                    var productos_selector = '<option value="">Seleccione</option>';
                     var servicios = '<optgroup label="Servicios">';
                     var productos = '<optgroup label="Productos">';
                     jQuery.each(response.data.productos, function(index, item) {
@@ -99,7 +99,7 @@ jQuery(function () {
                     productos_selector += servicios + '</optgroup>' + productos + '</optgroup>';
                     jQuery(registroform+' [name="producto_sel"]').html(productos_selector).trigger('change');
 
-                    var clientes = '<option value=""></option>';
+                    var clientes = '<option value="">Seleccione</option>';
                     jQuery.each(response.data.clientes, function(index, item) {
                         var disabled = (parseFloat(item.credito)<= 0 ? '' : 'disabled');
                         clientes += '<option value="'+item.id+'">'+item.documento+' - '+item.nombre_o_razon_social+'</option>';
@@ -486,7 +486,7 @@ jQuery(function () {
         jQuery(tablelist).closest('.block-content').find('.options div:nth-child(3)').empty();
         listdt.columns([1]).every( function () {
             var column = this;
-            var select = jQuery('<select class="js-select2-filtro form-control" id="filtrado1" data-placeholder="Filtro por cliente" data-allow-clear="true"><option></option></select>')
+            var select = jQuery('<select class="js-select2-filtro form-control" id="filtrado1" data-placeholder="Filtro por cliente" data-allow-clear="true"></select>')
                 .appendTo(jQuery(tablelist).closest('.block-content').find('.options div:nth-child(3)'))
                 .on( 'change', function () {
                     var val = jQuery.fn.dataTable.util.escapeRegex(
@@ -496,11 +496,13 @@ jQuery(function () {
                         .search( val ? '^'+val+'$' : '', true, false )
                         .draw();
                 } );
+            if (select2_enabled) { select.append( '<option value=""></option>' ); }
+            else { select.append( '<option value="">Filtro por cliente</option>' ); }
             column.data().unique().sort().each( function ( d, j ) {
                 select.append( '<option value="'+d+'">'+d+'</option>' )
             } );
         } );
-        jQuery('.js-select2-filtro').select2();
+        if (select2_enabled) { jQuery('.js-select2-filtro').select2(); }
     };
 
     var busquedavalidate = jQuery(busquedaform).validate({

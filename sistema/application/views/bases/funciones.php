@@ -40,6 +40,8 @@
             var ajax_timeout ='<?php echo $this->config->item('ajax_timeout');?>';
             var perfil ='<?php echo $this->session->userdata('perfil'); ?>';
             var crear_contrasena = <?php echo ($crear_contrasena ?? 'false'); ?>;
+            var select2_enabled = true;
+            var blockUI_message = ' Procesando';
         </script>
         <script type="text/javascript">
             /***Funciones generales***/
@@ -145,13 +147,13 @@
                 /*****Generales********/
                     var width = $(window).width();
 
-                    jQuery('form').on('keyup keypress', function(e) {
+                    /*jQuery('form').on('keyup keypress', function(e) {
                         var keyCode = e.keyCode || e.which;
                         if (keyCode === 13) { 
                             e.preventDefault();
                             return false;
                         }
-                    });
+                    });*/
 
                     jQuery('body').on('click', '.toTop', function(e) {
                         $('html, body').animate({
@@ -167,6 +169,8 @@
                     });
 
                     if(width <769){
+                        select2_enabled = false;
+                        blockUI_message = '';
                         if (jQuery('select.select2').data('select2')) {
                             jQuery('select.select2').select2("destroy");
                         }
@@ -277,7 +281,7 @@
 
                 /***AJAX***/
                     jQuery( document ).ajaxStart(function() {
-                        blockpage('<h1><i class="fa fa-cog fa-spin fa-fw"></i> Procesando</h1>');
+                        blockpage('<h1><i class="fa fa-cog fa-spin fa-fw"></i>' + blockUI_message + '</h1>');
                     });
                     jQuery( document ).ajaxError(function(event, jqxhr, settings, thrownError) {
                         ajaxflagunblock = true;

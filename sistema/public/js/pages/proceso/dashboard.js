@@ -237,7 +237,7 @@ jQuery(function () {
             },
             plotOptions: {
                 pie: {
-                    center: ['25%', '50%'],
+                    center: ['50%', '50%'],
                     dataLabels: {
                         enabled: true,
                         style: {
@@ -249,7 +249,8 @@ jQuery(function () {
                 }
             },
             legend: {
-                x: 320,
+                x: 0,
+                y: 400,
                 floating: true,
                 verticalAlign: "middle",
                 layout: "vertical",

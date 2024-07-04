@@ -52,7 +52,7 @@
                                             <label class="col-xs-12">Cliente</label>
                                             <div class="col-xs-12">
                                                 <select class="form-control select2" name="cliente" style="width: 100%;" data-placeholder="Todos los clientes"  data-allow-clear="true">
-                                                    <option value=""></option>
+                                                    <option value="">Seleccione</option>
                                                     <?php foreach ($clientes as $item) :?>
                                                     <option value="<?php echo $item['id']; ?>" ><?php echo $item['documento'].' - '.$item['nombre_o_razon_social']; ?></option>
                                                     <?php endforeach;?>

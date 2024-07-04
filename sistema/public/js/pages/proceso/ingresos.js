@@ -60,7 +60,7 @@ jQuery(function () {
                     jQuery(registroform+' [name="estado"]').val(1);
                     jQuery(registroform+' [name="counter"]').val(0);
                     jQuery(tabledetalles+' tbody').html('');
-                    var options = '<option value=""></option>';
+                    var options = '<option value="">Seleccione producto</option>';
                     var text = '';
                     jQuery.each(response.data, function(index, item) {
                         if(item.existencias>0) { text = item.existencias+' '+item.abreviatura; }
@@ -348,7 +348,7 @@ jQuery(function () {
         jQuery(tablelist).closest('.block-content').find('.options div:nth-child(3)').empty();
         listdt.columns([1]).every( function () {
             var column = this;
-            var select = jQuery('<select class="js-select2-filtro form-control" id="filtrado1" data-placeholder="Filtro por proveedor" data-allow-clear="true"><option></option></select>')
+            var select = jQuery('<select class="js-select2-filtro form-control" id="filtrado1" data-placeholder="Filtro por proveedor" data-allow-clear="true"></select>')
                 .appendTo(jQuery(tablelist).closest('.block-content').find('.options div:nth-child(3)'))
                 .on( 'change', function () {
                     var val = jQuery.fn.dataTable.util.escapeRegex(
@@ -358,11 +358,13 @@ jQuery(function () {
                         .search( val ? '^'+val+'$' : '', true, false )
                         .draw();
                 } );
+            if (select2_enabled) { select.append( '<option value=""></option>' ); }
+            else { select.append( '<option value="">Filtro por proveedor</option>' ); }
             column.data().unique().sort().each( function ( d, j ) {
                 select.append( '<option value="'+d+'">'+d+'</option>' )
             } );
         } );
-        jQuery('.js-select2-filtro').select2();
+        if (select2_enabled) { jQuery('.js-select2-filtro').select2(); }
     };
 
     var busquedavalidate = jQuery(busquedaform).validate({
