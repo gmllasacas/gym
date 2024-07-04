@@ -1,14 +1,9 @@
 
             <main id="main-container" >
-                <div class="content-mini bg-gray-lighter">
-                    <div class="row push-10">
-                        <div class="col-sm-6">
-                            <h1 class="page-heading">
-                                <?php echo $titulo_text;?>
-                            </h1>
-                        </div>
-                        <div class="col-sm-6 text-right hidden-xs">
-                            <ol class="breadcrumb push-10-t">
+                <div class="content-mini-barra bg-gray-lighter">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <ol class="breadcrumb">
                                 <li><?php echo $menu_text;?></li>
                                 <li><a class="link-effect" href="#"><?php echo $submenu_text;?></a></li>
                             </ol>
@@ -33,7 +28,7 @@
                                         <a class="block block-bordered block-link-hover3 text-center" id="envio" role="button" data-texto="" data-table="base_configuracion" data-id="1" data-envio="<?php echo $configuracion['envio'];?>">
                                         </a>
                                     </div>
-                                    <div class="col-xs-6 col-sm-4 col-xs-offset-3 col-sm-offset-0">
+                                    <div class="col-xs-12 col-sm-4 col-sm-offset-0">
                                         <input class="hidden" type="file" name="logo" onchange="document.getElementById('logo').src = window.URL.createObjectURL(this.files[0])">
                                         <a class="block block-bordered" id="editarlogo" role="button">
                                             <div class="block-content block-content-mini text-center" style="padding-bottom: 5px;">

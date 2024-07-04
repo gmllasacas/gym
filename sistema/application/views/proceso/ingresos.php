@@ -31,7 +31,7 @@
                             <div class="block-content">
                                 <div class="row">
                                     <div class="col-xs-12 col-sm-2 col-sm-offset-3">
-                                        <div class="form-group">
+                                        <div class="form-group push-5">
                                             <label class="col-xs-12">Fecha de inicio</label>
                                             <div class="col-xs-12">
                                                 <div class="input-group">
@@ -42,7 +42,7 @@
                                         </div>
                                     </div>
                                     <div class="col-xs-12 col-sm-2">
-                                        <div class="form-group">
+                                        <div class="form-group push-5">
                                             <label class="col-xs-12">Fecha de fin</label>
                                             <div class="col-xs-12">
                                                 <div class="input-group">
@@ -53,8 +53,8 @@
                                         </div>
                                     </div>
                                     <div class="col-xs-12 col-sm-2">
-                                        <div class="form-group">
-                                            <label class="col-xs-12 hidden-xs"><br></label>
+                                        <div class="form-group push-5">
+                                            <label class="col-xs-12"><br></label>
                                             <div class="col-xs-12">
                                                 <button class="btn btn-info width100" type="submit"><i class="fa fa-search push-5-r"></i>CONSULTAR</button>
                                             </div>
@@ -164,6 +164,7 @@
                                                 <div class="col-xs-12">
                                                     <div class="form-material form-material-info">
                                                         <select class="form-control select2 required" name="proveedor" style="width: 100%;" data-placeholder="Seleccione proveedor">
+                                                            <option value="">Seleccione</option>
                                                             <?php foreach ($proveedores as $item) :?>
                                                             <option value="<?php echo $item['id']; ?>" ><?php echo $item['ruc'].' - '.$item['nombre_o_razon_social']; ?></option>
                                                             <?php endforeach;?>

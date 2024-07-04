@@ -1,7 +1,7 @@
 
 
             <main id="main-container">
-                <div class="content bg-image overflow-hidden" style="background-image: url('<?php echo base_url().$configuracion['dashboard'];?>');">
+                <div class="content bg-image overflow-hidden hidden-xs" style="background-image: url('<?php echo base_url().$configuracion['dashboard'];?>');">
                     <div class="push-10-t push-15">
                         <h1 class="h2 text-white animated zoomIn">Dashboard</h1>
                     </div>
@@ -92,7 +92,7 @@
                                         <button class="text-info" role="button" type="submit"><i class="si si-magnifier"></i> <span class="hidden-xs">Consultar</span></button>
                                     </li>
                                 </ul>
-                                <h3 class="block-title"><?php echo $titulo_text;?> por fecha</h3>
+                                <h3 class="block-title"><?php echo $export_text;?> por fecha</h3>
                             </div>
                             <div class="block-content">
                                 <div class="row">
@@ -127,49 +127,45 @@
                         </form>
                     </div>
                     <div class="row">
-                        <div class="col-md-12">
+                        <div class="col-md-6">
                             <div class="block">
                                 <div class="block-header">
                                     <h3 class="block-title">VENTAS POR MES</h3>
                                 </div>
                                 <div class="block-content block-content-full bg-gray-lighter text-center">
-                                    <div id="graph1" style="width: 100%; height: 400px; margin: 0 auto"></div>
+                                    <div id="graph1" style="width: 100%; height: 250px; margin: 0 auto"></div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
+                        <div class="col-md-6">
                             <div class="block">
                                 <div class="block-header">
                                     <h3 class="block-title">PAGOS POR MES</h3>
                                 </div>
                                 <div class="block-content block-content-full bg-gray-lighter text-center">
-                                    <div id="graph2" style="width: 100%; height: 400px; margin: 0 auto"></div>
+                                    <div id="graph2" style="width: 100%; height: 250px; margin: 0 auto"></div>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-md-12">
+                        <div class="col-md-6">
                             <div class="block">
                                 <div class="block-header">
                                     <h3 class="block-title">INGRESOS POR MES</h3>
                                 </div>
                                 <div class="block-content block-content-full bg-gray-lighter text-center">
-                                    <div id="graph3" style="width: 100%; height: 400px; margin: 0 auto"></div>
+                                    <div id="graph3" style="width: 100%; height: 250px; margin: 0 auto"></div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
+                        <div class="col-md-6">
                             <div class="block">
                                 <div class="block-header">
                                     <h3 class="block-title">VENTAS POR CLIENTE DEL AñO (8 MAYORES)</h3>
                                 </div>
                                 <div class="block-content block-content-full bg-gray-lighter text-center">
-                                    <div id="high-pie1" style="width: 100%; height: 400px; margin: 0 auto"></div>
+                                    <div id="high-pie1" style="width: 100%; height: 250px; margin: 0 auto"></div>
                                 </div>
                             </div>
                         </div>

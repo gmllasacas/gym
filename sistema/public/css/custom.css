@@ -91,6 +91,7 @@
 }
 .table-responsive >.table {
 	margin-bottom: 0px;
+    min-width: 940px;
 }
 .table-responsive{
 	margin-bottom: 20px;
@@ -148,6 +149,10 @@ table.table > tbody > tr.row-condensed{
     width: 80px;
     height: 80px;
     border-radius: 5%;
+}
+
+.btn .si {
+    bottom: 0px;
 }
 
 .input-daterange .input-group-addon:first-child {
@@ -1011,6 +1016,13 @@ div.dataTables_wrapper  .form-control:focus {
 	.text-center-xs{
 		text-align:center !important;
 	}
+    div.dataTables_filter input {
+        width: 77%;
+    }
+    .js-select2-filtro.form-control {
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
 }
 
 @media print{

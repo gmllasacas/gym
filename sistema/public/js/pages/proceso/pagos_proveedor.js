@@ -200,7 +200,7 @@ jQuery(function () {
                 if(response.status=='200'){
                     reiniciarform(registroform,registrovalidate,'generico/nuevoregistro','<i class="fa fa-plus push-5-r"></i> Registrar');
                     jQuery(anulacionform).hide();
-                    var proveedores = '<option value=""></option>';
+                    var proveedores = '<option value="">Seleccione</option>';
                     jQuery.each(response.data, function(index, item) {
                         proveedores += '<option value="'+item.id+'">'+item.ruc+' - '+item.nombre_o_razon_social+'</option>';
                     });
@@ -480,9 +480,7 @@ jQuery(function () {
         });
     });
 
-    jQuery(busquedaform+' [name="proveedor"]').select2({
-        allowClear: true
-    }).on('select2:unselecting', function() {
+    jQuery(busquedaform+' [name="proveedor"]').on('select2:unselecting', function() {
         jQuery(this).data('unselecting', true);
     }).on('select2:opening', function(e) {
         if (jQuery(this).data('unselecting')) {

@@ -182,7 +182,7 @@ jQuery(function () {
         jQuery(tablelist).closest('.block-content').find('.options div:nth-child(3)').empty();
         listdt.columns([13]).every( function () {
             var column = this;
-            var select = jQuery('<select class="js-select2-filtro form-control table-custom-filter" data-placeholder="Filtro por etiqueta" data-allow-clear="true"><option></option></select>')
+            var select = jQuery('<select class="js-select2-filtro form-control table-custom-filter" data-placeholder="Filtro por etiqueta" data-allow-clear="true"></select>')
                 .appendTo(jQuery(tablelist).closest('.block-content').find('.options div:nth-child(3)'))
                 .on( 'change', function () {
                     var val = jQuery.fn.dataTable.util.escapeRegex(
@@ -192,11 +192,13 @@ jQuery(function () {
                         .search( val ? '^'+val+'$' : '', true, false )
                         .draw();
                 } );
+            if (select2_enabled) { select.append( '<option value=""></option>' ); }
+            else { select.append( '<option value="">Filtro por etiqueta</option>' ); }
             column.data().unique().sort().each( function ( d, j ) {
                 select.append( '<option value="'+d+'">'+d+'</option>' )
             } );
         } );
-        jQuery('.js-select2-filtro').select2();
+        if (select2_enabled) { jQuery('.js-select2-filtro').select2(); }
     };
 
     jQuery('body').on('click', '#block-reload', function() {
