@@ -15,6 +15,7 @@ use Greenter\Model\Sale\Legend;
 use Greenter\Report\HtmlReport;
 use Greenter\Report\PdfReport;
 use Greenter\Report\Resolver\DefaultTemplateResolver;
+use Greenter\Xml\Parser\InvoiceParser;
 
 class Sunat extends CI_Controller
 {
@@ -29,7 +30,7 @@ class Sunat extends CI_Controller
         $this->load->model('GenericoModelo', 'generico_modelo');
     }
 
-    public function factura()
+    public function enviar()
     {
         $see = new See();
         $see->setCertificate(file_get_contents(APPPATH.'third_party/certificate.pem'));
@@ -75,8 +76,7 @@ class Sunat extends CI_Controller
             ->setTotalImpuestos(18.00)
             ->setValorVenta(100.00)
             ->setSubTotal(118.00)
-            ->setMtoImpVenta(118.00)
-            ;
+            ->setMtoImpVenta(118.00);
 
         $item = (new SaleDetail())
             ->setCodProducto('P001')
@@ -90,8 +90,7 @@ class Sunat extends CI_Controller
             ->setTipAfeIgv('10') // Gravado Op. Onerosa - Catalog. 07
             ->setTotalImpuestos(18.00) // Suma de impuestos en el detalle
             ->setMtoValorVenta(100.00)
-            ->setMtoPrecioUnitario(59.00)
-            ;
+            ->setMtoPrecioUnitario(59.00);
 
         $legend = (new Legend())
             ->setCode('1000') // Monto en letras - Catalog. 52
@@ -102,13 +101,11 @@ class Sunat extends CI_Controller
         
         $result = $see->send($invoice);
 
-        // Guardar XML firmado digitalmente.
         file_put_contents(
             FCPATH . '/public/documentos/sunat/' . $invoice->getName().'.xml',
             $see->getFactory()->getLastXml()
         );
 
-        // Verificamos que la conexión con SUNAT fue exitosa.
         if (!$result->isSuccess()) {
             // Mostrar error al conectarse a SUNAT.
             echo 'Codigo Error: '.$result->getError()->getCode();
@@ -120,49 +117,48 @@ class Sunat extends CI_Controller
         file_put_contents(FCPATH . '/public/documentos/sunat/' . 'R-'.$invoice->getName().'.zip', $result->getCdrZip());
 
         $cdr = $result->getCdrResponse();
-
         $code = (int)$cdr->getCode();
-
         if ($code === 0) {
-            //echo 'ESTADO: ACEPTADA'.PHP_EOL;
-
-            $report = new HtmlReport();
-            $report->setTemplate('invoice3.html.twig');
-
-            $params = [
-                'system' => [
-                    'logo' => file_get_contents(FCPATH.'/public/img/recursos/logo.png'),
-                    'hash' => 'qqnr2dN4p/HmaEA/CJuVGo7dv5g=',
-                ],
-                'user' => [
-                    'header'     => 'Telf: <b>(01) 123375</b>', // Texto que se ubica debajo de la dirección de empresa
-                    'extras'     => [
-                        ['name' => 'CONDICION DE PAGO', 'value' => 'Efectivo'     ],
-                        ['name' => 'VENDEDOR'         , 'value' => 'GITHUB SELLER'],
-                    ],
-                    'footer' => '<p>Nro Resolucion: <b>3232323</b></p>'
-                ]
-            ];
-
-            $html = $report->render($invoice, $params);
-
-            echo $html;
-
-            //file_put_contents('invoice.pdf', $pdf);
-
+            echo 'ESTADO: ACEPTADA'.PHP_EOL;
             if (count($cdr->getNotes()) > 0) {
                 echo 'OBSERVACIONES:'.PHP_EOL;
-                // Corregir estas observaciones en siguientes emisiones.
                 var_dump($cdr->getNotes());
             }
         } else if ($code >= 2000 && $code <= 3999) {
             echo 'ESTADO: RECHAZADA'.PHP_EOL;
         } else {
-            /* Esto no debería darse, pero si ocurre, es un CDR inválido que debería tratarse como un error-excepción. */
-            /*code: 0100 a 1999 */
             echo 'Excepción';
         }
 
         echo $cdr->getDescription().PHP_EOL;
+    }
+
+    public function comprobante()
+    {
+        $parser = new InvoiceParser();
+        $xml = file_get_contents(FCPATH . '/public/documentos/sunat/20123456789-01-F001-1.xml');
+        $invoice = $parser->parse($xml);
+
+        $report = new HtmlReport();
+        $report->setTemplate('invoice3.html.twig');
+
+        $params = [
+            'system' => [
+                'logo' => file_get_contents(FCPATH.'/public/img/recursos/logo.png'),
+                'hash' => 'qqnr2dN4p/HmaEA/CJuVGo7dv5g=',
+            ],
+            'user' => [
+                'header'     => 'Telf: <b>(01) 123375</b>', // Texto que se ubica debajo de la dirección de empresa
+                'extras'     => [
+                    ['name' => 'CONDICION DE PAGO', 'value' => 'Efectivo'     ],
+                    ['name' => 'VENDEDOR'         , 'value' => 'GITHUB SELLER'],
+                ],
+                'footer' => '<p>Nro Resolucion: <b>3232323</b></p>'
+            ]
+        ];
+
+        $html = $report->render($invoice, $params);
+
+        echo $html;
     }
 }

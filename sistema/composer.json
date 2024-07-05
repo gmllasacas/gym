@@ -2,6 +2,7 @@
     "require": {
         "greenter/lite": "^5.0",
         "greenter/htmltopdf": "^5.0",
-        "greenter/report": "^5.0"
+        "greenter/report": "^5.0",
+        "greenter/xml-parser": "^5.0"
     }
 }
