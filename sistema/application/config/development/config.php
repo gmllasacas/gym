@@ -7,7 +7,7 @@ $config['base_url'] = 'http://localhost/tahua/sistema/';
 $config['log_threshold'] = 1;
 $config['sess_cookie_name'] = 'ci_session_tahua';
 $config['csrf_protection'] = false;
-$config['composer_autoload'] = false;
+$config['composer_autoload'] = FCPATH .'vendor/autoload.php';
 $config['file_version'] = '?v' . rand();
 
 #LOG

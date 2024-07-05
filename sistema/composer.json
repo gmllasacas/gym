@@ -1,10 +1,7 @@
 {
-	"name": "gz/sistema",
-	"type": "project",
-	"description": "Sistema with CodeIgniter v3",
-	"require": {
-		"php": "~7.4.0",
-		"ext-json": "*",
-		"ext-mbstring": "*"
-	}
+    "require": {
+        "greenter/lite": "^5.0",
+        "greenter/htmltopdf": "^5.0",
+        "greenter/report": "^5.0"
+    }
 }
