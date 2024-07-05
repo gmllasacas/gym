@@ -8,6 +8,8 @@ vendor/
 
 #Uploads
 public/uploads/*
+public/documentos/sunat/*
+!public/documentos/sunat/index.html
 
 #Configuration
 application/config/production/*
