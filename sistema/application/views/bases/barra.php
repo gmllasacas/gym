@@ -2,10 +2,9 @@
             <header id="header-navbar" class="content-mini content-mini-full">
                 <ul class="nav-header pull-right">
                     <li>
-                        
                         <div class="btn-group">
                             <button class="btn btn-default btn-image dropdown-toggle" data-toggle="dropdown" type="button">
-                                <span class="text-white text-uppercase font-w300"> <?php echo $this->session->userdata('username'); ?> </span> 
+                                <span class="text-white text-uppercase font-w300"></span> 
                                 <img src="<?php echo base_url();?>public/img/avatars/avatar.jpg" alt="Avatar">
                                 <span class="caret"></span>
                             </button>
@@ -13,7 +12,7 @@
                                 <li class="dropdown-header">Usuario</li>
                                 <li>
                                     <a tabindex="-1">
-                                        <i class="si si-user pull-right"></i><span><?php echo $this->session->userdata('nombres'); ?></span>
+                                        <i class="si si-user pull-right"></i><span><?php echo $this->session->userdata('username'); ?></span>
                                     </a>
                                 </li>
                                 <li class="divider"></li>
@@ -24,6 +23,23 @@
                                     </a>
                                 </li>
                             </ul>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="btn-group">
+                            <?php if ($this->session->userdata('caja')) { ?>
+                            <a class="btn text-white bg-success" href="#" data-toggle="tooltip" title="" data-placement="bottom" data-original-title="Caja abierta">
+                                <i class="si si-pointer"></i>
+                                <span class="push-5-l"><?php echo $this->session->userdata('sucursaldesc'); ?></span>
+                                <i class="fa fa-unlock push-5-l"></i>
+                            </a>
+                            <?php } else {?>
+                            <a class="btn text-white bg-danger" href="#" data-toggle="tooltip" title="" data-placement="bottom" data-original-title="Caja cerrada">
+                                <i class="si si-pointer"></i>
+                                <span class="push-5-l"><?php echo $this->session->userdata('sucursaldesc'); ?></span>
+                                <i class="fa fa-lock push-5-l"></i>
+                            </a>
+                            <?php } ?>
                         </div>
                     </li>
                 </ul>

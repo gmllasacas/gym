@@ -7,7 +7,7 @@ if (! function_exists('dd')) {
     function dd($variable)
     {
         echo '<pre>';
-        print_r($variable);
+        print_r((array) $variable);
         die();
     }
 }
@@ -278,6 +278,26 @@ if (! function_exists('response')) {
     }
 }
 
+if (! function_exists('caja_actual')) {
+    function caja_actual($estado = '1', $id = '0')
+    {
+        $ci=& get_instance();
+        $ci->load->model('generico_modelo');
+        $ci->load->database();
+        if ($id != '0') {
+            $parameters = ['id' => $id, 'sucursal' => $ci->session->userdata('sucursal'), 'estado'=>$estado];
+        } else {
+            $parameters = ['sucursal' => $ci->session->userdata('sucursal'), 'estado'=>$estado];
+        }
+        $data = $ci->generico_modelo->caja($parameters);
+        if (!isset($data['id'])) {
+            return false;
+        }
+
+        return $data;
+    }
+}
+
 if (! function_exists('registro_auditoria')) {
     function registro_auditoria($data, $accion)
     {
@@ -288,15 +308,34 @@ if (! function_exists('registro_auditoria')) {
             'usuario' => $ci->session->userdata('id'),
             'accion' => str_replace(['proceso_', 'base_'], ['', ''], $accion),
             'data' => json_encode($data),
-            //'sucursal' => $ci->session->userdata('sucursal'),
+            'sucursal' => $ci->session->userdata('sucursal'),
             'fecha' => date('Y-m-d H:i:s'),
         ];
         $ci->db->insert('proceso_auditoria', $inputs, true);
     }
 }
 
-if (! function_exists('nuevo_kardex')) {
-    function nuevo_kardex($referencia, $item, $tipo_kardex)
+if (! function_exists('registro_detalle_caja')) {
+    function registro_detalle_caja($data)
+    {
+        $ci=& get_instance();
+        $ci->load->library('session');
+
+        if ($data['monto'] > 0.00) {
+            $inputs = [
+                'caja' => $data['caja'],
+                'referencia' => $data['referencia'],
+                'monto' => $data['monto'],
+                'usuario' => $ci->session->userdata('id'),
+                'fecha' => date('Y-m-d H:i:s'),
+            ];
+            $ci->db->insert('proceso_caja_detalle', $inputs, true);
+        }
+    }
+}
+
+if (! function_exists('registro_kardex')) {
+    function registro_kardex($referencia, $item, $tipo_kardex)
     {
         $ci=& get_instance();
         $ci->load->database();

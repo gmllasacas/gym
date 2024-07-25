@@ -17,11 +17,13 @@ class Sistema extends CI_Controller
     public function index()
     {
         $this->session->sess_destroy();
+        $sucursales = $this->generico_modelo->listado('base_sucursal', '1');
 
         $datos = [
             'username' => '',
             'correo' => '',
-            'token' => ''
+            'token' => '',
+            'sucursales' => $sucursales
         ];
 
         $this->load->view('bases/cabezera');
@@ -32,74 +34,78 @@ class Sistema extends CI_Controller
 
     public function login()
     {
-        //$ruc=str_replace(' ','',addslashes($this->input->post('ruc')));
-        $username=$this->input->post('username');
-        $password=remove_invisible_characters($this->input->post('password'));
+        $username = $this->input->post('username');
+        $password = remove_invisible_characters($this->input->post('password'));
+        $sucursal = $this->input->post('sucursal');
         $user_logging_waiting_time = $this->config->item('user_logging_waiting_time');
         $user_logging_attempts = $this->config->item('user_logging_attempts');
+        $recaptcha_system_server_secret = $this->config->item('recaptcha_system_server_secret');
 
-        switch ($username) {
-            case 'superadmin':
-                $ruc=10478672882;
-                break;
-            default:
-                $ruc=10478672882;
-                break;
-        }
-
-        //$this->form_validation->set_rules('ruc', 'ruc', 'required');
         $this->form_validation->set_rules('username', 'username', 'required');
         $this->form_validation->set_rules('password', 'password', 'required');
+        $this->form_validation->set_rules('sucursal', 'sucursal', 'required');
+        $this->form_validation->set_rules('recaptcha_response', 'recaptcha_response', 'required');
 
         if ($this->form_validation->run() == false) {
             response(['message'=>'Parámetros incorrectos'], 500);
         } else {
-            $registro = $this->generico_modelo->login(['estado'=>1,'ruc'=>$ruc,'username'=>$username]);
-            if (count((array)$registro)>0) {
-                $intentos = $registro['intentos'] + 1;
-                $ultimo_intento = is_null($registro['ultimo_intento']) ? date('Y-m-d H:i:s') : $registro['ultimo_intento'];
-                $ahora = date('Y-m-d H:i:s');
-                $minutos = minutes_difference($ultimo_intento, $ahora);
-                $flag = false;
-                if ($minutos > $user_logging_waiting_time) {
-                    $intentos = 1;
-                    $this->db->update('base_usuario', ['intentos' => $intentos, 'ultimo_intento' => $ahora], ['id' => $registro['id']]);
-                    $flag = true;
-                } else {
-                    $this->db->update('base_usuario', ['intentos' => $intentos], ['id' => $registro['id']]);
-                    if ($intentos <= $user_logging_attempts) {
+            $recaptcha_response = $this->input->post('recaptcha_response');
+            $verifyResponse = file_get_contents('https://www.google.com/recaptcha/api/siteverify?secret='.$recaptcha_system_server_secret.'&response='.$recaptcha_response);
+            $responseData = json_decode($verifyResponse);
+            if ($responseData->success) {
+                $registro = $this->generico_modelo->login(['estado'=>1, 'username'=>$username, 'sucursal'=>$sucursal]);
+                if (isset($registro['id'])) {
+                    $intentos = $registro['intentos'] + 1;
+                    $ultimo_intento = is_null($registro['ultimo_intento']) ? date('Y-m-d H:i:s') : $registro['ultimo_intento'];
+                    $ahora = date('Y-m-d H:i:s');
+                    $minutos = minutes_difference($ultimo_intento, $ahora);
+                    $flag = false;
+                    if ($minutos > $user_logging_waiting_time) {
+                        $intentos = 1;
+                        $this->db->update('base_usuario', ['intentos' => $intentos, 'ultimo_intento' => $ahora], ['id' => $registro['id']]);
                         $flag = true;
-                    }
-                }
-
-                if ($flag) {
-                    if (password_verify($password, $registro['password'])) {
-                        //$this->session->set_userdata('aviso', 1);
-                        $this->session->set_userdata('id', $registro['id']);
-                        $this->session->set_userdata('cliente_sistema', $registro['cliente_sistema']);
-                        $this->session->set_userdata('ruc', $registro['ruc']);
-                        $this->session->set_userdata('username', $registro['username']);
-                        $this->session->set_userdata('perfil', $registro['perfil']);
-                        $this->session->set_userdata('nombres', $registro['nombres'].' '.$registro['apellidos']);
-                        //$this->session->set_userdata('mensaje', 'Bienvenido '.$registro['nombres'].' '.$registro['apellidos']);
-
-                        $this->db->update('base_usuario', ['intentos' => 0, 'ultimo_intento' => $ahora, 'token'=> null], ['id' => $registro['id']]);
-                        $permisos = $this->generico_modelo->listado('permisos', '1', ['perfil'=>$this->session->userdata('perfil')]);
-                        registro_auditoria([], "Inició sesión");
-                        response([
-                            'message' => 'Datos correctos',
-                            'redirect'=> base_url().$permisos[0]['url'],
-                        ]);
                     } else {
-                        $restante = ($user_logging_attempts - $intentos) < 0 ? $user_logging_attempts : ($user_logging_attempts - $intentos);
-                        registro_auditoria([], "Intentó iniciar sesión, contraseña incorrecta");
-                        response(['message'=>'Contraseña incorrecta, tiene ' .  $restante . ' intento(s) restante(s)'], 500);
+                        $this->db->update('base_usuario', ['intentos' => $intentos], ['id' => $registro['id']]);
+                        if ($intentos <= $user_logging_attempts) {
+                            $flag = true;
+                        }
+                    }
+
+                    if ($flag) {
+                        if (password_verify($password, $registro['password'])) {
+                            //$this->session->set_userdata('aviso', 1);
+                            $this->session->set_userdata('id', $registro['id']);
+                            $this->session->set_userdata('cliente_sistema', $registro['cliente_sistema']);
+                            $this->session->set_userdata('ruc', $registro['ruc']);
+                            $this->session->set_userdata('username', $registro['username']);
+                            $this->session->set_userdata('perfil', $registro['perfil']);
+                            $this->session->set_userdata('nombres', $registro['nombres'].' '.$registro['apellidos']);
+                            $this->session->set_userdata('sucursal', $registro['sucursal']);
+                            $this->session->set_userdata('sucursaldesc', $registro['sucursaldesc']);
+
+                            $caja = $this->generico_modelo->caja(['sucursal' => $sucursal, 'estado'=>1]);
+                            $this->session->set_userdata('caja', $caja['id'] ?? null);
+
+                            $this->db->update('base_usuario', ['intentos' => 0, 'ultimo_intento' => $ahora, 'token'=> null], ['id' => $registro['id']]);
+                            $permisos = $this->generico_modelo->listado('permisos', '1', ['perfil'=>$this->session->userdata('perfil')]);
+                            registro_auditoria([], "Inició sesión");
+                            response([
+                                'message' => 'Datos correctos',
+                                'redirect'=> base_url().$permisos[0]['url'],
+                            ]);
+                        } else {
+                            $restante = ($user_logging_attempts - $intentos) < 0 ? $user_logging_attempts : ($user_logging_attempts - $intentos);
+                            registro_auditoria([], "Intentó iniciar sesión, contraseña incorrecta");
+                            response(['message'=>'Contraseña incorrecta, tiene ' .  $restante . ' intento(s) restante(s)'], 500);
+                        }
+                    } else {
+                        response(['message'=>'Intentos de ingreso excedido (' . $user_logging_attempts .'), por favor espere ' . (15 - $minutos) . ' minuto(s) para intentar nuevamente'], 500);
                     }
                 } else {
-                    response(['message'=>'Intentos de ingreso excedido (' . $user_logging_attempts .'), por favor espere ' . (15 - $minutos) . ' minuto(s) para intentar nuevamente'], 500);
+                    response(['message' => $registro['message']], 500);
                 }
             } else {
-                response(['message'=>'Usuario incorrecto'], 500);
+                response(['message'=>'Captcha inválido, intente nuevamente'], 500);
             }
         }
     }
@@ -117,7 +123,6 @@ class Sistema extends CI_Controller
         $datos = [
             'menu_text' => 'Sistema',
             'submenu_text' => 'Configuración',
-            'titulo_text' => 'Configuración',
             'export_text' => 'Formulario',
             'registro_text' => '',
             'configuracion'=>$this->configuracion
@@ -136,7 +141,6 @@ class Sistema extends CI_Controller
         $datos = [
             'menu_text' => 'Sistema',
             'submenu_text' => 'Clientes del sistema',
-            'titulo_text' => 'Clientes del sistema',
             'export_text' => 'Listado de clientes del sistema',
             'registro_text' => 'cliente del sistema'
         ];
@@ -162,7 +166,6 @@ class Sistema extends CI_Controller
         $datos = [
             'menu_text' => 'Sistema',
             'submenu_text' => 'Usuarios',
-            'titulo_text' => 'Usuarios',
             'export_text' => 'Listado de usuarios',
             'registro_text' => 'usuario',
             'clientes_sistema'=>$clientes_sistema,
@@ -183,7 +186,6 @@ class Sistema extends CI_Controller
         $datos = [
             'menu_text' => 'Sistema',
             'submenu_text' => 'Auditoría',
-            'titulo_text' => 'Auditoría',
             'export_text' => 'Listado de registros',
             'registro_text' => 'auditoría',
         ];

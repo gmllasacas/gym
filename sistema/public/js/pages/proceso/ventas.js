@@ -87,10 +87,10 @@ jQuery(function () {
                                     text = 'Sin existencias';
                                     disabled = 'disabled';
                                 }
-                                productos += '<option value="'+item.id+'" '+disabled+'>'+item.codigo+' - '+item.descripcion+' ('+text+')</option>';
+                                productos += '<option data-tipo="'+item.tipo+'" value="'+item.id+'" '+disabled+'>'+item.codigo+' - '+item.descripcion+' ('+text+')</option>';
                                 break;
                             case '2':
-                                servicios += '<option value="'+item.id+'" '+disabled+'>'+item.codigo+' - '+item.descripcion+' ('+item.duracion+' '+item.duracion_unidad_desc+')</option>';
+                                servicios += '<option data-tipo="'+item.tipo+'" value="'+item.id+'" '+disabled+'>'+item.codigo+' - '+item.descripcion+' ('+item.duracion+' '+item.duracion_unidad_desc+')</option>';
                             default:
                                 break;
                         }
@@ -576,6 +576,7 @@ jQuery(function () {
     jQuery('body').on('click', registroform + ' .btn-producto', function() {
         var elemento = jQuery(this);
         var producto_sel = jQuery(registroform+' [name="producto_sel"]').val();
+        var tipo_sel = jQuery(registroform+' [name="producto_sel"]').find("option:selected").attr('data-tipo');
         var counter = jQuery(registroform+' [name="counter"]').val();
         if(producto_sel){
             var productos = jQuery(tabledetalles+' .input-id');
@@ -589,12 +590,14 @@ jQuery(function () {
                 }
             });
 
-            jQuery.each(producto_tipos, function(index, item) {
-                if(jQuery(item).val() == 2) { //servicio
-                    flag = false;
-                    message = 'Solo se puede agregar un servicio por venta';
-                }
-            });
+           if (tipo_sel == 2) {
+                jQuery.each(producto_tipos, function(index, item) {
+                    if(jQuery(item).val() == 2) { //servicio
+                        flag = false;
+                        message = 'Solo se puede agregar un servicio por venta';
+                    }
+                });
+           }
 
             if(flag){
                 jQuery.ajax({

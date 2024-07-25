@@ -40,7 +40,7 @@ jQuery(function () {
                     });
                     jQuery(registroform+' [name=cliente_sistema]').val(response.registro.cliente_sistema).trigger("change");
                     jQuery(registroform+' [name=cliente_sistema]').prop('disabled',true);
-                    jQuery(registroform+' [name=password2]').val('');
+                    jQuery(registroform+' [name=password]').val('');
                     jQuery(registroform+' [name=password2]').val('');
                     jQuery('#passwordswb').show();
                     jQuery('#passwordsw').prop("checked",false).trigger("change");
@@ -257,7 +257,7 @@ jQuery(function () {
     var registrovalidate = jQuery(registroform).validate({
         rules: {
             'password2': {
-                equalTo: '#password'
+                equalTo: '#password2'
             },
         },
         messages: {

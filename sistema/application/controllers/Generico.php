@@ -77,7 +77,6 @@ class Generico extends CI_Controller
                     }
                     break;
                 case 'proceso_venta':
-                    //log_message('error','inputs:'.print_r($inputs, TRUE));
                     $flag = true;
                     $message = '';
                     $productos = $this->input->post('producto');
@@ -105,16 +104,29 @@ class Generico extends CI_Controller
                             }
                         }
                     }
+                    $caja_actual = caja_actual();
+                    if (!$caja_actual) {
+                        response(['message' => 'No se puede registrar la venta, la caja está cerrada'], 500);
+                    }
 
                     if ($flag) {
-                        $inputs['usuario']=$this->session->userdata('id');
-                        $inputs['fecha']=$fecha;
+                        $usuario = $this->session->userdata('id');
+                        $inputs['usuario'] = $usuario;
+                        $inputs['fecha'] = $fecha;
                         $exclude=array('id','table','counter','producto_sel','producto','tipo_pago');
                         $registro=basenuevoregistro($inputs, $table, $exclude);
                         if ($registro) {
+                            if ($tipo_pago == '1') {
+                                /**Detalle de caja */
+                                $inputs_dc['caja'] = $this->session->userdata('caja');
+                                $inputs_dc['referencia'] = $registro['id'];
+                                $inputs_dc['monto'] = $total_venta;
+                                registro_detalle_caja($inputs_dc);
+                                /**Detalle de caja */
+                            }
                             foreach ($productos as $item) {
                                 /**Kardex */
-                                nuevo_kardex($registro['id'], $item, 2);//Venta
+                                registro_kardex($registro['id'], $item, 2);//Venta
                                 /**Kardex */
 
                                 /**Detalle */
@@ -193,7 +205,7 @@ class Generico extends CI_Controller
                     if ($registro) {
                         foreach ($productos as $item) {
                             /**Kardex */
-                            nuevo_kardex($registro['id'], $item, 1);//Ingreso
+                            registro_kardex($registro['id'], $item, 1);//Ingreso
                             /**Kardex */
 
                             /**Detalle */
@@ -247,6 +259,54 @@ class Generico extends CI_Controller
                     $exclude = ['id', 'table', 'proveedor'];
                     $registro = basenuevoregistro($inputs, $table, $exclude);
                     if ($registro) {
+                        response(['message'=>'Registro correcto']);
+                    } else {
+                        response(['message'=>'Error al escribir en la BD'], 500);
+                    }
+                    break;
+                case 'proceso_caja':
+                    $apertura = $this->input->post('apertura');
+                    $usuario = $this->session->userdata('id');
+                    $fecha = date('Y-m-d H:i:s');
+
+                    $inputs_c['apertura'] = $apertura;
+                    $inputs_c['sucursal'] = $this->session->userdata('sucursal');
+                    $inputs_c['notas'] = $this->input->post('notas');
+                    $inputs_c['usuario'] = $usuario;
+                    $inputs_c['fecha'] = $fecha;
+                    $inputs_c['fecha_apertura'] = $this->input->post('fecha_apertura');
+                    $registro = basenuevoregistro($inputs_c, $table, []);
+                    $this->session->set_userdata('caja', $registro['id']);
+                    if ($registro) {
+                        /**Detalle de caja */
+                        $inputs_dc['caja'] = $registro['id'];
+                        $inputs_dc['referencia'] = null;
+                        $inputs_dc['monto'] = $apertura;
+                        registro_detalle_caja($inputs_dc);
+                        /**Detalle de caja */
+
+                        response(['message'=>'Registro correcto']);
+                    } else {
+                        response(['message'=>'Error al escribir en la BD'], 500);
+                    }
+                    break;
+                case 'proceso_caja_detalle':
+                    $caja_actual = caja_actual();
+                    if (!$caja_actual) {
+                        response(['message' => 'No se puede registrar el ajuste, la caja está cerrada'], 500);
+                    }
+
+                    $usuario = $this->session->userdata('id');
+                    $fecha = date('Y-m-d H:i:s');
+                    $ajuste = $this->input->post('ajuste');
+
+                    $inputs_dc['caja'] = $caja_actual['id'];
+                    $inputs_dc['referencia'] = null;
+                    $inputs_dc['monto'] = $ajuste;
+                    $inputs_dc['usuario'] = $usuario;
+                    $inputs_dc['fecha'] = $fecha;
+                    $registro_dc = basenuevoregistro($inputs_dc, $table, []);
+                    if ($registro_dc) {
                         response(['message'=>'Registro correcto']);
                     } else {
                         response(['message'=>'Error al escribir en la BD'], 500);
@@ -376,7 +436,7 @@ class Generico extends CI_Controller
                             /**Anulacion de ingreso */
                             foreach ($detalles as $item) {
                                 /**Kardex inverso*/
-                                nuevo_kardex($registro['id'], $item, 3);//Ingreso anulado
+                                registro_kardex($registro['id'], $item, 3);//Ingreso anulado
                                 /**Kardex inverso*/
                             }
 
@@ -405,7 +465,7 @@ class Generico extends CI_Controller
                         /**Anulacion de venta */
                         foreach ($detalles as $item) {
                             /**Kardex inverso*/
-                            nuevo_kardex($registro_a['id'], $item, 4);//Venta anulada
+                            registro_kardex($registro_a['id'], $item, 4);//Venta anulada
                             /**Kardex inverso*/
                         }
 
@@ -483,6 +543,63 @@ class Generico extends CI_Controller
                     $exclude=array('id','table');
                     $registro=baseactualizarregistro($inputs, $table, $where, $exclude);
                     if ($registro) {
+                        response(['message'=>'Registro correcto']);
+                    } else {
+                        response(['message'=>'Error al escribir en la BD'], 500);
+                    }
+                    break;
+                case 'proceso_caja':
+                    $apertura = $this->input->post('apertura');
+                    $cierre = $this->input->post('cierre');
+                    $sucursal = $this->session->userdata('sucursal');
+                    $usuario = $this->session->userdata('id');
+                    $perfil = $this->session->userdata('perfil');
+                    $caja_actual = caja_actual();
+                    $fecha = date('Y-m-d H:i:s');
+
+                    if (in_array($perfil, [1, 2]) || ($caja_actual['usuario'] == $usuario)) {
+                        $inputs_c['cierre'] = $cierre;
+                        $inputs_c['notas_cierre'] = $this->input->post('notas');
+                        $inputs_c['usuario_cierre'] = $usuario;
+                        $inputs_c['fecha_cierre'] = $fecha;
+                        $inputs_c['estado'] = $this->input->post('estado');
+                        $registro = baseactualizarregistro($inputs_c, $table, ['id' => $id], []);
+                        $this->session->set_userdata('caja', null);
+                        if ($registro) {
+                            $actual = $caja_actual['total'];
+                            $monto = 0;
+                            if ($cierre != $actual) {
+                                $monto = $cierre - $actual;
+                            }
+                            /**Detalle de caja */
+                            $inputs_dc['caja'] = $registro['id'];
+                            $inputs_dc['referencia'] = null;
+                            $inputs_dc['monto'] = $monto;
+                            registro_detalle_caja($inputs_dc);
+                            /**Detalle de caja */
+
+                            response(['message'=>'Registro correcto']);
+                        } else {
+                            response(['message'=>'Error al escribir en la BD'], 500);
+                        }
+                    } else {
+                        response(['message'=>'La caja puede ser cerrada solo por el usuario que abrió la caja o un administrador'], 500);
+                    }
+                    break;
+                case 'base_sucursal':
+                    $usuarios = $this->input->post('usuarios');
+                    $fecha = date('Y-m-d H:i:s');
+
+                    $registro = baseactualizarregistro($inputs, $table, ['id' => $id], ['id', 'table', 'usuarios', 'numeracion_boleta_actual', 'numeracion_factura_actual']);
+                    if ($registro) {
+                        $this->db->delete('base_usuario_sucursal', ['sucursal' => $id]);
+                        foreach ($usuarios as $item) {
+                            $inputs_us['usuario'] = $item;
+                            $inputs_us['sucursal'] = $id;
+                            $inputs_us['fecha'] = $fecha;
+                            $registro_p=basenuevoregistro($inputs_us, 'base_usuario_sucursal', []);
+                        }
+
                         response(['message'=>'Registro correcto']);
                     } else {
                         response(['message'=>'Error al escribir en la BD'], 500);
@@ -607,6 +724,31 @@ class Generico extends CI_Controller
                             $registro['anulacion']['usuario'] = basedetalleregistro('base_usuario', ['id' => $registro['anulacion']['usuario']]);
                         }
                         break;
+                    case 'proceso_caja':
+                        $sucursal = $this->session->userdata('sucursal');
+                        $action = $this->input->post('action') ?? '';
+                        $estado = $this->input->post('estado') ?? 1;
+
+                        if ($action == 'apertura') {
+                            $registro = basedetalleregistro('base_usuario', ['id' => $this->session->userdata('id')], true);
+                            $registro['sucursal'] = basedetalleregistro('base_sucursal', ['id' => $sucursal]);
+                            $registro['fecha_apertura'] = date('Y-m-d H:i:s');
+                            $registro['detalles'] = [];
+                            break;
+                        } else {
+                            $registro = caja_actual($estado, $id) ?? [];
+                            if (!$registro && $action == 'ajuste') {
+                                throw new Exception('No se puede registrar, la caja está cerrada');
+                            }
+                            $registro['detalles'] = $this->generico_modelo->listado('proceso_caja_detalle', '1', ['caja' => $id]);
+                        }
+                        break;
+                    case 'base_sucursal':
+                        $registro = basedetalleregistro($table, ['id' => $id], true);
+                        $usuarios = $this->generico_modelo->listado('base_usuario_sucursal', '1', ['where' => ['sucursal' => $id]]);
+                        $ids = array_column($usuarios, 'usuario');
+                        $registro['usuarios'] = $ids;
+                        break;
                     default:
                         $where = array('id' => $id);
                         $registro = basedetalleregistro($table, $where, true);
@@ -651,6 +793,11 @@ class Generico extends CI_Controller
                         }
                         break;
                     case 'proceso_producto_y_clientes':
+                        $caja_actual = caja_actual();
+                        if (!$caja_actual) {
+                            throw new Exception('No se puede registrar, la caja está cerrada');
+                        }
+
                         $productos = $this->generico_modelo->listado('proceso_producto', $estado, [], true);
                         foreach ($productos as &$item) {
                             $item['codigo'] = spd($item['id'], 6, '0');
@@ -692,6 +839,13 @@ class Generico extends CI_Controller
                         } else {
                             //No muestra mensaje
                             response(['message'=>''], 404);
+                        }
+                        break;
+                    case 'base_sucursal':
+                        $registros = $this->generico_modelo->listado($table, $estado, [], true);
+                        foreach ($registros as &$item) {
+                            $usuarios = $this->generico_modelo->listado('base_usuario_sucursal', '1', ['where' => ['sucursal' => $item['id']]]);
+                            $item['usuarios'] = count($usuarios);
                         }
                         break;
                     default:
@@ -761,6 +915,19 @@ class Generico extends CI_Controller
                         foreach ($registros as &$item) {
                             $item['codigo'] = spd($item['id'], 6, '0');
                         }
+                        break;
+                    case 'proceso_caja':
+                        $params['sucursal'] = $this->session->userdata('sucursal');
+                        $params['perfil'] = $this->session->userdata('perfil');
+                        $registros = $this->generico_modelo->busqueda($table, $params);
+                        /*foreach ($registros as &$item) {
+                            $item['pagosum'] = ($item['estado']==3 ? 0 : $item['pago']);
+                        }*/
+                        break;
+                    case 'proceso_auditoria':
+                        $params['sucursal'] = $this->session->userdata('sucursal');
+                        $params['perfil'] = $this->session->userdata('perfil');
+                        $registros = $this->generico_modelo->busqueda($table, $params);
                         break;
                     default:
                         response(['message'=>'No existe la tabla'], 500);

@@ -3,6 +3,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.2/js/bootstrap.min.js"></script>
     <script src="./assets/js/aos.min.js"></script>
     <script src="./assets/js/owl.carousel.min.js"></script>
+    <script src="./assets/js/notify.min.js"></script>
     <script src="./assets/js/custom.js"></script>
 </body>
 </html>

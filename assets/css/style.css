@@ -90,6 +90,18 @@ p{
     line-height: 26px;
 }
 
+.border-accent {
+    border: 2px solid var(--e-global-color-accent);
+}
+
+.notifyjs-bootstrap-base {
+    font-weight: normal !important;
+    padding: 10px 10px 10px 30px !important;
+    text-shadow: none  !important;
+    border: none  !important;
+    background-position: 7px 13px !important;
+}
+
 /* Home Page Style */
 
 /* Home Page Header Section Style */
@@ -106,8 +118,8 @@ p{
     display: inherit; 
 }
 .navbar-nav .nav-item a{
-    font-size: 30px;
-    line-height: 30px;
+    font-size: 28px;
+    line-height: 28px;
     font-weight: 400;
     color: var(--e-global-color-white) !important;
     transition: all 0.3s ease-in-out;
@@ -781,6 +793,10 @@ p{
 .testimonials_section .owl-carousel .owl-nav button:focus{
     outline: none;
 }
+.testimonials_section .item figure.testimonials_img img {
+    border-radius: 30px;
+    border: 2px solid var(--e-global-color-accent);
+}
 
 /* Home Page Pricing Tables Section Style */
 
@@ -834,14 +850,14 @@ p{
 }
 .pricing_tables_box_image_content .price{
     font-family: 'Teko', sans-serif;
-    font-size: 45px;
-    line-height: 45px;
+    font-size: 40px;
+    line-height: 40px;
     font-weight: 600;
     color: var(--e-global-color-white);
 }
 .pricing_tables_box_image_content .month{
-    font-size: 18px;
-    line-height: 18px;
+    font-size: 16px;
+    line-height: 16px;
     font-weight: 300;
     color: var(--e-global-color-white);
 }
@@ -979,7 +995,7 @@ p{
 .team_member_background_section{
     /*background: var(--e-global-color-accent);
     background: linear-gradient(180deg, var(--e-global-color-accent) 20%, var(--e-global-color-primary) 100%);*/
-    background-image: url('../images/fotos_background.jpg');
+    background-image: url('../images/members_background.jpg');
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
@@ -1024,10 +1040,11 @@ p{
 }
 .team_member_box_upper_portion img{
     transition: all 0.3s ease-in-out;
+    border-radius: 50%;
 }
 .team_member_box_upper_portion img:hover{
-    transform: scale(1.1);
-    opacity: 0.8;
+    /*transform: scale(1.1);*/
+    opacity: 0.9;
 }
 .team_member_box_lower_portion {
     padding: 35px 30px;
@@ -1121,7 +1138,7 @@ p{
     background-color: var(--e-global-color-white);
     color: var(--e-global-color-dark-grayish-red);
     border: 2px solid var(--e-global-color-white);
-    border-radius: 50px;
+    border-radius: 15px;
     padding: 14px 24px;
     width: 260px;
     overflow: visible;
@@ -1173,7 +1190,7 @@ textarea {
     height: 42px;
     width: 52px;
     position: absolute;
-    left: 155px;
+    left: 120px;
     top: 10px;
     background-image: linear-gradient(-82deg, var(--e-global-color-accent) 0%, var(--e-global-color-soft-red) 100%);
     border-radius: 50px;
@@ -1822,7 +1839,7 @@ textarea {
     transition: all 0.3s ease-in-out;
 }
 .our_schedule_section table td:first-child{
-    color: var(--e-global-color-white);
+    color: var(--e-global-color-primary);
     font-size: 20px;
     line-height: 50px;
     font-weight: 500;
@@ -5838,7 +5855,7 @@ iframe {
         padding: 10px 8px 8px 8px;
     }
     .our_schedule_section table td {
-        padding: 5px 12px;
+        padding: 0px 10px;
     }
     .our_schedule_section table td h6 {
         font-size: 18px;
@@ -5848,9 +5865,9 @@ iframe {
         line-height: 14px;
     }
     .our_schedule_section table td:first-child {
-        line-height: 20px;
-        height: 50px;
-        font-size: 16px;
+        line-height: 17px;
+        height: 40px;
+        font-size: 14px;
     }
     .our_schedule_section table tr:last-child th {
         font-size: 19px;

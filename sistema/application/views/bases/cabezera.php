@@ -24,8 +24,6 @@
         <meta name="msapplication-config" content="<?php echo base_url();?>public/img/recursos/icon/browserconfig.xml">
         <meta name="theme-color" content="#ffffff">
         
-        <link rel="stylesheet" href="<?php echo base_url();?>public/js/plugins/slick/slick.min.css">
-        <link rel="stylesheet" href="<?php echo base_url();?>public/js/plugins/slick/slick-theme.min.css">
         <link rel="stylesheet" href="<?php echo base_url();?>public/js/plugins/datatables/jquery.dataTables.min.css">
         <link rel="stylesheet" href="<?php echo base_url();?>public/js/plugins/datatables/buttons.dataTables.min.css">
         <link rel="stylesheet" href="<?php echo base_url();?>public/js/plugins/datatables/dataTables.checkboxes.css">

@@ -254,7 +254,6 @@ class Proceso extends CI_Controller
         $datos = [
             'menu_text' => 'Sistema',
             'submenu_text' => '',
-            'titulo_text' => 'Indicadores',
             'export_text' => '',
             'registro_text' => '',
             'contadores'=>$contadores,
@@ -281,7 +280,6 @@ class Proceso extends CI_Controller
         $datos = [
             'menu_text' => 'Inventario',
             'submenu_text' => 'Clientes',
-            'titulo_text' => 'Clientes',
             'export_text' => 'Listado de clientes',
             'registro_text' => 'cliente',
             'tipos' => $tipos_documento,
@@ -302,7 +300,6 @@ class Proceso extends CI_Controller
         $datos = [
             'menu_text' => 'Inventario',
             'submenu_text' => 'Proveedores',
-            'titulo_text' => 'Proveedores',
             'export_text' => 'Listado de proveedores',
             'registro_text' => 'Proveedor'
         ];
@@ -325,7 +322,6 @@ class Proceso extends CI_Controller
         $datos = [
             'menu_text' => 'Inventario',
             'submenu_text' => 'Productos y Servicios',
-            'titulo_text' => 'Productos  y Servicio',
             'export_text' => 'Listado de productos y servicios',
             'registro_text' => 'producto o servicio',
             'tipos'=>$tipos,
