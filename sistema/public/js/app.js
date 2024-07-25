@@ -932,35 +932,6 @@ var App = function() {
     };
 
     /*
-     * Slick init, for more examples you can check out http://kenwheeler.github.io/slick/
-     *
-     * App.initHelper('slick');
-     *
-     */
-    var uiHelperSlick = function(){
-        // Get each slider element (with .js-slider class)
-        jQuery('.js-slider').each(function(){
-            var $slider = jQuery(this);
-
-            // Get each slider's init data
-            var $sliderArrows       = $slider.data('slider-arrows') ? $slider.data('slider-arrows') : false;
-            var $sliderDots         = $slider.data('slider-dots') ? $slider.data('slider-dots') : false;
-            var $sliderNum          = $slider.data('slider-num') ? $slider.data('slider-num') : 1;
-            var $sliderAuto         = $slider.data('slider-autoplay') ? $slider.data('slider-autoplay') : false;
-            var $sliderAutoSpeed    = $slider.data('slider-autoplay-speed') ? $slider.data('slider-autoplay-speed') : 3000;
-
-            // Init slick slider
-            $slider.slick({
-                arrows: $sliderArrows,
-                dots: $sliderDots,
-                slidesToShow: $sliderNum,
-                autoplay: $sliderAuto,
-                autoplaySpeed: $sliderAutoSpeed
-            });
-        });
-    };
-
-    /*
      * Bootstrap Datepicker init, for more examples you can check out https://github.com/eternicode/bootstrap-datepicker
      *
      * App.initHelper('datepicker');
@@ -1348,9 +1319,6 @@ var App = function() {
                     break;
                 case 'summernote':
                     uiHelperSummernote();
-                    break;
-                case 'slick':
-                    uiHelperSlick();
                     break;
                 case 'datepicker':
                     uiHelperDatepicker();

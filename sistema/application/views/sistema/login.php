@@ -1,3 +1,5 @@
+        <script src="https://www.google.com/recaptcha/api.js?hl=es-419" async defer></script>
+
         <main id="main-container" >
             <div class="content">
                 <div class="row">
@@ -31,6 +33,22 @@
                                                 <h1 class="h2 font-w600 push-30-t push-5 text-logo"><b><?php echo $this->configuracion['titulo'];?></b></h1>
                                                 <h1 class="h3 font-w400 push-30-t push-5 text-logo" >SISTEMA DE CONTROL DE INVENTARIO</h1>
                                                 <form class="form-horizontal push-30-t push-30" id="form-login" action="<?php echo base_url();?>sistema/login" method="post">
+                                                <div class="row">
+                                                    <div class="col-xs-12 col-md-12">
+                                                        <div class="form-group">
+                                                            <div class="col-xs-12">
+                                                                <div class="form-material form-material-info">
+                                                                    <select class="form-control" name="sucursal" style="width: 100%;" data-placeholder="Seleccione">
+                                                                        <?php foreach ($sucursales as $item) :?>
+                                                                        <option value="<?php echo $item['id']; ?>" ><?php echo $item['sucursal']; ?></option>
+                                                                        <?php endforeach;?>
+                                                                    </select>
+                                                                    <label>Sucursal</label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                                     <div class="row">
                                                         <div class="col-xs-12 col-md-12">
                                                             <div class="form-group text-left">
@@ -56,7 +74,9 @@
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                    </div>
+                                                    </div>                                                   
+                                                    <div  align="center" class="g-recaptcha" data-sitekey="<?php echo $this->config->item('recaptcha_system_web_secret'); ?>"></div>
+                                                    <br/>
                                                     <div class="form-group">
                                                         <div class="col-xs-12 col-sm-6 col-sm-offset-3">
                                                             <button class="btn btn-block btn-primary" type="submit"><i class="si si-login push-5-r"></i>Ingresar</button>

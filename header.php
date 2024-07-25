@@ -6,6 +6,7 @@ $logo = './assets/images/logo.png';
 $logo_coming = './assets/images/logo-footer.png';
 $logo_footer = './assets/images/logo-footer.png';
 $logo_meta = './assets/images/logo-meta.png';
+$recaptcha_html_web_secret = '6Ld4Tw0qAAAAANrRPE8LyYcAFmkGOxL2hKlcSm2O';
 
 if ($environment === 'production') {
     $url = getenv('PROD_HOSTNAME');
@@ -71,4 +72,5 @@ $whatsapp = 'https://wa.me/51992171475';
     <link href="./assets/css/owl.carousel.min.css" rel="stylesheet" type="text/css">
     <link href="./assets/css/aos.min.css" rel="stylesheet" type="text/css">
     <link href="./assets/css/style.css?v<?php echo rand();?>" rel="stylesheet" type="text/css">
+    <script src="https://www.google.com/recaptcha/api.js?hl=es-419" async defer></script>
 </head>

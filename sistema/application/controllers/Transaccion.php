@@ -23,7 +23,6 @@ class Transaccion extends CI_Controller
         $datos = [
             'menu_text' => 'Transacciones',
             'submenu_text' => 'Ingresos',
-            'titulo_text' => 'Ingresos',
             'export_text' => 'Listado de ingresos',
             'registro_text' => 'ingreso',
             'tipocomprobantes'=>$tipocomprobantes,
@@ -49,7 +48,6 @@ class Transaccion extends CI_Controller
         $datos = [
             'menu_text' => 'Transacciones',
             'submenu_text' => 'Ventas',
-            'titulo_text' => 'Ventas',
             'export_text' => 'Listado de ventas',
             'registro_text' => 'venta',
             'tipocomprobantes'=>$tipocomprobantes,
@@ -82,7 +80,6 @@ class Transaccion extends CI_Controller
         $datos = [
             'menu_text' => 'Transacciones',
             'submenu_text' => 'Kardex',
-            'titulo_text' => 'Kardex',
             'export_text' => 'Listado de registros',
             'registro_text' => 'kardex',
             'productos'=>$productos,
@@ -103,7 +100,7 @@ class Transaccion extends CI_Controller
     }
 
     // phpcs:ignore
-    public function pagos_cliente()
+    public function pagosCliente()
     {
         $estados = $this->generico_modelo->listado('base_estado', '1');
         $clientes = $this->generico_modelo->listado('proceso_cliente', '1');
@@ -112,7 +109,6 @@ class Transaccion extends CI_Controller
         $datos = [
             'menu_text' => 'Transacciones',
             'submenu_text' => 'Pagos de clientes',
-            'titulo_text' => 'Pago de cliente',
             'export_text' => 'Listado de registros',
             'registro_text' => 'pago de cliente',
             'clientes'=>$clientes,
@@ -129,7 +125,7 @@ class Transaccion extends CI_Controller
     }
 
     // phpcs:ignore
-    public function pagos_proveedor()
+    public function pagosProveedor()
     {
         $estados = $this->generico_modelo->listado('base_estado', '1');
         $clientes = $this->generico_modelo->listado('proceso_cliente', '1');
@@ -152,6 +148,48 @@ class Transaccion extends CI_Controller
         $this->load->view('proceso/pagos_proveedor', $datos);
         $this->load->view('bases/pie');
         $this->load->view('bases/funciones', ['funciones' => ['proceso/pagos_proveedor']]);
+    }
+
+    public function caja()
+    {
+        $sucursal = $this->session->userdata('sucursal');
+        $estados = $this->generico_modelo->listado('base_estado', '1');
+        $clientes = $this->generico_modelo->listado('proceso_cliente', '1');
+        $productos = $this->generico_modelo->listado('proceso_producto', '1');
+        foreach ($productos as &$item) {
+            $item['codigo'] = spd($item['id'], 6, '0');
+        }
+        $tipocomprobantes = $this->generico_modelo->listado('proceso_tipo_comprobante', '1', ['orderby'=>'id','direction'=>'asc']);
+        $tipo_venta_pagos = $this->generico_modelo->listado('proceso_tipo_venta_pago', '1', ['orderby'=>'id','direction'=>'asc']);
+        $tipo_pagos = $this->generico_modelo->listado('proceso_tipo_pago', '1', ['orderby'=>'id','direction'=>'asc']);
+        $proveedores = $this->generico_modelo->listado('proceso_proveedor', '1');
+        $caja = $this->generico_modelo->caja(['sucursal' => $sucursal, 'estado'=>1]);
+        $ultima_caja = $this->generico_modelo->caja(['sucursal' => $sucursal, 'estado'=>2]);
+        $ultima_fecha = $ultima_caja['fecha_cierre'] ?? 'Sin información';
+
+        $datos = [
+            'menu_text' => 'Transacciones',
+            'submenu_text' => 'Caja',
+            'export_text' => 'Listado de registros',
+            'registro_text' => 'registro',
+            'productos'=>$productos,
+            'tipocomprobantes'=>$tipocomprobantes,
+            'tipo_venta_pagos'=>$tipo_venta_pagos,
+            'tipo_pagos'=>$tipo_pagos,
+            'clientes'=>$clientes,
+            'proveedores'=>$proveedores,
+            'estados'=>$estados,
+            'sucursal'=>$sucursal,
+            'caja'=>$caja,
+            'ultima_fecha'=>$ultima_fecha,
+        ];
+
+        $this->load->view('bases/cabezera');
+        $this->load->view('bases/menu', ['menu' =>3, 'submenu' =>307]);
+        $this->load->view('bases/barra');
+        $this->load->view('transaccion/caja', $datos);
+        $this->load->view('bases/pie');
+        $this->load->view('bases/funciones', ['funciones' => ['transaccion/caja']]);
     }
 
     public function comprobanteventa($id)

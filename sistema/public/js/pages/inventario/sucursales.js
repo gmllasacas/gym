@@ -15,7 +15,7 @@ jQuery(function () {
             url: base_url+'generico/listado/',
             timeout: ajax_timeout,
             data: {
-                table: 'base_cliente_sistema',
+                table: 'base_sucursal',
                 estado: '^5',
             },
             dataSrc: function (response) {
@@ -26,16 +26,16 @@ jQuery(function () {
                             switch (response.data[i]['estado']) {
                                 case '2':
                                     response.data[i]['acciones']+=
-                                                    '    <button class="btn btn-xs btn-success cambiadatoregistro" data-toggle="tooltip" data-placement="top" title="Activar" data-id="' + response.data[i]['id'] + '" data-table="base_cliente_sistema" data-valor="1" data-campo="estado">' +
+                                                    '    <button class="btn btn-xs btn-success cambiadatoregistro" data-toggle="tooltip" data-placement="top" title="Activar" data-id="' + response.data[i]['id'] + '" data-table="base_sucursal" data-valor="1" data-campo="estado">' +
                                                     '        <i class="fa fa-check"></i>'+
                                                     '    </button>';
                                     break;
                                 case '1':
                                     response.data[i]['acciones']+=
-                                                    '    <button class="btn btn-xs btn-info editarregistro" data-toggle="tooltip" data-placement="top" title="Editar" data-id="'+response.data[i]['id']+'" data-table="base_cliente_sistema">'+
+                                                    '    <button class="btn btn-xs btn-info editarregistro" data-toggle="tooltip" data-placement="top" title="Editar" data-id="'+response.data[i]['id']+'" data-table="base_sucursal">'+
                                                     '        <i class="fa fa-edit"></i>'+
                                                     '    </button>'+
-                                                    '    <button class="btn btn-xs btn-warning cambiadatoregistro" data-toggle="tooltip" data-placement="top" title="Desactivar" data-id="' + response.data[i]['id'] + '" data-table="base_cliente_sistema" data-valor="2" data-campo="estado">' +
+                                                    '    <button class="btn btn-xs btn-warning cambiadatoregistro" data-toggle="tooltip" data-placement="top" title="Desactivar" data-id="' + response.data[i]['id'] + '" data-table="base_sucursal" data-valor="2" data-campo="estado">' +
                                                     '        <i class="fa fa-ban"></i>'+
                                                     '    </button>';
                                     break;
@@ -43,12 +43,7 @@ jQuery(function () {
                                     response.data[i]['acciones']='';
                                     break;
                             }
-                            response.data[i]['contactostr'] = (response.data[i]['contacto']=='' ? '' : response.data[i]['contacto']) + (response.data[i]['telefono']=='' ? '' : ' ( '+response.data[i]['telefono']+' )');
                             response.data[i]['estadostr'] = '<label class="label label-'+response.data[i]['estadocol']+'">'+response.data[i]['estadodesc']+'</label>';
-                            response.data[i]['acciones'] += '<button class="btn btn-xs btn-danger cambiadatoregistro" data-toggle="tooltip" data-placement="top" title="Eliminar" data-id="' + response.data[i]['id'] + '" data-table="base_cliente_sistema" data-valor="5" data-campo="estado">' +
-                                                                '        <i class="fa fa-times"></i>'+
-                                                                '    </button>'+
-                                                                '</div>';
                         }
                         return response.data;
                         break;
@@ -64,9 +59,9 @@ jQuery(function () {
         },
         columns: [
             { data: 'id' },
-            { data: 'ruc' },
-            { data: 'nombre_o_razon_social' },
-            { data: 'contactostr' },
+            { data: 'sucursal' },
+            { data: 'direccion' },
+            { data: 'usuarios' },
             { data: 'estadostr' },
             { data: 'acciones' },
         ],
@@ -74,18 +69,14 @@ jQuery(function () {
             /*{	
                 visible: false, 
                 targets: [-3 ]
-            },
-            {
-                targets: [1],
-                className: 'dt-body-nowrap'
             },*/
             {
-                targets: [-2,-1],
+                targets: [-3,-2,-1],
                 className: 'dt-body-center'
             },
         ],
         buttons: true,
-        order: [[ 0, "desc" ]],
+        order: [[ 0, "asc" ]],
         bAutoWidth: false
     });	
     var buttons = new jQuery.fn.dataTable.Buttons(listdt, {
@@ -146,7 +137,8 @@ jQuery(function () {
                             jQuery(registroform+' [name='+index+']').val(item);
                         }
                     });
-                    jQuery(registroform+' [name=ruc]').prop('disabled',true);
+
+					jQuery(registroform+' select[name="usuarios[]"]').val(response.registro.usuarios).trigger('change');
                     jQuery(registromodal).modal('toggle');
                 }
             }

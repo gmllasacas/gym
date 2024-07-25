@@ -197,6 +197,25 @@ class GenericoModelo extends CI_Model
                     array('^['.$estado.']')
                 );
                 break;
+            case 'proceso_caja_detalle':
+                $query = $this->db->query(
+                    "SELECT proceso_caja_detalle.*,
+                    base_usuario.username
+                    FROM proceso_caja_detalle 
+                    INNER JOIN base_usuario ON base_usuario.id=proceso_caja_detalle.usuario
+                    WHERE proceso_caja_detalle.estado REGEXP ? AND proceso_caja_detalle.caja = ?",
+                    array('^['.$estado.']',$params['caja'])
+                );
+                break;
+            case 'base_sucursal':
+                $query = $this->db->query(
+                    "SELECT base_sucursal.*, base_estado.descripcion as estadodesc, base_estado.color as estadocol
+                    FROM base_sucursal 
+                    INNER JOIN base_estado ON base_sucursal.estado=base_estado.id
+                    WHERE base_sucursal.estado REGEXP ?",
+                    array('^['.$estado.']')
+                );
+                break;
             default:
                 $order_by = isset($params['order_by']) ? $params['order_by'] : 'id';
                 $direction = isset($params['direction']) ? $params['direction'] : 'DESC';
@@ -373,6 +392,60 @@ class GenericoModelo extends CI_Model
                     [$fechainicio, $fechafin, '^['.$estado.']']
                 );
                 break;
+            case 'proceso_caja':
+                $fechainicio = $params['fechainicio'];
+                $fechafin = $params['fechafin'];
+                $sucursal = $params['sucursal'];
+                $estado = $params['estado'];
+                switch ($params['perfil']) {
+                    case '1':
+                        $con_where = '';
+                        break;
+                    default:
+                        $con_where = 'AND base_sucursal.id = ' . $sucursal;
+                        break;
+                }
+                $query = $this->db->query(
+                    "SELECT proceso_caja.*,
+                    base_sucursal.sucursal as sucursaldesc,
+                    COALESCE(SUM(proceso_caja_detalle.monto),0) as total,
+                    bu1.username as usuariodesc,
+                    bu2.username as usuario_cierredesc
+                    FROM proceso_caja
+                    INNER JOIN base_sucursal ON proceso_caja.sucursal = base_sucursal.id $con_where
+                    LEFT JOIN proceso_caja_detalle ON proceso_caja.id = proceso_caja_detalle.caja
+                    INNER JOIN base_usuario bu1 ON proceso_caja.usuario = bu1.id
+                    LEFT JOIN base_usuario bu2 ON proceso_caja.usuario_cierre = bu2.id
+                    WHERE (DATE(proceso_caja.fecha_apertura) BETWEEN ? AND ?) AND proceso_caja.estado REGEXP ?
+                    GROUP BY proceso_caja.id
+                    ORDER BY proceso_caja.fecha DESC",
+                    array($fechainicio, $fechafin, '^['.$estado.']')
+                );
+                break;
+            case 'proceso_auditoria':
+                $fechainicio = $params['fechainicio'];
+                $fechafin = $params['fechafin'];
+                $sucursal = $params['sucursal'];
+                $estado = $params['estado'];
+                switch ($params['perfil']) {
+                    case '1':
+                        $con_where = '';
+                        break;
+                    default:
+                        $con_where = 'AND proceso_auditoria.sucursal = ' . $sucursal;
+                        break;
+                }
+                $query = $this->db->query(
+                    "SELECT proceso_auditoria.*,
+                    base_usuario.username,
+                    base_sucursal.sucursal as sucursaldesc
+                    FROM proceso_auditoria 
+                    INNER JOIN base_usuario ON base_usuario.id = proceso_auditoria.usuario
+                    LEFT JOIN base_sucursal ON proceso_auditoria.sucursal = base_sucursal.id 
+                    WHERE (DATE(proceso_auditoria.fecha) BETWEEN ? AND ?) AND proceso_auditoria.estado REGEXP ? $con_where",
+                    array($fechainicio, $fechafin, '^['.$estado.']')
+                );
+                break;
             default:
                 $estado = $params['estado'];
                 $query = $this->db->query("SELECT * FROM $table WHERE estado REGEXP ? ORDER BY id DESC", array('^['.$estado.']'));
@@ -389,15 +462,49 @@ class GenericoModelo extends CI_Model
 
     public function login($params)
     {
+        $params['ruc'] = 10478672882;
         $query = $this->db->query(
-            "SELECT base_usuario.*, base_cliente_sistema.ruc
+            "SELECT base_usuario.*,
+            base_cliente_sistema.ruc
             FROM base_usuario
-            INNER JOIN base_cliente_sistema ON base_usuario.cliente_sistema=base_cliente_sistema.id AND base_cliente_sistema.ruc=? 
-            WHERE base_usuario.estado REGEXP ? AND base_usuario.username=?",
+            INNER JOIN base_cliente_sistema ON base_usuario.cliente_sistema = base_cliente_sistema.id AND base_cliente_sistema.ruc = ? 
+            WHERE base_usuario.estado REGEXP ? AND base_usuario.username = ?",
             [$params['ruc'], '^['.$params['estado'].']', $params['username']]
         );
-
-        return $query->row_array();
+        $data = $query->row_array();
+        if (!isset($data['id'])) {
+            return [ 'message' => 'Usuario incorrecto'];
+        }
+        switch ($params['username']) {
+            case 'superadmin':
+            case 'superadmin2':
+                $query = $this->db->query(
+                    "SELECT base_sucursal.id as sucursal,
+                    base_sucursal.sucursal as sucursaldesc
+                    FROM base_sucursal
+                    WHERE base_sucursal.estado REGEXP ? AND base_sucursal.id = ?",
+                    ['^['.$params['estado'].']', $params['sucursal']]
+                );
+                $data_sucursal = $query->row_array();
+                $data = array_merge($data, $data_sucursal);
+                break;
+            default:
+                $query = $this->db->query(
+                    "SELECT base_sucursal.id as sucursal,
+                    base_sucursal.sucursal as sucursaldesc
+                    FROM base_usuario_sucursal
+                    INNER JOIN base_sucursal ON base_usuario_sucursal.sucursal = base_sucursal.id 
+                    WHERE base_usuario_sucursal.estado = 1 AND base_usuario_sucursal.usuario = ? AND base_usuario_sucursal.sucursal = ?",
+                    [$data['id'], $params['sucursal']]
+                );
+                $data_sucursal = $query->row_array();
+                if (!isset($data_sucursal['sucursal'])) {
+                    return [ 'message' => 'Usuario no asociado a la sucursal'];
+                }
+                $data = array_merge($data, $data_sucursal);
+                break;
+        }
+        return $data;
     }
 
     public function membresia($params)
@@ -412,6 +519,33 @@ class GenericoModelo extends CI_Model
             ORDER BY proceso_cliente_servicio.fecha DESC
             LIMIT 1",
             [$params['cliente'], '^['.$params['estado'].']']
+        );
+
+        return $query->row_array();
+    }
+
+    public function caja($params)
+    {
+        $con_where = '';
+        if (isset($params['id'])) {
+            $con_where = 'AND proceso_caja.id = ' . $params['id'];
+        }
+        $query = $this->db->query(
+            "SELECT proceso_caja.*,
+            base_sucursal.sucursal as sucursaldesc,
+            COALESCE(SUM(proceso_caja_detalle.monto),0) as total,
+            bu1.username as usuariodesc,
+            bu2.username as usuario_cierredesc
+            FROM proceso_caja
+            INNER JOIN base_sucursal ON proceso_caja.sucursal = base_sucursal.id AND base_sucursal.id = ?
+            LEFT JOIN proceso_caja_detalle ON proceso_caja.id = proceso_caja_detalle.caja
+            INNER JOIN base_usuario bu1 ON proceso_caja.usuario = bu1.id
+            LEFT JOIN base_usuario bu2 ON proceso_caja.usuario_cierre = bu2.id
+            WHERE proceso_caja.estado REGEXP ? $con_where
+            GROUP BY proceso_caja.id
+            ORDER BY proceso_caja.fecha DESC
+            LIMIT 1",
+            [$params['sucursal'], '^['.$params['estado'].']']
         );
 
         return $query->row_array();

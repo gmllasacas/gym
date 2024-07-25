@@ -16,10 +16,45 @@
                             var reportetext='<?php echo $export_text;?>';
                         </script>
                         <div class="block-header bg-gray-lighter">
-                            <div class="block-options-simple">
-                                <button class="btn btn-xs btn-info push-10-l" type="button" title="Recargar" id="block-reload"><i class="si si-refresh"></i><span class="hidden-xs push-5-l">RECARGAR LISTADO</span></button>
-                            </div>
                             <h3 class="block-title"><?php echo $export_text;?></h3>
+                        </div>
+                        <div class="block-content">
+                            <form class="form-horizontal" method="post" action="" id="busqueda-form" autocomplete="off">
+                                <input type="hidden" name="table" value="proceso_auditoria">
+                                <input type="hidden" name="estado" value="^5">
+                                <div class="row">
+                                    <div class="col-xs-12 col-sm-2 col-sm-offset-3">
+                                        <div class="form-group push-5">
+                                            <label class="col-xs-12">Fecha de inicio</label>
+                                            <div class="col-xs-12">
+                                                <div class="input-group">
+                                                    <input class="js-datepicker-inicio form-control required" data-date-format="yyyy-mm-dd" type="text" name="fechainicio" placeholder="Fecha">
+                                                    <span class="input-group-addon"><i class="si si-calendar"></i></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-2">
+                                        <div class="form-group push-5">
+                                            <label class="col-xs-12">Fecha de fin</label>
+                                            <div class="col-xs-12">
+                                                <div class="input-group">
+                                                    <input class="js-datepicker-fin form-control required" data-date-format="yyyy-mm-dd" type="text" name="fechafin" placeholder="Fecha">
+                                                    <span class="input-group-addon"><i class="si si-calendar"></i></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-2">
+                                        <div class="form-group push-5">
+                                            <label class="col-xs-12"><br></label>
+                                            <div class="col-xs-12">
+                                                <button class="btn btn-info width100" type="submit"><i class="fa fa-search push-5-r"></i>CONSULTAR</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
                         </div>
                         <div class="block-content">
                             <div class="row options push-5">
@@ -115,7 +150,7 @@
                                         <div class="col-xs-12 col-sm-2">
                                         </div>
                                         <div class="col-xs-12 col-sm-8">                                            
-                                            <div class="table-responsive">
+                                            <div class="">
                                                 <table class="table table-condensed table-hover table-bordered" id="table-detalles">
                                                     <thead>
                                                         <tr>

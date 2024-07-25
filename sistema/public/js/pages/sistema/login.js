@@ -34,24 +34,29 @@ jQuery(function () {
             }
         },
         submitHandler: function(form) {
-            jQuery.ajax({
-                url: form.action,
-                type: form.method,
-                data: $(form).serialize(),
-                dataType: 'json',
-                timeout: 60000,
-                success: function(response) {
-                    if(response.status=='500'){
-                        notifytemplate('fa fa-times', response.message, 'danger', 4000);
+            var recaptcha_response = grecaptcha.getResponse();
+            if (!recaptcha_response) {
+                notifytemplate('fa fa-times', 'El captcha es requerido', 'danger', 4000);
+            } else {
+                jQuery.ajax({
+                    url: form.action,
+                    type: form.method,
+                    data: $(form).serialize() + '&recaptcha_response=' + recaptcha_response,
+                    dataType: 'json',
+                    timeout: 60000,
+                    success: function(response) {
+                        if(response.status=='500'){
+                            notifytemplate('fa fa-times', response.message, 'danger', 4000);
+                        }
+                        if(response.status=='200'){
+                            notifytemplate('fa fa-check', response.message, 'success', 2000, false, 2001);
+                            setTimeout(function(){
+                                window.location.href = response.redirect;
+                            }, 1500);
+                        }
                     }
-                    if(response.status=='200'){
-                        notifytemplate('fa fa-check', response.message, 'success', 2000, false, 2001);
-                        setTimeout(function(){
-                            window.location.href = response.redirect;
-                        }, 1500);
-                    }
-                }
-            });
+                });
+            }
         }
     });
 

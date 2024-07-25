@@ -1,19 +1,23 @@
 
 jQuery(function () {
+    var date = new Date(); 
     var tablelist= '#table-list';
     var detalleregistro= '.detalleregistro';
     var registromodal= '#registro-modal';
     var registroform= '#registro-form';
     var tabledetalles= '#table-detalles';
+    var busquedaform= '#busqueda-form';
+
+    jQuery('[name=fechainicio]').datepicker("setDate", date);
+    jQuery('[name=fechafin]').datepicker("setDate", date);
 
     var listdt = jQuery(tablelist).DataTable({
         ajax: {
             type: 'POST',
-            url: base_url+'generico/listado/',
+            url: base_url+'generico/busqueda/',
             timeout: ajax_timeout,
-            data: {
-                table: 'proceso_auditoria',
-                estado: '^5',
+            data: function ( d ) {
+                return jQuery(busquedaform).serialize();
             },
             dataSrc: function (response) {
                 switch (response.status) {
@@ -48,7 +52,7 @@ jQuery(function () {
             { data: 'fecha' },
             { data: 'username' },
             { data: 'accion' },
-            { data: 'sucursal' },
+            { data: 'sucursaldesc' },
             { data: 'acciones' },
         ],
         columnDefs: [
@@ -115,6 +119,12 @@ jQuery(function () {
         } );
         if (select2_enabled) { jQuery('.js-select2-filtro').select2(); }
     };
+
+    var busquedavalidate = jQuery(busquedaform).validate({
+        submitHandler: function(form) {
+            listdt.ajax.reload(selectores);
+        }
+    });
 
     jQuery('body').on('click', '#block-reload', function() {
         listdt.ajax.reload(selectores);

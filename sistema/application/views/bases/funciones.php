@@ -1,4 +1,3 @@
-        <script src="<?php echo base_url();?>public/js/plugins/slick/slick.min.js"></script>
         <script src="<?php echo base_url();?>public/js/plugins/chartjs/Chart.min.js"></script>
         <script src="<?php echo base_url();?>public/js/plugins/datatables/jquery.dataTables.min.js"></script>
         <script src="<?php echo base_url();?>public/js/plugins/bootstrap-maxlength/bootstrap-maxlength.min.js"></script>
@@ -33,7 +32,7 @@
         <script src="<?php echo base_url();?>public/js/plugins/jquery-confirm/jquery-confirm.min.js"></script>
         <script>
             jQuery(function () {
-                App.initHelpers(['slick','datepicker','datetimepicker','maxlength', 'select2', 'tags-inputs', 'slimscroll', 'notify', 'table-tools', 'masked-inputs', 'rangeslider', 'magnific-popup']);
+                App.initHelpers(['datepicker','datetimepicker','maxlength', 'select2', 'tags-inputs', 'slimscroll', 'notify', 'table-tools', 'masked-inputs', 'rangeslider', 'magnific-popup']);
             });
             var base_server ='<?php echo (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]";?>';
             var base_url ='<?php echo base_url();?>';

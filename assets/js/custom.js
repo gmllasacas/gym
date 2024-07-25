@@ -47,6 +47,30 @@ $(document).ready(function() {
         }
     });
 
+    var owl = $('.team_member_section .owl-carousel');
+    owl.owlCarousel({
+        margin: 30,
+        nav: true,
+        loop: true,
+        dots: false,
+        autoplay: true,
+        autoplayTimeout: 4500,
+        responsive: {
+            0: {
+                items: 1
+            },
+            576: {
+                items: 2
+            },
+            768: {
+                items: 3
+            },
+            992: {
+                items: 3
+            }
+        }
+    });
+
     var owl = $('.our_news_section .owl-carousel');
     owl.owlCarousel({
         margin: 30,
@@ -124,5 +148,44 @@ $(document).ready(function() {
                 $(this).text(Math.ceil(now));
             }
         });
+    });
+
+    var form = "#contact-form";
+    $(form).on('submit', function(e) {
+        e.preventDefault();
+        var recaptcha_response = grecaptcha.getResponse();
+        if (!recaptcha_response) {
+            $.notify(
+                'El captcha es requerido', 
+                { className: 'error' }
+            );
+        } else {
+            jQuery(form+' [name="btnsubmit"]').prop('disabled', true);
+            jQuery.ajax({
+                url: e.currentTarget.action,
+                type: 'post',
+                data: $(form).serialize() + '&recaptcha_response=' + recaptcha_response,
+                dataType: 'json',
+                timeout: 60000,
+                success: function(response) {
+                    jQuery(form+' [name="btnsubmit"]').prop('disabled', false);
+                    if(response.status=='500'){
+                        grecaptcha.reset();
+                        $.notify(
+                            response.message, 
+                            { className: 'error' }
+                        );
+                    }
+                    if(response.status=='200'){
+                        $(form).trigger("reset");
+                        grecaptcha.reset();
+                        $.notify(
+                            response.message, 
+                            { className: 'success' }
+                        );
+                    }
+                }
+            });
+        }
     });
 });
