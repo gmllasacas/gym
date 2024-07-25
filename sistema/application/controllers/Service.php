@@ -27,8 +27,8 @@ class Service extends CI_Controller
             response(['message'=>'Parámetros incorrectos'], 500);
         } else {
             $recaptcha_response = $this->input->post('recaptcha_response');
-            $secret = '6Ld4Tw0qAAAAAMMSQjjx1S5LifkYTDj1h2_Q-9k8';
-            $verifyResponse = file_get_contents('https://www.google.com/recaptcha/api/siteverify?secret='.$secret.'&response='.$recaptcha_response);
+            $recaptcha_html_server_secret = $this->config->item('recaptcha_html_server_secret');
+            $verifyResponse = file_get_contents('https://www.google.com/recaptcha/api/siteverify?secret='.$recaptcha_html_server_secret.'&response='.$recaptcha_response);
             $responseData = json_decode($verifyResponse);
             if ($responseData->success) {
                 $inputs['nombres'] = $this->input->post('name');
