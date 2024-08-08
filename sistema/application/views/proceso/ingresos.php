@@ -78,6 +78,7 @@
                                         <th>Fecha de registro</th>
                                         <th>Proveedor</th>
                                         <th>Usuario</th>
+                                        <th>Sucursal</th>
                                         <th>Estado</th>
                                         <th class="text-center" style="width: 120px;">Acciones</th>
                                     </tr>
@@ -202,7 +203,46 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-xs-12 col-sm-3 col-sm-offset-3">
+                                        <div class="col-xs-12 col-sm-3">
+                                            <div class="form-group">
+                                                <div class="col-xs-12">
+                                                    <div class="form-material form-material-info">
+                                                        <select class="form-control" name="tipo_ingreso_pago" style="width: 100%;" data-placeholder="Seleccione">
+                                                            <option value="">Seleccione</option>
+                                                            <?php foreach ($tipos_ingreso_pago as $item) :?>
+                                                            <option value="<?php echo $item['id']; ?>" ><?php echo $item['descripcion']; ?></option>
+                                                            <?php endforeach;?>
+                                                        </select>
+                                                        <label>Pago al proveedor</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-12 col-sm-3 tipo_ingreso_pago_div">
+                                            <div class="form-group">
+                                                <div class="col-xs-12">
+                                                    <div class="input-group form-material form-material-info">
+                                                        <span class="input-group-addon">S/ </span>
+                                                        <input class="form-control number" type="number" step="0.01" min="0.01" name="pago">
+                                                        <label>Pago</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-xs-12 col-sm-3">
+                                            <div class="form-group">
+                                                <div class="col-xs-12">
+                                                    <div class="input-group form-material form-material-info">
+                                                        <input class="form-control textoinput" type="text" name="sucursal" value="" readonly>
+                                                        <label>Sucursal</label>
+                                                        <span class="input-group-addon"><i class="si si-pointer"></i></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-12 col-sm-3">
                                             <div class="form-group">
                                                 <div class="col-xs-12">
                                                     <div class="input-group form-material form-material-info">

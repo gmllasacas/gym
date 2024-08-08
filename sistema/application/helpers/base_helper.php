@@ -340,8 +340,13 @@ if (! function_exists('registro_kardex')) {
         $ci=& get_instance();
         $ci->load->database();
         $table = 'proceso_kardex';
-        $kardex = basedetalleregistro('proceso_kardex', ['estado' => '1', 'producto' => $item['id']]);
+        $sucursal = $ci->session->userdata('sucursal');
+        //$kardex = $ci->generico_modelo->kardex(
+        //    ['estado' => '1', 'producto' => $item['id'], 'sucursal' => $ci->session->userdata('sucursal'), 'tipo_kardex' => $tipo_kardex]
+        //);
+        $kardex = basedetalleregistro('proceso_kardex', ['estado' => '1', 'producto' => $item['id'], 'sucursal' => $sucursal]);
         $saldo = (isset($kardex['saldo']) ? ($kardex['saldo'] > 0 ? $kardex['saldo'] : 0) : 0);
+        $inputs['sucursal'] = $sucursal;
         $inputs['tipo_kardex'] = $tipo_kardex;
         $inputs['referencia'] = $referencia;
         $inputs['producto'] = $item['id'];
@@ -369,5 +374,19 @@ if (! function_exists('registro_kardex')) {
         }
 
         basenuevoregistro($inputs, 'proceso_kardex', []);
+    }
+}
+
+if (! function_exists('ultimo_kardex')) {
+    function ultimo_kardex($parameters, $sucursal = null)
+    {
+        $ci=& get_instance();
+        $ci->load->database();
+        $table = 'proceso_kardex';
+        $sucursal = $sucursal ?? $ci->session->userdata('sucursal');
+        return basedetalleregistro(
+            'proceso_kardex',
+            ['estado' => $parameters['estado'], 'producto' => $parameters['producto'], 'sucursal' => $sucursal]
+        );
     }
 }

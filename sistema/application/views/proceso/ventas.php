@@ -23,13 +23,11 @@
                             <div class="block-options-simple">
                                 <?php if ($this->session->userdata('caja')) { ?>
                                 <button class="btn btn-xs btn-success nuevoregistro" type="button">
-                                    <i class="fa fa-plus"></i><span class="hidden-xs push-5-l">REGISTRAR <?php echo $registro_text;?></span>
-                                </button>
                                 <?php } else {?>
                                 <button class="btn btn-xs btn-danger text-white" data-toggle="popover" data-placement="left" data-content="La caja de la sucursal está cerrada." disabled>
+                                <?php } ?>
                                     <i class="fa fa-plus"></i><span class="hidden-xs push-5-l">REGISTRAR <?php echo $registro_text;?></span>
                                 </button>
-                                <?php } ?>
                             </div>
                             <h3 class="block-title"><?php echo $export_text;?> por fecha</h3>
                         </div>
@@ -90,6 +88,7 @@
                                         <th>Tipo de venta</th>
                                         <th>Comprobante</th>
                                         <th>Usuario</th>
+                                        <th>Sucursal</th>
                                         <th>Estado</th>
                                         <th class="text-center" style="width: 120px;">Acciones</th>
                                     </tr>
@@ -100,6 +99,7 @@
                                     <tr>
                                         <th></th>
                                         <th>TOTAL</th>
+                                        <th></th>
                                         <th></th>
                                         <th></th>
                                         <th></th>
@@ -230,14 +230,14 @@
                                             <div class="form-group">
                                                 <div class="col-xs-12">
                                                     <div class="input-group form-material form-material-info">
-                                                        <input class="form-control textoinput required" type="text" name="comprobante">
+                                                        <input class="form-control textoinput" type="text" name="comprobante" readonly>
                                                         <label>N° de comprobante</label>
                                                         <span class="input-group-addon"><i class="fa fa-barcode"></i></span>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-xs-12 col-sm-3 tipo_pago_div">
+                                        <div class="col-xs-12 col-sm-3 tipo_venta_pago_div">
                                             <div class="form-group">
                                                 <div class="col-xs-12">
                                                     <div class="form-material form-material-info">
@@ -247,6 +247,30 @@
                                                             <?php endforeach;?>
                                                         </select>
                                                         <label>Tipo de pago</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-12 col-sm-3 tipo_pago_div">
+                                            <div class="form-group">
+                                                <div class="col-xs-12">
+                                                    <div class="input-group form-material form-material-info">
+                                                        <input class="form-control textoinput" type="text" name="numero_operacion">
+                                                        <label>N° de operación</label>
+                                                        <span class="input-group-addon"><i class="fa fa-barcode"></i></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-xs-12 col-sm-3">
+                                            <div class="form-group">
+                                                <div class="col-xs-12">
+                                                    <div class="input-group form-material form-material-info">
+                                                        <input class="form-control textoinput" type="text" name="sucursal" value="" readonly>
+                                                        <label>Sucursal</label>
+                                                        <span class="input-group-addon"><i class="si si-pointer"></i></span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -278,15 +302,17 @@
 
                                     <h3 class="h5 font-w600 text-uppercase push-15"><i class="fa fa-list text-primary push-5-r"></i> Detalles de venta</h3>
                                     <div class="row">
-                                        <div class="col-xs-12 col-md-offset-1 producto-div">
+                                        <div class="col-xs-12 producto-div">
                                             <div class="form-group">
-                                                <label class="col-md-2 control-label">Producto / Servicio</label>
-                                                <div class="col-md-6 push-10">
-                                                    <select class="form-control select2" name="producto_sel" style="width: 100%;" data-placeholder="Seleccione">
-                                                    </select>
-                                                </div>
-                                                <div class="col-md-2 text-center">
-                                                    <a class="btn btn-success btn-producto width100" type="button" data-toggle="tooltip" data-placement="top" title="Agregar detalle de venta"><i class="fa fa-plus"></i> Agregar</a>
+                                                <label class="col-md-2 control-label text-right">Producto / Servicio</label>
+                                                <div class="col-xs-12 col-md-10">
+                                                    <div class="input-group push-10">
+                                                        <select class="form-control select2" name="producto_sel" style="width: 100%;" data-placeholder="Seleccione">
+                                                        </select>
+                                                        <span class="input-group-btn">
+                                                            <button class="btn btn-success btn-producto" type="button"><i class="fa fa-plus"></i><span class=" push-10-l"> Agregar detalle</button>
+                                                        </span>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>

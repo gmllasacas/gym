@@ -18,6 +18,7 @@ class Transaccion extends CI_Controller
     {
         $estados = $this->generico_modelo->listado('base_estado', '1');
         $tipocomprobantes = $this->generico_modelo->listado('proceso_tipo_comprobante', '1', ['orderby'=>'id','direction'=>'asc']);
+        $tipos_ingreso_pago = $this->generico_modelo->listado('proceso_tipo_ingreso_pago', '1', ['orderby'=>'id','direction'=>'asc']);
         $proveedores = $this->generico_modelo->listado('proceso_proveedor', '1');
 
         $datos = [
@@ -26,6 +27,7 @@ class Transaccion extends CI_Controller
             'export_text' => 'Listado de ingresos',
             'registro_text' => 'ingreso',
             'tipocomprobantes'=>$tipocomprobantes,
+            'tipos_ingreso_pago'=>$tipos_ingreso_pago,
             'proveedores'=>$proveedores,
             'estados'=>$estados,
         ];
@@ -62,6 +64,38 @@ class Transaccion extends CI_Controller
         $this->load->view('proceso/ventas', $datos);
         $this->load->view('bases/pie');
         $this->load->view('bases/funciones', ['funciones' => ['proceso/ventas']]);
+    }
+
+    public function venta()
+    {
+        $sucursal = $this->session->userdata('sucursal');
+        $estados = $this->generico_modelo->listado('base_estado', '1');
+        $tipocomprobantes = $this->generico_modelo->listado('proceso_tipo_comprobante', '1', ['orderby'=>'id','direction'=>'asc']);
+        $tipo_venta_pagos = $this->generico_modelo->listado('proceso_tipo_venta_pago', '1', ['orderby'=>'id','direction'=>'asc']);
+        $tipo_pagos = $this->generico_modelo->listado('proceso_tipo_pago', '1', ['orderby'=>'id','direction'=>'asc']);
+        $caja = $this->generico_modelo->caja(['sucursal' => $sucursal, 'estado'=>1]);
+        $tipos_documento = $this->generico_modelo->listado('proceso_tipo_documento', '1');
+
+        $datos = [
+            'menu_text' => 'Transacciones',
+            'submenu_text' => 'Venta',
+            'export_text' => 'Formulario de venta',
+            'registro_text' => 'venta',
+            'tipocomprobantes'=>$tipocomprobantes,
+            'tipo_venta_pagos'=>$tipo_venta_pagos,
+            'tipo_pagos'=>$tipo_pagos,
+            'caja'=>$caja,
+            'tipos'=>$tipos_documento,
+            'departamento' => 2,
+            'estados'=>$estados,
+        ];
+
+        $this->load->view('bases/cabezera');
+        $this->load->view('bases/menu', ['menu' =>3,'submenu' =>308]);
+        $this->load->view('bases/barra');
+        $this->load->view('transaccion/venta', $datos);
+        $this->load->view('bases/pie');
+        $this->load->view('bases/funciones', ['funciones' => ['transaccion/venta']]);
     }
 
     public function kardex()
@@ -131,6 +165,7 @@ class Transaccion extends CI_Controller
         $clientes = $this->generico_modelo->listado('proceso_cliente', '1');
         $proveedores = $this->generico_modelo->listado('proceso_proveedor', '1');
         $tipo_pagos = $this->generico_modelo->listado('proceso_tipo_pago', '1', ['orderby'=>'id','direction'=>'asc']);
+        $tipocomprobantes = $this->generico_modelo->listado('proceso_tipo_comprobante', '1', ['orderby'=>'id','direction'=>'asc']);
 
         $datos = [
             'menu_text' => 'Transacciones',
@@ -140,6 +175,7 @@ class Transaccion extends CI_Controller
             'proveedores'=>$proveedores,
             'estados'=>$estados,
             'tipo_pagos'=>$tipo_pagos,
+            'tipocomprobantes'=>$tipocomprobantes,
         ];
 
         $this->load->view('bases/cabezera');

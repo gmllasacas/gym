@@ -846,16 +846,6 @@ th .form-control::placeholder {
     opacity: 1;
 }
 
-.list-activity > li {
-	margin-bottom: 0px; 
-	padding-bottom: 0px; 
-	padding-left: 25px;
-	font-size: 13px;
-	border-bottom: 1px solid #f3f3f3;
-}
-.list-activity > li > i:first-child {
-	left: 0;
-}
 .block-content.block-content-mini {
 	padding: 10px;
 }
@@ -926,6 +916,51 @@ div.dataTables_wrapper  .form-control:focus {
 	border-color:#cccccc;
 }
 
+.block .block-blocker {
+   position: absolute;
+   width: 100%;
+   height: 100%;
+   background-color: #ffffffc9;
+   z-index: 5;
+}
+
+.block .block-blocker:after {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin: -20px 0 0 -20px;
+    width: 40px;
+    height: 40px;
+    line-height: 40px;
+    color: red;
+    font-family: 'FontAwesome';
+    font-size: 25px;
+    text-align: center;
+    z-index: 2;
+    content: "\f05e";
+    animation: none;
+    -webkit-animation: none;
+}
+
+.ribbon-box {
+    padding: 0 10px;
+    height: 20px;
+    line-height: 20px;
+    font-size: 12px;
+    color: #fff;
+}
+
+.ribbon-modern .ribbon-box:before {
+    border: 10px solid;
+}
+
+a.block.block-link-disabled {
+    opacity: 0.75;
+}
+
+a.block.block-link-disabled:hover {
+    cursor: not-allowed;
+}
 /*******
 	#page-container, #sidebar {
 		background-color: #0099A8;

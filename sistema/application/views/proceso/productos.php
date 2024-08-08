@@ -42,6 +42,7 @@
                                         <th>Existencias</th>
                                         <th>Duración</th>
                                         <th>Fecha de registro</th>
+                                        <th>Fav.</th>
                                         <th>Estado</th>
                                         <th class="text-center" style="width: 120px;">Acciones</th>
                                     </tr>
@@ -81,7 +82,7 @@
                                         </div>
                                     </div>
                                     <div class="row">
-                                        <div class="col-xs-12 col-sm-8 col-sm-offset-2">
+                                        <div class="col-xs-9 col-sm-6 col-sm-offset-2">
                                             <div class="form-group">
                                                 <div class="col-xs-12">
                                                     <div class="input-group form-material form-material-info">
@@ -91,6 +92,11 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                        </div>
+                                        <div class="col-xs-3 col-sm-2">
+                                            <label class="css-input switch switch-primary">
+                                                <input type="checkbox" name="favorito" checked=""><span></span> Favorito
+                                            </label>
                                         </div>
                                     </div>
                                     <div class="row">

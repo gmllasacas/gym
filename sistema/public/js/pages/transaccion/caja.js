@@ -343,6 +343,7 @@ jQuery(function () {
                                 jQuery(abrirform+' [name="sucursal"]').val(response.registro.sucursaldesc);
                                 jQuery(abrirform+' .apertura-block').show();
                                 jQuery(abrirform+' .cierre-block').show();
+                                break;
                             default:
                                 break;
                         }

@@ -200,10 +200,16 @@ class GenericoModelo extends CI_Model
             case 'proceso_caja_detalle':
                 $query = $this->db->query(
                     "SELECT proceso_caja_detalle.*,
-                    base_usuario.username
+                    base_usuario.username,
+                    proceso_tipo_caja_detalle.descripcion as tipodesc,
+                    proceso_cliente.nombre_o_razon_social as clientedesc
                     FROM proceso_caja_detalle 
                     INNER JOIN base_usuario ON base_usuario.id=proceso_caja_detalle.usuario
-                    WHERE proceso_caja_detalle.estado REGEXP ? AND proceso_caja_detalle.caja = ?",
+                    INNER JOIN proceso_tipo_caja_detalle ON proceso_caja_detalle.tipo_caja_detalle=proceso_tipo_caja_detalle.id
+                    LEFT JOIN proceso_venta ON proceso_venta.id=proceso_caja_detalle.referencia
+                    LEFT JOIN proceso_cliente ON proceso_venta.cliente=proceso_cliente.id
+                    WHERE proceso_caja_detalle.estado REGEXP ? AND proceso_caja_detalle.caja = ?
+                    ORDER BY id DESC",
                     array('^['.$estado.']',$params['caja'])
                 );
                 break;
@@ -252,6 +258,14 @@ class GenericoModelo extends CI_Model
                 $estado = $params['estado'];
                 //$usuario_sesion = $this->session->userdata('perfil') > 2 ? 'AND base_usuario.id="'.$this->session->userdata('id').'"' : '';
                 $usuario_sesion = '';
+                switch ($this->session->userdata('perfil')) {
+                    case '1':
+                        $con_where = '';
+                        break;
+                    default:
+                        $con_where = 'AND base_sucursal.id = ' . $this->session->userdata('sucursal');
+                        break;
+                }
                 $query = $this->db->query(
                     "SELECT proceso_venta.*,
                     base_estado.descripcion as estadodesc,
@@ -263,13 +277,15 @@ class GenericoModelo extends CI_Model
                         (
                         SELECT SUM(proceso_venta_detalle.cantidad) FROM proceso_venta_detalle
                         WHERE proceso_venta_detalle.estado REGEXP ? AND proceso_venta_detalle.venta = proceso_venta.id
-                        ) as cantidad
+                        ) as cantidad,
+                    base_sucursal.sucursal as sucursaldesc
                     FROM proceso_venta 
                     INNER JOIN base_estado ON proceso_venta.estado=base_estado.id
                     INNER JOIN proceso_cliente ON proceso_venta.cliente=proceso_cliente.id
                     INNER JOIN base_usuario ON base_usuario.id=proceso_venta.usuario $usuario_sesion
                     INNER JOIN proceso_tipo_venta_pago ON proceso_venta.tipo_venta_pago=proceso_tipo_venta_pago.id
                     INNER JOIN proceso_tipo_comprobante ON proceso_venta.tipo_comprobante=proceso_tipo_comprobante.id
+                    INNER JOIN base_sucursal ON proceso_venta.sucursal = base_sucursal.id $con_where
                     WHERE (DATE(proceso_venta.fecha) BETWEEN ? AND ?) AND proceso_venta.estado REGEXP ?",
                     array('^['.$estado.']',$fechainicio,$fechafin,'^['.$estado.']')
                 );
@@ -279,16 +295,26 @@ class GenericoModelo extends CI_Model
                 $fechafin = $params['fechafin'];
                 $estado = $params['estado'];
                 $usuario_sesion = $this->session->userdata('perfil') > 2 ? 'AND base_usuario.id="'.$this->session->userdata('id').'"' : '';
+                switch ($this->session->userdata('perfil')) {
+                    case '1':
+                        $con_where = '';
+                        break;
+                    default:
+                        $con_where = 'AND base_sucursal.id = ' . $this->session->userdata('sucursal');
+                        break;
+                }
                 $query = $this->db->query(
                     "SELECT proceso_ingreso.*,
                     base_estado.descripcion as estadodesc,
                     base_estado.color as estadocol,
                     proceso_proveedor.nombre_o_razon_social as proveedordesc,
-                    base_usuario.username
+                    base_usuario.username,
+                    base_sucursal.sucursal as sucursaldesc
                     FROM proceso_ingreso 
                     INNER JOIN base_estado ON proceso_ingreso.estado=base_estado.id
                     INNER JOIN proceso_proveedor ON proceso_ingreso.proveedor=proceso_proveedor.id
                     INNER JOIN base_usuario ON base_usuario.id=proceso_ingreso.usuario $usuario_sesion
+                    INNER JOIN base_sucursal ON proceso_ingreso.sucursal = base_sucursal.id $con_where
                     WHERE (DATE(proceso_ingreso.fecha) BETWEEN ? AND ?) AND proceso_ingreso.estado REGEXP ?",
                     array($fechainicio,$fechafin,'^['.$estado.']')
                 );
@@ -299,6 +325,14 @@ class GenericoModelo extends CI_Model
                 $producto = $params['producto'];
                 $estado = $params['estado'];
                 $con_producto = (empty($producto) ? '' : 'AND proceso_kardex.producto = '.$producto);
+                switch ($this->session->userdata('perfil')) {
+                    case '1':
+                        $con_where = '';
+                        break;
+                    default:
+                        $con_where = 'AND base_sucursal.id = ' . $this->session->userdata('sucursal');
+                        break;
+                }
                 $query = $this->db->query(
                     "SELECT proceso_kardex.*,
                     base_estado.descripcion as estadodesc,
@@ -307,11 +341,13 @@ class GenericoModelo extends CI_Model
                     proceso_producto.tipo as tipo_producto,
                     proceso_producto.descripcion,
                     proceso_unidad.abreviatura,
-                    proceso_duracion_unidad.descripcion as duracion_unidad_desc
+                    proceso_duracion_unidad.descripcion as duracion_unidad_desc,
+                    base_sucursal.sucursal as sucursaldesc
                     FROM proceso_kardex 
                     INNER JOIN base_estado ON proceso_kardex.estado=base_estado.id
                     INNER JOIN proceso_tipo_kardex ON proceso_kardex.tipo_kardex=proceso_tipo_kardex.id
                     INNER JOIN proceso_producto ON proceso_kardex.producto=proceso_producto.id
+                    INNER JOIN base_sucursal ON proceso_kardex.sucursal = base_sucursal.id $con_where
                     LEFT JOIN proceso_unidad ON proceso_producto.unidad=proceso_unidad.id
                     LEFT JOIN proceso_duracion_unidad ON proceso_producto.duracion_unidad=proceso_duracion_unidad.id
                     WHERE (DATE(proceso_kardex.fecha) BETWEEN ? AND ?) AND proceso_kardex.estado REGEXP ? $con_producto",
@@ -451,7 +487,6 @@ class GenericoModelo extends CI_Model
                 $query = $this->db->query("SELECT * FROM $table WHERE estado REGEXP ? ORDER BY id DESC", array('^['.$estado.']'));
                 break;
         }
-
         $data = $query->result_array();
         if (count((array)$data) == 0) {
             throw new Exception("No existen registros");
@@ -509,12 +544,14 @@ class GenericoModelo extends CI_Model
 
     public function membresia($params)
     {
+        $con_where = 'AND base_sucursal.id = ' . $this->session->userdata('sucursal');
         $query = $this->db->query(
             "SELECT proceso_cliente_servicio.fecha_fin, proceso_producto.descripcion
             FROM proceso_cliente
             INNER JOIN proceso_cliente_servicio ON proceso_cliente.membresia=proceso_cliente_servicio.id
             INNER JOIN proceso_venta ON proceso_cliente_servicio.venta=proceso_venta.id AND proceso_venta.cliente = ?
             INNER JOIN proceso_producto ON proceso_cliente_servicio.producto=proceso_producto.id
+            INNER JOIN base_sucursal ON proceso_venta.sucursal = base_sucursal.id $con_where
             WHERE proceso_cliente_servicio.estado REGEXP ?
             ORDER BY proceso_cliente_servicio.fecha DESC
             LIMIT 1",
@@ -546,6 +583,25 @@ class GenericoModelo extends CI_Model
             ORDER BY proceso_caja.fecha DESC
             LIMIT 1",
             [$params['sucursal'], '^['.$params['estado'].']']
+        );
+
+        return $query->row_array();
+    }
+
+    public function kardex($params)
+    {
+        match ((int) $params['tipo_kardex']) {
+            1, 3 => $referencia_table = 'proceso_ingreso',
+            2, 4 => $referencia_table = 'proceso_venta',
+        };
+        $query = $this->db->query(
+            "SELECT proceso_kardex.*
+            FROM proceso_kardex
+            INNER JOIN $referencia_table ON proceso_kardex.referencia=$referencia_table.id AND $referencia_table.sucursal = ?
+            WHERE proceso_kardex.estado REGEXP ? AND proceso_kardex.producto = ?
+            ORDER BY base_sucursal.id DESC
+            LIMIT 1",
+            [$params['sucursal'], '^['.$params['estado'].']', $params['producto']]
         );
 
         return $query->row_array();
