@@ -480,6 +480,35 @@ jQuery(function () {
         });
     });
 
+    jQuery('body').on('change', registroform+' [name="proveedor"]', function() {
+      var proveedor = $(this).val();
+      if(proveedor){
+        jQuery.ajax({
+          type: "POST",
+          url: base_url + "generico/detalleregistro",
+          data: {
+              table: 'proceso_proveedor',
+              id: proveedor,
+              estado: '1',
+          },
+          dataType: 'json',
+          timeout: 60000,
+          success: function(response) {
+            if(response.status=='500'){
+              notifytemplate('fa fa-times', response.message, 'danger');
+            }
+            if(response.status=='200'){
+              jQuery(registroform+' [name="tipo_comprobante"]').val(response.registro.ultimo_ingreso.tipo_comprobante);
+              jQuery(registroform+' [name="comprobante"]').val(response.registro.ultimo_ingreso.comprobante);
+            }
+          }
+        });
+      }else{
+        jQuery(registroform+' [name="tipo_comprobante"]').val(null);
+        jQuery(registroform+' [name="comprobante"]').val(null);
+      }
+    });
+
     jQuery(busquedaform+' [name="proveedor"]').on('select2:unselecting', function() {
         jQuery(this).data('unselecting', true);
     }).on('select2:opening', function(e) {

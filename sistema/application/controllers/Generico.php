@@ -4,6 +4,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 class Generico extends CI_Controller
 {
     public $configuracion = [];
+    public $sucursal = [];
 
     public function __construct()
     {
@@ -12,6 +13,7 @@ class Generico extends CI_Controller
         $this->configuracion['logo'] = ($this->configuracion['logo'] == '') ? 'public/img/recursos/logo.png' : $this->configuracion['logo'];
         $this->load->helper('text');
         $this->load->model('GenericoModelo', 'generico_modelo');
+        $sucursal['id'] = $this->session->userdata('sucursal');
     }
 
     public function nuevoregistro()
@@ -40,6 +42,7 @@ class Generico extends CI_Controller
                     }
                     break;
                 case 'proceso_producto':
+                    $inputs['favorito'] = $this->input->post('favorito') ? 1 : 0;
                     $tipo= $inputs['tipo'];
                     switch ($tipo) {
                         case '1':
@@ -82,6 +85,7 @@ class Generico extends CI_Controller
                     $productos = $this->input->post('producto');
                     $tipo_venta_pago = $this->input->post('tipo_venta_pago');
                     $tipo_pago = $this->input->post('tipo_pago');
+                    $numero_operacion = $this->input->post('numero_operacion');
                     $cliente = $this->input->post('cliente');
                     $total_venta = $this->input->post('total');
                     $estado = $this->input->post('estado');
@@ -95,7 +99,7 @@ class Generico extends CI_Controller
                                 break;
                             }
                         } else {
-                            $kardex = basedetalleregistro('proceso_kardex', ['estado' => '1', 'producto' => $item['id']]);
+                            $kardex = ultimo_kardex(['estado' => '1','producto' => $item['id']]);
                             $saldo = (isset($kardex['saldo']) ? ($kardex['saldo'] > 0 ? $kardex['saldo'] : 0) : 0);
                             if ($item['cantidad'] > $saldo) {
                                 $flag = false;
@@ -111,9 +115,10 @@ class Generico extends CI_Controller
 
                     if ($flag) {
                         $usuario = $this->session->userdata('id');
+                        $inputs['sucursal'] = $this->session->userdata('sucursal');
                         $inputs['usuario'] = $usuario;
                         $inputs['fecha'] = $fecha;
-                        $exclude=array('id','table','counter','producto_sel','producto','tipo_pago');
+                        $exclude=array('id','table','counter','producto_sel','producto','tipo_pago','numero_operacion');
                         $registro=basenuevoregistro($inputs, $table, $exclude);
                         if ($registro) {
                             if ($tipo_pago == '1') {
@@ -174,11 +179,13 @@ class Generico extends CI_Controller
                                     break;
                                 case 2:
                                     /**Pago */
-                                    $inputs_pa['tipo_pago']=$tipo_pago;
-                                    $inputs_pa['cliente']=$cliente;
-                                    $inputs_pa['pago']=$total_venta;
-                                    $inputs_pa['usuario']=$this->session->userdata('id');
-                                    $inputs_pa['fecha']=date('Y-m-d H:i:s');
+                                    $inputs_pa['tipo_pago'] = $tipo_pago;
+                                    $inputs_pa['venta'] = $registro['id'];
+                                    $inputs_pa['numero_operacion'] = $numero_operacion;
+                                    $inputs_pa['cliente'] = $cliente;
+                                    $inputs_pa['pago'] = $total_venta;
+                                    $inputs_pa['usuario'] = $this->session->userdata('id');
+                                    $inputs_pa['fecha'] = date('Y-m-d H:i:s');
                                     $registro_pa=basenuevoregistro($inputs_pa, 'proceso_pago', []);
                                     /**Pago */
                                     break;
@@ -197,10 +204,15 @@ class Generico extends CI_Controller
                 case 'proceso_ingreso':
                     $productos = $this->input->post('producto');
                     $tipo_comprobante = $this->input->post('tipo_comprobante');
+                    $tipo_ingreso_pago = $this->input->post('tipo_ingreso_pago');
+                    $proveedor = $this->input->post('proveedor');
+                    $total = $this->input->post('total');
+                    $inputs['tipo_ingreso_pago'] = $tipo_ingreso_pago == '' ? null : $tipo_ingreso_pago;
+                    $inputs['sucursal'] = $this->session->userdata('sucursal');
                     $inputs['tipo_comprobante'] = ($tipo_comprobante=='' ? null : $tipo_comprobante);
                     $inputs['usuario'] = $this->session->userdata('id');
                     $inputs['fecha'] = date('Y-m-d H:i:s');
-                    $exclude = array('id','table','counter','producto_sel','producto','total');
+                    $exclude = array('id','table','counter','producto_sel','producto','total','pago');
                     $registro = basenuevoregistro($inputs, $table, $exclude);
                     if ($registro) {
                         foreach ($productos as $item) {
@@ -218,6 +230,22 @@ class Generico extends CI_Controller
                             $registro_p = basenuevoregistro($inputs_p, 'proceso_ingreso_detalle', []);
                             /**Detalle */
                         }
+
+                        if ($tipo_ingreso_pago) {
+                            /**Gasto */
+                            $inputs_ga['tipo_gasto'] = 1;
+                            $inputs_ga['referencia'] = $proveedor;
+                            $inputs_ga['pago'] = match ((int) $tipo_ingreso_pago) {
+                                1 => $total,
+                                2 => $this->input->post('pago'),
+                            };
+                            $inputs_ga['usuario'] = $this->session->userdata('id');
+                            $inputs_ga['observaciones'] = 'Pago creado automáticamente en el registro del ingreso.';
+                            $inputs_ga['fecha'] = date('Y-m-d H:i:s');
+                            $registro_pa=basenuevoregistro($inputs_ga, 'proceso_gasto', []);
+                            /**Gasto */
+                        }
+
                         response(['message'=>'Registro correcto']);
                     } else {
                         response(['message'=>'Error al escribir en la BD'], 500);
@@ -411,7 +439,7 @@ class Generico extends CI_Controller
                     $message='';
                     $detalles = $this->generico_modelo->listado('proceso_ingreso_detalle', '1', ['ingreso'=>$id]);
                     foreach ($detalles as $item) {
-                        $kardex = basedetalleregistro('proceso_kardex', ['estado'=>'1','producto'=>$item['producto']]);
+                        $kardex = ultimo_kardex(['estado' => '1','producto' => $item['producto']]);
                         $saldo = (isset($kardex['saldo']) ? ($kardex['saldo']>0 ? $kardex['saldo'] : 0) : 0);
                         if ($item['cantidad']>$saldo) {
                             $flag=false;
@@ -605,6 +633,17 @@ class Generico extends CI_Controller
                         response(['message'=>'Error al escribir en la BD'], 500);
                     }
                     break;
+                case 'proceso_producto':
+                    $inputs['favorito'] = $this->input->post('favorito') ? 1 : 0;
+                    $where = array('id'=>$id);
+                    $exclude = array('id','table','codigo');
+                    $registro = baseactualizarregistro($inputs, $table, $where, $exclude);
+                    if ($registro) {
+                        response(['message'=>'Registro correcto']);
+                    } else {
+                        response(['message'=>'Error al escribir en la BD'], 500);
+                    }
+                    break;
                 default:
                     $where = array('id'=>$id);
                     $exclude = array('id','table');
@@ -643,7 +682,7 @@ class Generico extends CI_Controller
                         $where = array('id'=>$id);
                         $registro = basedetalleregistro($table, $where, true);
                         $registro['codigo'] = spd($registro['id'], 6, '0');
-                        $kardex = basedetalleregistro('proceso_kardex', ['estado'=>'1','producto'=>$id]);
+                        $kardex = ultimo_kardex(['estado' => '1','producto' => $id]);
                         $registro['existencias'] = ($kardex['saldo']>0 ? $kardex['saldo'] : 0);
                         if ($registro['tipo'] == 1) {
                             $unidad = basedetalleregistro('proceso_unidad', ['estado'=>'1','id'=>$registro['unidad']]);
@@ -658,6 +697,7 @@ class Generico extends CI_Controller
                         $where = array('id'=>$id);
                         $registro = basedetalleregistro($table, $where, true);
                         $registro['detalles'] = $this->generico_modelo->listado('proceso_venta_detalle', '1', ['venta'=>$id]);
+                        $registro['sucursal'] = basedetalleregistro('base_sucursal', ['estado'=>'1','id'=>$registro['sucursal']]);
                         foreach ($registro['detalles'] as &$item) {
                             $item['codigo'] = spd($item['producto'], 6, '0');
                             $producto = basedetalleregistro('proceso_producto', ['estado'=>'1','id'=>$item['producto']]);
@@ -680,6 +720,7 @@ class Generico extends CI_Controller
                         $where = array('id'=>$id);
                         $registro = basedetalleregistro($table, $where, true);
                         $registro['detalles'] = $this->generico_modelo->listado('proceso_ingreso_detalle', '1', ['ingreso'=>$id]);
+                        $registro['sucursal'] = basedetalleregistro('base_sucursal', ['estado'=>'1','id'=>$registro['sucursal']]);
                         foreach ($registro['detalles'] as &$item) {
                             $item['codigo'] = spd($item['producto'], 6, '0');
                         }
@@ -744,10 +785,21 @@ class Generico extends CI_Controller
                         }
                         break;
                     case 'base_sucursal':
+                        $tipo_comprobante = $this->input->post('tipo_comprobante');
                         $registro = basedetalleregistro($table, ['id' => $id], true);
                         $usuarios = $this->generico_modelo->listado('base_usuario_sucursal', '1', ['where' => ['sucursal' => $id]]);
                         $ids = array_column($usuarios, 'usuario');
                         $registro['usuarios'] = $ids;
+                        $registro['numeracion'] = match ((int) $tipo_comprobante) {
+                            1 => $registro['serie_boleta'] . '-' . spd($registro['numeracion_boleta'], 6, '0'),
+                            2 => $registro['serie_factura'] . '-' . spd($registro['numeracion_factura'], 6, '0'),
+                            default => ''
+                        };
+                        break;
+                    case 'proceso_proveedor':
+                        $tipo_comprobante = $this->input->post('tipo_comprobante');
+                        $registro = basedetalleregistro($table, ['id' => $id], true);
+                        $registro['ultimo_ingreso'] = basedetalleregistro('proceso_ingreso', ['estado'=>'1','sucursal'=>$this->session->userdata('sucursal'), 'proveedor'=>$id]);
                         break;
                     default:
                         $where = array('id' => $id);
@@ -773,6 +825,7 @@ class Generico extends CI_Controller
         if ($this->form_validation->run() == false) {
             response(['message'=>'Parámetros incorrectos'], 500);
         } else {
+            $meta = [];
             try {
                 switch ($table) {
                     case 'base_usuario':
@@ -784,13 +837,13 @@ class Generico extends CI_Controller
                         foreach ($registros as &$item) {
                             $item['codigo'] = spd($item['id'], 6, '0');
                             if ($item['tipo'] == 1) {
-                                $kardex = basedetalleregistro('proceso_kardex', ['estado'=>'1','producto'=>$item['id']]);
+                                $kardex = ultimo_kardex(['estado' => '1','producto' => $item['id']]);
                                 $item['existencias'] = (isset($kardex['saldo']) ? ($kardex['saldo']>0 ? $kardex['saldo'] : 0) : 0);
-                                //$item['existencias'] = rand(20, 100);
                             } else {
                                 $item['existencias'] = '';
                             }
                         }
+                        $meta['sucursal'] = $this->session->userdata('sucursaldesc');
                         break;
                     case 'proceso_producto_y_clientes':
                         $caja_actual = caja_actual();
@@ -801,7 +854,7 @@ class Generico extends CI_Controller
                         $productos = $this->generico_modelo->listado('proceso_producto', $estado, [], true);
                         foreach ($productos as &$item) {
                             $item['codigo'] = spd($item['id'], 6, '0');
-                            $kardex = basedetalleregistro('proceso_kardex', ['estado'=>'1','producto'=>$item['id']]);
+                            $kardex = ultimo_kardex(['estado' => '1','producto' => $item['id']]);
                             $item['existencias'] = (isset($kardex['saldo']) ? ($kardex['saldo']>0 ? $kardex['saldo'] : 0) : 0);
                         }
                         $clientes = $this->generico_modelo->listado('proceso_cliente', $estado, [], true);
@@ -815,6 +868,7 @@ class Generico extends CI_Controller
                             'date'=>date('Y-m-d H:i:s'),
                             'clientes'=>$clientes
                         ];
+                        $meta['sucursal'] = $this->session->userdata('sucursaldesc');
                         break;
                     case 'proceso_cliente':
                         $ahora = date('Y-m-d');
@@ -852,7 +906,7 @@ class Generico extends CI_Controller
                         $registros = $this->generico_modelo->listado($table, $estado, [], true);
                         break;
                 }
-                response(['data'=>$registros]);
+                response(['data'=>$registros, 'meta'=>$meta]);
             } catch (Exception $e) {
                 response(['message'=>$e->getMessage()], 500);
             }

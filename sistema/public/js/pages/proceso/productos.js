@@ -22,6 +22,7 @@ jQuery(function () {
         jQuery(registroform+' [name=unidad]').prop('disabled',false);
         jQuery(registroform+' [name=duracion]').prop('disabled',false);
         jQuery(registroform+' [name=duracion_unidad]').prop('disabled',false).val(1).trigger('change');
+        jQuery(registroform+' [name=favorito]').val(1).prop('checked',false);
         jQuery(registromodal).modal('toggle');
     });
 
@@ -47,6 +48,7 @@ jQuery(function () {
                     jQuery(registroform+' [name=unidad]').prop('disabled',true).trigger('change');
                     jQuery(registroform+' [name=duracion]').prop('disabled',true).trigger('change');
                     jQuery(registroform+' [name=duracion_unidad]').prop('disabled',true).trigger('change');
+                    jQuery(registroform+' [name=favorito]').val(1).prop('checked',parseInt(response.registro.favorito));
                     jQuery(registromodal).modal('toggle');
                 }
             }
@@ -54,142 +56,150 @@ jQuery(function () {
     });
 
     var listdt = jQuery(tablelist).DataTable({
-        ajax: {
-            type: 'POST',
-            url: base_url+'generico/listado/',
-            timeout: ajax_timeout,
-            data: {
-                table: 'proceso_producto',
-                estado: '^5',
-            },
-            dataSrc: function (response) {
-                switch (response.status) {
-                    case 200:
-                        for ( var i=0, ien=response.data.length ; i<ien ; i++ ) {
-                            switch (response.data[i]['estado']) {
-                                case '2':
-                                    response.data[i]['acciones']='<div class="btn-group">'+
-                                                                        '    <button class="btn btn-xs btn-success cambiadatoregistro" data-toggle="tooltip" data-placement="top" title="Activar" data-id="' + response.data[i]['id'] + '" data-table="proceso_producto" data-valor="1" data-campo="estado">' +
-                                                                        '        <i class="fa fa-check"></i>'+
-                                                                        '    </button>'+
-                                                                        '</div>';
-                                    break;
-                                case '1':
-                                    response.data[i]['acciones']='<div class="btn-group">'+
-                                                                        '    <button class="btn btn-xs btn-info editarregistro" data-toggle="tooltip" data-placement="top" title="Detalles / Editar" data-id="'+response.data[i]['id']+'" data-table="proceso_producto">'+
-                                                                        '        <i class="fa fa-edit"></i>'+
-                                                                        '    </button>'+
-                                                                        '    <button class="btn btn-xs btn-warning cambiadatoregistro" data-toggle="tooltip" data-placement="top" title="Desactivar" data-id="' + response.data[i]['id'] + '" data-table="proceso_producto" data-valor="2" data-campo="estado">' +
-                                                                        '        <i class="fa fa-ban"></i>'+
-                                                                        '    </button>'+
-                                                                        '</div>';
-                                    break;
-                                default:
-                                    response.data[i]['acciones']='';
-                                    break;
-                            }
-                            switch (response.data[i]['tipo']) {
-                                case '1':
-                                    var color = '';
-                                    if(response.data[i]['existencias']==0){
-                                        color = 'danger';
-                                    }else if(response.data[i]['existencias']<30){
-                                        color = 'warning';
-                                    }else{
-                                        color = 'success';
-                                    }
-                                    response.data[i]['existenciasstr'] = '<span class="text-'+color+'">'+response.data[i]['existencias']+' '+response.data[i]['abreviatura']+'</span>';
-                                    response.data[i]['duracionstr'] = '';
-                                    response.data[i]['tipodescstr']='<label class="label label-info">'+response.data[i]['tipodesc']+'</label>';
-                                    break;
-                                case '2':
-                                    response.data[i]['duracionstr'] = response.data[i]['duracion']+' '+response.data[i]['duracion_unidad_desc'];
-                                    response.data[i]['existenciasstr'] = '';
-                                    response.data[i]['tipodescstr']='<label class="label label-success">'+response.data[i]['tipodesc']+'</label>';
-                                default:
-                                    break;
-                            }
-                            
-                            response.data[i]['preciostr']='S/ '+response.data[i]['precio'];
-                            response.data[i]['estadostr']='<label class="label label-'+response.data[i]['estadocol']+'">'+response.data[i]['estadodesc']+'</label>';
-                        }
-                        return response.data;
-                        break;
-                    case 500:
-                        notifytemplate('fa fa-times', response.message, 'danger');
-                        return [];
-                        break;
-                    default:
-                        return [];
-                        break;
+      ajax: {
+        type: 'POST',
+        url: base_url+'generico/listado/',
+        timeout: ajax_timeout,
+        data: {
+          table: 'proceso_producto',
+          estado: '^5',
+        },
+        dataSrc: function (response) {
+          switch (response.status) {
+            case 200:
+              for ( var i=0, ien=response.data.length ; i<ien ; i++ ) {
+                switch (response.data[i]['estado']) {
+                  case '2':
+                    response.data[i]['acciones']='<div class="btn-group">'+
+                                                '    <button class="btn btn-xs btn-success cambiadatoregistro" data-toggle="tooltip" data-placement="top" title="Activar" data-id="' + response.data[i]['id'] + '" data-table="proceso_producto" data-valor="1" data-campo="estado">' +
+                                                '        <i class="fa fa-check"></i>'+
+                                                '    </button>'+
+                                                '</div>';
+                    break;
+                  case '1':
+                    response.data[i]['acciones']='<div class="btn-group">'+
+                                                '    <button class="btn btn-xs btn-info editarregistro" data-toggle="tooltip" data-placement="top" title="Detalles / Editar" data-id="'+response.data[i]['id']+'" data-table="proceso_producto">'+
+                                                '        <i class="fa fa-edit"></i>'+
+                                                '    </button>'+
+                                                '    <button class="btn btn-xs btn-warning cambiadatoregistro" data-toggle="tooltip" data-placement="top" title="Desactivar" data-id="' + response.data[i]['id'] + '" data-table="proceso_producto" data-valor="2" data-campo="estado">' +
+                                                '        <i class="fa fa-ban"></i>'+
+                                                '    </button>'+
+                                                '</div>';
+                    break;
+                  default:
+                    response.data[i]['acciones']='';
+                    break;
                 }
-            }
+
+                switch (response.data[i]['tipo']) {
+                  case '1':
+                    var color = '';
+                    if(response.data[i]['existencias']==0){
+                      color = 'danger';
+                    }else if(response.data[i]['existencias']<30){
+                      color = 'warning';
+                    }else{
+                      color = 'success';
+                    }
+                    response.data[i]['existenciasstr'] = '<span class="text-'+color+'">'+response.data[i]['existencias']+' '+response.data[i]['abreviatura']+'</span>';
+                    response.data[i]['duracionstr'] = '';
+                    response.data[i]['tipodescstr']='<label class="label label-info">'+response.data[i]['tipodesc']+'</label>';
+                    break;
+                  case '2':
+                    response.data[i]['duracionstr'] = response.data[i]['duracion']+' '+response.data[i]['duracion_unidad_desc'];
+                    response.data[i]['existenciasstr'] = '';
+                    response.data[i]['tipodescstr']='<label class="label label-success">'+response.data[i]['tipodesc']+'</label>';
+                  default:
+                    break;
+                }
+
+                if (response.data[i]['favorito'] == "1") {
+                  response.data[i]['favoritostr']='<i class="fa fa-star text-warning"></i>';
+                } else {
+                  response.data[i]['favoritostr']='';
+                }
+                
+                response.data[i]['preciostr']='S/ '+response.data[i]['precio'];
+                response.data[i]['estadostr']='<label class="label label-'+response.data[i]['estadocol']+'">'+response.data[i]['estadodesc']+'</label>';
+              }
+              return response.data;
+              break;
+            case 500:
+              notifytemplate('fa fa-times', response.message, 'danger');
+              return [];
+              break;
+            default:
+              return [];
+              break;
+          }
+        }
+      },
+      columns: [
+        { data: 'codigo' },
+        { data: 'descripcion' },
+        { data: 'tipodesc' },
+        { data: 'tipodescstr' },
+        { data: 'preciostr' },
+        { data: 'existenciasstr' },
+        { data: 'duracionstr' },
+        { data: 'fecha' },
+        { data: 'favoritostr' },
+        { data: 'estadostr' },
+        { data: 'acciones' },
+      ],
+      columnDefs: [
+        {	
+          targets: [2],
+          visible: false, 
         },
-        columns: [
-            { data: 'codigo' },
-            { data: 'descripcion' },
-            { data: 'tipodesc' },
-            { data: 'tipodescstr' },
-            { data: 'preciostr' },
-            { data: 'existenciasstr' },
-            { data: 'duracionstr' },
-            { data: 'fecha' },
-            { data: 'estadostr' },
-            { data: 'acciones' },
-        ],
-        columnDefs: [
-            {	
-                targets: [2],
-                visible: false, 
-            },
-            {
-                targets: [3,4,5,6,-2,-1],
-                className: 'dt-body-center'
-            },
-            /*{
-                orderData: 4,
-                targets: 5
-            },*/
-            {
-                type: membresias,
-                targets: 5
-            },
-        ],
-        buttons: true,
-        order: [[5, "desc"]],
-        bAutoWidth: false,
-        initComplete: function () {
-            selectores();
+        {
+          targets: [3,4,5,6,-3,-2,-1],
+          className: 'dt-body-center'
         },
+        /*{
+          orderData: 4,
+          targets: 5
+        },*/
+        {
+          type: membresias,
+          targets: 5
+        },
+      ],
+      buttons: true,
+      order: [[5, "desc"]],
+      bAutoWidth: false,
+      initComplete: function () {
+        selectores();
+      },
     });	
     
     var buttons = new jQuery.fn.dataTable.Buttons(listdt, {
-        buttons: [
-            {
-                extend: 'copy',
-                text: '<i class="fa fa-copy push-5-r"></i> Copiar',
-                exportOptions: {
-                    columns: ':not(:last-child)',
-                }
-            },
-            {
-                extend: 'excel',
-                text: '<i class="fa fa-file-excel-o push-5-r"></i> Exportar a Excel',
-                title: reportetext,
-                filename: reportetext,
-                exportOptions: {
-                    columns: ':not(:last-child)',
-                }
-            },
-            {
-                extend: 'print',
-                text: '<i class="si si-printer push-5-r"></i> Imprimir',
-                title: reportetext,
-                exportOptions: {
-                    columns: ':not(:last-child)',
-                }
-            },
-        ],
+      buttons: [
+        {
+          extend: 'copy',
+          text: '<i class="fa fa-copy push-5-r"></i> Copiar',
+          exportOptions: {
+            columns: ':not(:last-child)',
+          }
+        },
+        {
+          extend: 'excel',
+          text: '<i class="fa fa-file-excel-o push-5-r"></i> Exportar a Excel',
+          title: reportetext,
+          filename: reportetext,
+          exportOptions: {
+            columns: ':not(:last-child)',
+          }
+        },
+        {
+          extend: 'print',
+          text: '<i class="si si-printer push-5-r"></i> Imprimir',
+          title: reportetext,
+          exportOptions: {
+            columns: ':not(:last-child)',
+          }
+        },
+      ],
     }).container().appendTo(jQuery(tablelist).closest('.block-content').find('.options div:nth-child(1)'));
 
     function selectores() { 

@@ -105,13 +105,14 @@ jQuery(function () {
                         clientes += '<option value="'+item.id+'">'+item.documento+' - '+item.nombre_o_razon_social+'</option>';
                     });
                     jQuery(registroform+' [name="cliente"]').html(clientes).trigger('change');
+                    jQuery(registroform+' [name="sucursal"]').val(response.meta.sucursal);
 
                     jQuery(registroform+' button[type="submit"]').show();
                     jQuery(registroform+' .producto-div').show();
                     jQuery(registroform+' [name="cliente"]').prop('disabled',false);
                     jQuery(registroform+' [name="tipo_comprobante"]').prop('disabled',false);
                     jQuery(registroform+' [name="comprobante"]').prop('disabled',false);
-                    jQuery(registroform+' [name="tipo_pago"]').prop('disabled',false);
+                    jQuery(registroform+' [name="tipo_pago"]').prop('disabled',false).trigger('change');
                     jQuery(registroform+' [name="datos_adicionales"]').prop('disabled',false);
                     jQuery(registromodal).modal('toggle');
                 }
@@ -402,6 +403,7 @@ jQuery(function () {
             { data: 'tipodesc' },
             { data: 'comprobantestr' },
             { data: 'username' },
+            { data: 'sucursaldesc' },
             { data: 'estadostr' },
             { data: 'acciones' },
         ],
@@ -553,23 +555,53 @@ jQuery(function () {
         calcular_total();
     });
 
-    /*jQuery('body').on('change', registroform+' [name="tipo_comprobante"]', function() {
-        if($(this).val()){
-            jQuery(registroform+' [name="comprobante"]').removeClass('required');
-            jQuery(registroform+' [name="comprobante"]').parents('.form-group').removeClass('has-error');
-        }else{
-            jQuery(registroform+' [name="comprobante"]').addClass('required');
-        }
-    });*/
+    jQuery('body').on('change', registroform+' [name="tipo_comprobante"]', function() {
+      var tipo_comprobante = $(this).val();
+      if(tipo_comprobante){
+        jQuery.ajax({
+          type: "POST",
+          url: base_url + "generico/detalleregistro",
+          data: {
+              table: 'base_sucursal',
+              id: sucursal,
+              tipo_comprobante: tipo_comprobante,
+              estado: '1',
+          },
+          dataType: 'json',
+          timeout: 60000,
+          success: function(response) {
+            if(response.status=='500'){
+              notifytemplate('fa fa-times', response.message, 'danger');
+            }
+            if(response.status=='200'){
+              jQuery(registroform+' [name="comprobante"]').val(response.registro.numeracion);
+            }
+          }
+        });
+      }else{
+        jQuery(registroform+' [name="comprobante"]').addClass('required');
+      }
+    });
 
     jQuery('body').on('change', registroform+' [name="tipo_venta_pago"]', function() {
         if($(this).val()=='2'){
-            jQuery(registroform+' .tipo_pago_div').show();
+            jQuery(registroform+' .tipo_venta_pago_div').show();
             jQuery(registroform+' [name="tipo_pago"]').addClass('required');
         }else{
-            jQuery(registroform+' .tipo_pago_div').hide();
+            jQuery(registroform+' .tipo_venta_pago_div').hide();
             jQuery(registroform+' [name="tipo_pago"]').removeClass('required');
             jQuery(registroform+' [name="tipo_pago"]').parents('.form-group').removeClass('has-error');
+        }
+    });
+
+    jQuery('body').on('change', registroform+' [name="tipo_pago"]', function() {
+        if($(this).val()=='2'){
+            jQuery(registroform+' .tipo_pago_div').show();
+            jQuery(registroform+' [name="numero_operacion"]').addClass('required');
+        }else{
+            jQuery(registroform+' .tipo_pago_div').hide();
+            jQuery(registroform+' [name="numero_operacion"]').removeClass('required');
+            jQuery(registroform+' [name="numero_operacion"]').parents('.form-group').removeClass('has-error');
         }
     });
 

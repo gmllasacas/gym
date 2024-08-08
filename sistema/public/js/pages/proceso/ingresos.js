@@ -70,9 +70,12 @@ jQuery(function () {
                     jQuery(registroform+' [name="producto_sel"]').html(options).trigger('change');
                     jQuery(registroform+' button[type="submit"]').show();
                     jQuery(registroform+' .producto-div').show();
+                    jQuery(registroform+' [name="sucursal"]').val(response.meta.sucursal);
                     jQuery(registroform+' [name="proveedor"]').prop('disabled',false);
                     jQuery(registroform+' [name="proveedor"] option:eq(0)').prop('selected',true).trigger('change');
                     jQuery(registroform+' [name="tipo_comprobante"]').prop('disabled',false).val(null).trigger('change');
+                    jQuery(registroform+' [name="tipo_ingreso_pago"]').prop('disabled',false).val(null).trigger('change');
+                    jQuery(registroform+' [name="pago"]').prop('disabled',false);
                     jQuery(registroform+' [name="comprobante"]').prop('disabled',false);
                     jQuery(registroform+' [name="datos_adicionales"]').prop('disabled',false);
                     jQuery(registromodal).modal('toggle');
@@ -102,8 +105,11 @@ jQuery(function () {
                             jQuery(registroform+' [name='+index+']').val(item).trigger("change");
                         }
                     });
+                    jQuery(registroform+' [name="sucursal"]').val(response.registro.sucursal.sucursal);
                     jQuery(registroform+' [name="proveedor"]').prop('disabled',true);
                     jQuery(registroform+' [name="tipo_comprobante"]').prop('disabled',true).trigger('change');
+                    jQuery(registroform+' [name="tipo_ingreso_pago"]').prop('disabled',true).trigger('change');
+                    jQuery(registroform+' [name="pago"]').prop('disabled',true);
                     jQuery(registroform+' [name="comprobante"]').prop('disabled',true);
                     jQuery(registroform+' [name="datos_adicionales"]').prop('disabled',true);
                     jQuery(tabledetalles+' tbody').html('');
@@ -185,6 +191,8 @@ jQuery(function () {
                     });
                     jQuery(registroform+' [name="proveedor"]').prop('disabled',true);
                     jQuery(registroform+' [name="tipo_comprobante"]').prop('disabled',true);
+                    jQuery(registroform+' [name="tipo_ingreso_pago"]').prop('disabled',true);
+                    jQuery(registroform+' [name="pago"]').prop('disabled',true);
                     jQuery(registroform+' [name="comprobante"]').prop('disabled',true);
                     jQuery(registroform+' [name="datos_adicionales"]').prop('disabled',true);
                     jQuery(tabledetalles+' tbody').html('');
@@ -299,6 +307,7 @@ jQuery(function () {
             { data: 'fecha' },
             { data: 'proveedordesc' },
             { data: 'username' },
+            { data: 'sucursaldesc' },
             { data: 'estadostr' },
             { data: 'acciones' },
         ],
@@ -425,6 +434,17 @@ jQuery(function () {
             jQuery(registroform+' [name="comprobante"]').removeClass('required');
             jQuery(registroform+' [name="comprobante"]').parents('.form-group').removeClass('has-error');
         }
+    });
+
+    jQuery('body').on('change', registroform+' [name="tipo_ingreso_pago"]', function() {
+      if($(this).val()=='2'){
+        jQuery(registroform+' .tipo_ingreso_pago_div').show();
+        jQuery(registroform+' [name="pago"]').addClass('required');
+      }else{
+        jQuery(registroform+' .tipo_ingreso_pago_div').hide();
+        jQuery(registroform+' [name="pago"]').removeClass('required');
+        jQuery(registroform+' [name="pago"]').parents('.form-group').removeClass('has-error');
+      }
     });
 
     jQuery('body').on('click', registroform + ' .btn-producto', function() {

@@ -38,6 +38,7 @@
             var base_url ='<?php echo base_url();?>';
             var ajax_timeout ='<?php echo $this->config->item('ajax_timeout');?>';
             var perfil ='<?php echo $this->session->userdata('perfil'); ?>';
+            var sucursal ='<?php echo $this->session->userdata('sucursal'); ?>';
             var crear_contrasena = <?php echo ($crear_contrasena ?? 'false'); ?>;
             var select2_enabled = true;
             var blockUI_message = ' Procesando';

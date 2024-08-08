@@ -181,7 +181,7 @@
                                     <input type="hidden" name="tipo_gasto" value="1">
                                     <h3 class="h5 font-w600 text-uppercase push-15"><i class="fa fa-info text-primary push-5-r"></i> Datos generales</h3>
                                     <div class="row">
-                                        <div class="col-xs-12 col-sm-6 col-sm-offset-3">
+                                        <div class="col-xs-12 col-sm-6">
                                             <div class="form-group">
                                                 <div class="col-xs-12">
                                                     <div class="form-material form-material-info">
@@ -192,9 +192,35 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <div class="col-xs-12 col-sm-3">
+                                            <div class="form-group">
+                                                <div class="col-xs-12">
+                                                    <div class="form-material form-material-info">
+                                                        <select class="form-control" name="tipo_comprobante" style="width: 100%;" data-placeholder="Seleccione" disabled>
+                                                            <option value="">Seleccione</option>
+                                                            <?php foreach ($tipocomprobantes as $item) :?>
+                                                            <option value="<?php echo $item['id']; ?>" ><?php echo $item['descripcion']; ?></option>
+                                                            <?php endforeach;?>
+                                                        </select>
+                                                        <label>Tipo de comprobante</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-12 col-sm-3">
+                                            <div class="form-group">
+                                                <div class="col-xs-12">
+                                                    <div class="input-group form-material form-material-info">
+                                                        <input class="form-control textoinput" type="text" name="comprobante" disabled>
+                                                        <label>N° de comprobante</label>
+                                                        <span class="input-group-addon"><i class="fa fa-barcode"></i></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                     <div class="row">
-                                        <div class="col-xs-12 col-sm-3 col-sm-offset-3">
+                                        <div class="col-xs-12 col-sm-3">
                                             <div class="form-group">
                                                 <div class="col-xs-12">
                                                     <div class="input-group form-material form-material-info">
