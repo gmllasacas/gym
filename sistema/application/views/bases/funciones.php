@@ -140,6 +140,34 @@
                     }
                 }
 
+                function validarTipoDocumento(tipo_documento, documento) {
+                    var flag = false;
+                    var message = '';
+
+                    switch (tipo_documento) {
+                        case '1': //DNI
+                            if(documento.length == 8) flag = true;
+                            else message = 'El número de documento debe tener 8 dígitos';
+                            break;
+                        case '4': //CARNET DE EXTRANJERIA
+                            if(documento.length <= 12) flag = true;
+                            else message = 'El número de documento debe como máximo 12 caracteres';
+                            break;
+                        case '6': //RUC
+                            if(documento.length == 11) flag = true;
+                            else message = 'El número de documento debe tener 11 dígitos';
+                            break;
+                        default:
+                            flag = false;
+                            break;
+                    }
+                    
+                    return {
+                        'flag' : flag,
+                        'message' : message
+                    };
+                }
+
             /***Funciones generales***/
 
             jQuery(function () {
@@ -297,7 +325,7 @@
                 /***AJAX***/
             });
         </script>
-        <?php foreach ($funciones as $item) { ?>
+        <?php foreach ((array)$funciones as $item) { ?>
         <script src="<?php echo base_url();?>public/js/pages/<?php echo $item;?>.js<?php echo $this->config->item('file_version');?>"></script>
         <?php }?>
     </body>

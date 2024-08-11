@@ -16,7 +16,7 @@
                 </div>
                 <div class="content">
                     <div class="block push-10">
-                        <ul class="nav nav-tabs nav-justified" data-toggle="tabs">
+                        <ul class="nav nav-tabs" data-toggle="tabs">
                             <li class="active">
                                 <a href="#clientes_nuevos" class="block-title"><?php echo $export_text;?></a>
                             </li>

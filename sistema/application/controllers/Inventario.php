@@ -33,4 +33,21 @@ class Inventario extends CI_Controller
         $this->load->view('bases/pie');
         $this->load->view('bases/funciones', ['funciones' => ['inventario/sucursales']]);
     }
+
+    public function codigos()
+    {
+        $datos = [
+            'menu_text' => 'Inventario',
+            'submenu_text' => 'Códigos de descuento',
+            'export_text' => 'Listado de códigos de descuento',
+            'registro_text' => 'Código de descuento'
+        ];
+
+        $this->load->view('bases/cabezera');
+        $this->load->view('bases/menu', ['menu' =>2,'submenu' =>205]);
+        $this->load->view('bases/barra');
+        $this->load->view('inventario/codigos', $datos);
+        $this->load->view('bases/pie');
+        $this->load->view('bases/funciones', ['funciones' => ['inventario/codigos']]);
+    }
 }

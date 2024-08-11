@@ -164,7 +164,7 @@
                                                 <div class="col-xs-12">
                                                     <div class="form-material form-material-info">
                                                         <select class="form-control required select2" name="usuarios[]" style="width: 100%;" data-placeholder="Seleccione usuarios" multiple="multiple">
-                                                            <?php foreach ($usuarios as $item) :?>
+                                                            <?php foreach ((array)$usuarios as $item) :?>
                                                             <option value="<?php echo $item['id']; ?>" ><?php echo $item['username'].' - '.$item['nombres']. ' ' .$item['apellidos']; ?></option>
                                                             <?php endforeach;?>
                                                         </select>

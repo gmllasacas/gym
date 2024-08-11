@@ -123,6 +123,7 @@ class Generico extends CI_Controller
                         if ($registro) {
                             if ($tipo_pago == '1') {
                                 /**Detalle de caja */
+                                $inputs_dc['tipo_caja_detalle'] = 2;
                                 $inputs_dc['caja'] = $this->session->userdata('caja');
                                 $inputs_dc['referencia'] = $registro['id'];
                                 $inputs_dc['monto'] = $total_venta;
@@ -338,6 +339,22 @@ class Generico extends CI_Controller
                         response(['message'=>'Registro correcto']);
                     } else {
                         response(['message'=>'Error al escribir en la BD'], 500);
+                    }
+                    break;
+                case 'proceso_codigo_descuento':
+                    $registro_det=basedetalleregistro($table, ['codigo'=>$this->input->post('codigo')]);
+                    if (count((array)$registro_det)==0) {
+                        $inputs['usuario'] = $this->session->userdata('id');
+                        $inputs['fecha']=date('Y-m-d H:i:s');
+                        $exclude=array('id','table');
+                        $registro=basenuevoregistro($inputs, $table, $exclude);
+                        if ($registro) {
+                            response(['message'=>'Registro correcto']);
+                        } else {
+                            response(['message'=>'Error al escribir en la BD'], 500);
+                        }
+                    } else {
+                        response(['message'=>'El código de descuento ya está registrado'], 500);
                     }
                     break;
                 default:
@@ -639,7 +656,7 @@ class Generico extends CI_Controller
                     $exclude = array('id','table','codigo');
                     $registro = baseactualizarregistro($inputs, $table, $where, $exclude);
                     if ($registro) {
-                        response(['message'=>'Registro correcto']);
+                        response(['message'=>'Registro correcto'], 201);
                     } else {
                         response(['message'=>'Error al escribir en la BD'], 500);
                     }
@@ -791,8 +808,8 @@ class Generico extends CI_Controller
                         $ids = array_column($usuarios, 'usuario');
                         $registro['usuarios'] = $ids;
                         $registro['numeracion'] = match ((int) $tipo_comprobante) {
-                            1 => $registro['serie_boleta'] . '-' . spd($registro['numeracion_boleta'], 6, '0'),
-                            2 => $registro['serie_factura'] . '-' . spd($registro['numeracion_factura'], 6, '0'),
+                            3 => $registro['serie_boleta'] . '-' . spd($registro['numeracion_boleta'], 6, '0'),
+                            1 => $registro['serie_factura'] . '-' . spd($registro['numeracion_factura'], 6, '0'),
                             default => ''
                         };
                         break;
@@ -935,6 +952,9 @@ class Generico extends CI_Controller
                         foreach ($registros as &$item) {
                             $item['totalsum'] = (($item['estado']==3 || $item['estado']==4) ? 0 : $item['total']);
                         }
+                        break;
+                    case 'reporte_contable':
+                        $registros = $this->generico_modelo->busqueda($table, $params);
                         break;
                     case 'proceso_ingreso':
                         $registros = $this->generico_modelo->busqueda($table, $params);

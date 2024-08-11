@@ -222,6 +222,19 @@ class GenericoModelo extends CI_Model
                     array('^['.$estado.']')
                 );
                 break;
+            case 'proceso_codigo_descuento':
+                $query = $this->db->query(
+                    "SELECT proceso_codigo_descuento.*,
+                    base_usuario.username,
+                    base_estado.descripcion as estadodesc,
+                    base_estado.color as estadocol
+                    FROM proceso_codigo_descuento 
+                    INNER JOIN base_estado ON proceso_codigo_descuento.estado=base_estado.id
+                    INNER JOIN base_usuario ON base_usuario.id=proceso_codigo_descuento.usuario
+                    WHERE proceso_codigo_descuento.estado REGEXP ?",
+                    array('^['.$estado.']')
+                );
+                break;
             default:
                 $order_by = isset($params['order_by']) ? $params['order_by'] : 'id';
                 $direction = isset($params['direction']) ? $params['direction'] : 'DESC';
@@ -288,6 +301,22 @@ class GenericoModelo extends CI_Model
                     INNER JOIN base_sucursal ON proceso_venta.sucursal = base_sucursal.id $con_where
                     WHERE (DATE(proceso_venta.fecha) BETWEEN ? AND ?) AND proceso_venta.estado REGEXP ?",
                     array('^['.$estado.']',$fechainicio,$fechafin,'^['.$estado.']')
+                );
+                break;
+            case 'reporte_contable':
+                $fecha = $params['fechainicio'] . '-01';
+                $estado = $params['estado'];
+                $query = $this->db->query(
+                    "SELECT proceso_venta.*,
+                    DATE(proceso_venta.fecha) as fecha,
+                    proceso_cliente.tipo_documento as cliente_tipo_doc,
+                    proceso_cliente.documento as cliente_documento,
+                    proceso_cliente.nombre_o_razon_social as cliente_nombre_o_razon_social
+                    FROM proceso_venta 
+                    INNER JOIN proceso_cliente ON proceso_venta.cliente=proceso_cliente.id
+                    INNER JOIN base_sucursal ON proceso_venta.sucursal = base_sucursal.id AND base_sucursal.id = ?
+                    WHERE (YEAR(proceso_venta.fecha) = YEAR(?) AND MONTH(proceso_venta.fecha) = MONTH(?)) AND proceso_venta.estado REGEXP ?",
+                    array($this->session->userdata('sucursal'),$fecha, $fecha,'^['.$estado.']')
                 );
                 break;
             case 'proceso_ingreso':

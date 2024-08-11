@@ -9,6 +9,21 @@
         text-transform: none;
         font-weight: 500;
     }
+    .table-condensed .form-control {
+        font-size: 13px;
+    }
+    .table-condensed tfoot > tr > th {
+        vertical-align: middle;
+    }
+    .text-success {
+        color: #46c37b !important;
+    }
+    tfoot .text-muted {
+        color: #b9b9b9 !important;
+    }
+    tfoot .text-muted .form-control{
+        color: #b9b9b9 !important;
+    } 
 </style>
 
 <main id="main-container" >
@@ -65,7 +80,7 @@
                                             <div class="form-material form-material-info">
                                                 <select class="form-control required" name="tipo_comprobante" style="width: 100%;" data-placeholder="Seleccione">
                                                     <option value="">Seleccione</option>
-                                                    <?php foreach ($tipocomprobantes as $item) :?>
+                                                    <?php foreach ((array)$tipocomprobantes as $item) :?>
                                                     <option value="<?php echo $item['id']; ?>" ><?php echo $item['descripcion']; ?></option>
                                                     <?php endforeach;?>
                                                 </select>
@@ -87,7 +102,7 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-xs-12 col-sm-6">
+                                <div class="col-xs-12 col-sm-3">
                                     <div class="form-group">
                                         <div class="col-xs-12">
                                             <div class="input-group form-material form-material-info">
@@ -98,12 +113,27 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="col-xs-12 col-sm-3">
+                                    <div class="form-group">
+                                        <div class="col-xs-12">
+                                            <div class="form-material form-material-info">
+                                                <select class="form-control select2" name="codigo_descuento" style="width: 100%;" data-placeholder="Seleccione">
+                                                    <option value="">Seleccione</option>
+                                                    <?php foreach ((array)$codigos_descuento as $item) :?>
+                                                    <option data-descuento_tipo="<?php echo $item['descuento_tipo']; ?>" data-descuento_cantidad="<?php echo $item['descuento_cantidad']; ?>" value="<?php echo $item['id']; ?>" ><?php echo $item['codigo'] . ' (' . $item['descuento_tipo'].$item['descuento_cantidad'] .')'; ?></option>
+                                                    <?php endforeach;?>
+                                                </select>
+                                                <label>Código de descuento</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                                 <div class="col-xs-12 col-sm-3 tipo_venta_pago_div">
                                     <div class="form-group">
                                         <div class="col-xs-12">
                                             <div class="form-material form-material-info">
                                                 <select class="form-control" name="tipo_pago" style="width: 100%;" data-placeholder="Seleccione">
-                                                    <?php foreach ($tipo_pagos as $item) :?>
+                                                    <?php foreach ((array)$tipo_pagos as $item) :?>
                                                     <option value="<?php echo $item['id']; ?>" ><?php echo $item['descripcion']; ?></option>
                                                     <?php endforeach;?>
                                                 </select>
@@ -157,23 +187,37 @@
                                     </tbody>
                                     <tfoot>
                                         <tr>
-                                            <th colspan="6" class="text-right">Subtotal</th>
+                                            <th colspan="6" class="text-right text-info">Total Inicial</th>
                                             <th>
-                                                <div class="input-group"><span class="input-group-addon">S/</span><input style="text-align:right" class="form-control" type="text" name="subtotal" readonly tabindex="-1"></div>
+                                                <div class="input-group"><span class="input-group-addon">S/</span><input style="text-align:right" class="form-control text-info" type="text" name="total_inicial" readonly tabindex="-1"></div>
+                                            </th>
+                                            <th></th>
+                                        </tr>
+                                        <tr class="text-muted">
+                                            <th colspan="6" class="text-right">Descuento</th>
+                                            <th>
+                                                <div class="input-group"><span class="input-group-addon">S/</span><input style="text-align:right" class="form-control" type="text" name="descuento" readonly tabindex="-1"></div>
                                             </th>
                                             <th></th>
                                         </tr>
                                         <tr>
+                                            <th colspan="6" class="text-right text-success">Total</th>
+                                            <th>
+                                                <div class="input-group"><span class="input-group-addon">S/</span><input style="text-align:right" class="form-control text-success" type="text" name="total" readonly tabindex="-1"></div>
+                                            </th>
+                                            <th></th>
+                                        </tr>
+                                        <tr class="text-muted">
                                             <th colspan="6" class="text-right">IGV</th>
                                             <th>
                                                 <div class="input-group"><span class="input-group-addon">S/</span><input style="text-align:right" class="form-control" type="text" name="igv" readonly tabindex="-1" data-igv="<?php echo $this->configuracion['igv'];?>"></div>
                                             </th>
                                             <th></th>
                                         </tr>
-                                        <tr>
-                                            <th colspan="6" class="text-right">Total</th>
+                                        <tr class="text-muted">
+                                            <th colspan="6" class="text-right">Gravada</th>
                                             <th>
-                                                <div class="input-group"><span class="input-group-addon">S/</span><input style="text-align:right" class="form-control" type="text" name="total" readonly tabindex="-1"></div>
+                                                <div class="input-group"><span class="input-group-addon">S/</span><input style="text-align:right" class="form-control" type="text" name="subtotal" readonly tabindex="-1"></div>
                                             </th>
                                             <th></th>
                                         </tr>
@@ -194,7 +238,7 @@
             <div class="col-lg-4">
                 <div class="block block-caja">
                     <script>
-                        var caja_id ='<?php echo $caja['id']; ?>';
+                        var caja_id ='<?php echo isset($caja['id']) ? $caja['id'] : 0; ?>';
                     </script>
                     <?php if (isset($caja['id'])) { ?>
                     <div class="block-header bg-success">
@@ -423,7 +467,7 @@
                                     <div class="col-xs-12">
                                         <div class="form-material form-material-info">
                                             <select class="form-control" name="tipo_documento" style="width: 100%;">
-                                                <?php foreach ($tipos as $item) :?>
+                                                <?php foreach ((array)$tipos as $item) :?>
                                                 <option value="<?php echo $item['id']; ?>" ><?php echo $item['descripcion']; ?></option>
                                                 <?php endforeach;?>
                                             </select>

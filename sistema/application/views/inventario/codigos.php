@@ -34,17 +34,13 @@
                             <table class="table table-hover table-bordered table-header-bg" id="table-list">
                                 <thead>
                                     <tr>
+                                        <th>ID</th>
                                         <th>Código</th>
-                                        <th>Descripción</th>
-                                        <th>Tipo</th>
-                                        <th>Tipo</th>
-                                        <th>Precio</th>
-                                        <th>Existencias</th>
-                                        <th>Duración</th>
+                                        <th>Descuento</th>
+                                        <th>Usuario</th>
                                         <th>Fecha de registro</th>
-                                        <th>Fav.</th>
                                         <th>Estado</th>
-                                        <th class="text-center" style="width: 120px;">Acciones</th>
+                                        <th class="text-center" style="width: 10%;">Acciones</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -66,84 +62,30 @@
                             <div class="block-content">
                                 <form class="form-horizontal push-10-t push-10" method="post" action="" id="registro-form" autocomplete="off">
                                     <input type="hidden" name="id" value="">
-                                    <input type="hidden" name="table" value="proceso_producto">
+                                    <input type="hidden" name="estado" value="1">
+                                    <input type="hidden" name="table" value="proceso_codigo_descuento">
                                     <h3 class="h5 font-w600 text-uppercase push-15"><i class="fa fa-info text-primary push-5-r"></i> Datos generales</h3>
                                     <div class="row">
-                                        <div class="col-xs-12 col-sm-4 col-sm-offset-4">
+                                        <div class="col-xs-12 col-sm-3 col-sm-offset-3">
                                             <div class="form-group">
                                                 <div class="col-xs-12">
                                                     <div class="input-group form-material form-material-info">
-                                                        <input class="form-control" type="text" name="codigo" readonly>
-                                                        <label>Código</label>
+                                                        <input class="js-masked-ruc form-control required textoinput font-w700" type="text" name="codigo">
+                                                        <label>Código de descuento</label>
                                                         <span class="input-group-addon"><i class="fa fa-barcode"></i></span>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-xs-9 col-sm-6 col-sm-offset-2">
-                                            <div class="form-group">
-                                                <div class="col-xs-12">
-                                                    <div class="input-group form-material form-material-info">
-                                                        <input class="form-control required textoinput" type="text" name="descripcion">
-                                                        <label>Descripción</label>
-                                                        <span class="input-group-addon"><i class="si si-info"></i></span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-xs-3 col-sm-2">
-                                            <label class="css-input switch switch-primary">
-                                                <input type="checkbox" name="favorito" checked=""><span></span> Favorito
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-xs-12 col-sm-3 col-sm-offset-2">
+                                        <div class="col-xs-12 col-sm-1">
                                             <div class="form-group">
                                                 <div class="col-xs-12">
                                                     <div class="form-material form-material-info">
-                                                        <select class="form-control" name="tipo" style="width: 100%;">
-                                                            <?php foreach ((array)$tipos as $item) :?>
-                                                            <option value="<?php echo $item['id']; ?>" ><?php echo $item['descripcion']; ?></option>
-                                                            <?php endforeach;?>
+                                                        <select class="form-control" name="descuento_tipo" style="width: 100%;">
+                                                            <option value="%">%</option>
+                                                            <option value="-">-</option>
                                                         </select>
                                                         <label>Tipo</label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-xs-12 col-sm-3" id="producto">
-                                            <div class="form-group">
-                                                <div class="col-xs-12">
-                                                    <div class="form-material form-material-info">
-                                                        <select class="form-control" name="unidad" style="width: 100%;">
-                                                            <?php foreach ((array)$unidades as $item) :?>
-                                                            <option value="<?php echo $item['id']; ?>" ><?php echo $item['descripcion'] . ' (' . $item['abreviatura'] . ')'; ?></option>
-                                                            <?php endforeach;?>
-                                                        </select>
-                                                        <label>Unidades</label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-xs-12 col-sm-3" id="servicio">
-                                            <div class="form-group no-sides-form-group">
-                                                <div class="col-xs-3 no-sides-pad">
-                                                    <div class="input-group form-material form-material-info">
-                                                        <input class="form-control number" type="number" step="1" min="1" name="duracion">
-                                                        <label>Duración</label>
-                                                    </div>
-                                                </div>
-                                                <div class="col-xs-9 no-sides-pad">
-                                                    <div class="input-group form-material form-material-info">
-                                                        <select class="form-control" name="duracion_unidad" style="width: 100%;">
-                                                            <?php foreach ((array)$duracion_unidades as $item) :?>
-                                                            <option value="<?php echo $item['id']; ?>" ><?php echo $item['descripcion']; ?></option>
-                                                            <?php endforeach;?>
-                                                        </select>
-                                                        <span class="input-group-addon"><i class="si si-calendar"></i></span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -152,9 +94,21 @@
                                             <div class="form-group">
                                                 <div class="col-xs-12">
                                                     <div class="input-group form-material form-material-info">
-                                                        <span class="input-group-addon">S/ </span>
-                                                        <input class="form-control required number" type="number" step="0.01" min="0.00" name="precio">
-                                                        <label>Precio referencial</label>
+                                                        <input class="form-control required number" type="number" name="descuento_cantidad">
+                                                        <label>Cantidad</label>
+                                                        <span class="input-group-addon"><i class="si si-info"></i></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-xs-12">
+                                            <div class="form-group">
+                                                <div class="col-xs-12">
+                                                    <div class="form-material">
+                                                        <textarea class="form-control" name="observaciones" rows="2"></textarea>
+                                                        <label>Observaciones</label>
                                                     </div>
                                                 </div>
                                             </div>
@@ -163,7 +117,7 @@
                                     <div class="form-group">
                                         <div class="col-xs-12 text-center">
                                             <a class="btn btn-minw btn-square btn-muted" data-dismiss="modal"><i class="fa fa-times push-5-r"></i> Cerrar</a>
-                                            <button class="btn btn-minw btn-square btn-success" type="submit"><i class="fa fa-plus push-5-r"></i> Registrar</button>
+                                            <button class="btn btn-minw btn-square btn-primary" type="submit"><i class="fa fa-plus push-5-r"></i> Registrar</button>
                                         </div>
                                     </div>
                                 </form>

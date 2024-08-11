@@ -503,37 +503,30 @@
 
         $team_members[0]['nombre'] = 'ISRAEL LAZARO';
         $team_members[0]['titulo'] = 'Trainer';
-        $team_members[0]['redes']['facebook'] = '#';
         $team_members[0]['imagen'] = './assets/images/members/member_1.jpg';
 
         $team_members[1]['nombre'] = 'GIANPIERRE CORDERO';
         $team_members[1]['titulo'] = 'Trainer';
-        $team_members[1]['redes']['facebook'] = '#';
         $team_members[1]['imagen'] = './assets/images/members/member_2.jpg';
 
         $team_members[2]['nombre'] = 'BRINER RODRÍGUEZ';
         $team_members[2]['titulo'] = 'Trainer';
-        $team_members[2]['redes']['facebook'] = '#';
         $team_members[2]['imagen'] = './assets/images/members/member_4.jpg';
 
         $team_members[4]['nombre'] = 'FRAYELIS BRIZUELA';
         $team_members[4]['titulo'] = 'Trainer';
-        $team_members[4]['redes']['facebook'] = '#';
         $team_members[4]['imagen'] = './assets/images/members/member_5.jpg';
 
         $team_members[5]['nombre'] = 'KEVIN CORASI';
         $team_members[5]['titulo'] = 'Trainer';
-        $team_members[5]['redes']['facebook'] = '#';
         $team_members[5]['imagen'] = './assets/images/members/member_6.jpg';
 
         $team_members[6]['nombre'] = 'ANGELA JAMANCA';
         $team_members[6]['titulo'] = 'Trainer';
-        $team_members[6]['redes']['facebook'] = '#';
         $team_members[6]['imagen'] = './assets/images/members/member_7.jpg';
 
         $team_members[7]['nombre'] = 'SIANG LUNA';
         $team_members[7]['titulo'] = 'Trainer';
-        $team_members[7]['redes']['facebook'] = '#';
         $team_members[7]['imagen'] = './assets/images/members/member_8.jpg';
     ?>
     <!-- TEAM MEMBERS SECTION -->
@@ -560,17 +553,6 @@
                             <div class="team_member_box_lower_portion">
                                 <h5><?php echo $item['nombre']; ?></h5>
                                 <p><?php echo $item['titulo']; ?></p>
-                                <div class="team_member_social_icons">
-                                    <a href="<?php echo $item['redes']['facebook']; ?>" class="text-decoration-none">
-                                        <i class="fa-brands fa-facebook-f" aria-hidden="true"></i>
-                                    </a>
-                                    <a href="<?php echo $item['redes']['facebook']; ?>" class="text-decoration-none">
-                                        <i class="fa-brands fa-twitter" aria-hidden="true"></i>
-                                    </a>
-                                    <a href="<?php echo $item['redes']['facebook']; ?>" class="text-decoration-none">
-                                        <i class="fa-brands fa-instagram" aria-hidden="true"></i>
-                                    </a>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -580,7 +562,7 @@
         </div>
     </section>
 
-    <!-- TEAM MEMBERS SECTION -->
+    <!-- INSTAGRAM-->
     <section class="our_news_section"  id="fotos">
         <div class="container">
             <div class="row d-flex align-items-center justify-content-center" data-aos="fade-up">

@@ -75,6 +75,7 @@ class Transaccion extends CI_Controller
         $tipo_pagos = $this->generico_modelo->listado('proceso_tipo_pago', '1', ['orderby'=>'id','direction'=>'asc']);
         $caja = $this->generico_modelo->caja(['sucursal' => $sucursal, 'estado'=>1]);
         $tipos_documento = $this->generico_modelo->listado('proceso_tipo_documento', '1');
+        $codigos_descuento = $this->generico_modelo->listado('proceso_codigo_descuento', '1');
 
         $datos = [
             'menu_text' => 'Transacciones',
@@ -87,6 +88,7 @@ class Transaccion extends CI_Controller
             'caja'=>$caja,
             'tipos'=>$tipos_documento,
             'departamento' => 2,
+            'codigos_descuento' => $codigos_descuento,
             'estados'=>$estados,
         ];
 
