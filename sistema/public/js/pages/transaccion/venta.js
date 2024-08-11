@@ -32,6 +32,10 @@ jQuery(function () {
       }
     });
 
+    jQuery('body').on('change', registroform+' [name="codigo_descuento"]', function() {
+      calcular_total();
+    });
+  
     jQuery('body').on('change', tabledetalles+' .input-precio', function() {
       var precio = parseFloat($(this).closest('tr').find('.input-precio').val());
       precio = (precio < 0 ? 0.00 : precio.toFixed(2));
@@ -253,20 +257,9 @@ jQuery(function () {
       submitHandler: function(form) {
         var tipo_documento = jQuery(registroclienteform + ' [name="tipo_documento"]').val();
         var documento = jQuery(registroclienteform + ' [name="documento"]').val();
-        var flag = false;
-        switch (tipo_documento) {
-          case '1': //DNI
-            if(documento.length=='8') flag=true;
-            break;
-          case '5': //RUC
-            if(documento.length=='11') flag=true;
-            break;
-          default:
-            flag=false;
-            break;
-        }
+        var validar = validarTipoDocumento(tipo_documento, documento);
 
-        if(flag){
+        if(validar.flag){
           jQuery.ajax({
             url: form.action,
             type: form.method,
@@ -285,7 +278,7 @@ jQuery(function () {
             }
           });
         }else{
-          notifytemplate('fa fa-times', 'El número de documento es inválido para el tipo de documento seleccionado', 'danger');
+          notifytemplate('fa fa-times', validar.message, 'danger');
           jQuery(registroclienteform + ' [name="documento"]').focus();
         }
       }
@@ -655,15 +648,38 @@ jQuery(function () {
   function calcular_total() {
     var subtotales = jQuery(tabledetalles+' .input-subtotal');
     var igv_percent = parseFloat(jQuery(registroform+' [name="igv"]').data('igv'));
+    var descuento_tipo = jQuery(registroform+' [name="codigo_descuento"]').find("option:selected").data('descuento_tipo');
+    var descuento_cantidad = parseFloat(jQuery(registroform+' [name="codigo_descuento"]').find("option:selected").data('descuento_cantidad'));
     var igv = 0;
+    var descuento = 0;
+    var subtotal = 0;
     var total = 0;
+    var total_inicial = 0;
     
     /**Total venta */
       jQuery.each(subtotales, function(index, item) {
-        var subtotal = parseFloat(jQuery(item).val());
-        total = total + subtotal; 
+        var subtotal_item = parseFloat(jQuery(item).val());
+        total_inicial = total_inicial + subtotal_item; 
       });
-      
+      total_inicial = (isNaN(total_inicial) ? 0 : total_inicial.toFixed(2));
+      jQuery(registroform+' [name="total_inicial"]').val(total_inicial);
+
+      switch (descuento_tipo) {
+        case '%':
+          descuento = total_inicial*(descuento_cantidad/100);
+          break;
+        case '-':
+          descuento = total_inicial<=descuento_cantidad ? total_inicial : descuento_cantidad;
+          break;
+        default:
+          break;
+      }
+      jQuery(registroform+' [name="descuento"]').val(descuento.toFixed(2));
+
+      total = total_inicial - descuento;
+      total = (isNaN(total) ? 0 : total.toFixed(2));
+      jQuery(registroform+' [name="total"]').val(total);
+
       subtotal = total*(100/(igv_percent+100));
       subtotal = (isNaN(subtotal) ? 0 : subtotal.toFixed(2));
       jQuery(registroform+' [name="subtotal"]').val(subtotal);
@@ -672,8 +688,6 @@ jQuery(function () {
       igv = (isNaN(igv) ? 0 : igv.toFixed(2));
       jQuery(registroform+' [name="igv"]').val(igv);
 
-      total = (isNaN(total) ? 0 : total.toFixed(2));
-      jQuery(registroform+' [name="total"]').val(total);
     /**Total venta */
   }
 

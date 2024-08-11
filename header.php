@@ -15,8 +15,8 @@ if ($environment === 'production') {
     $url = '#';
     $system = '/tahua/sistema';
 }
-$instagram = 'https://www.instagram.com/tahua_fitnessclub/';
-$instagram_embed = 'https://www.instagram.com/tahua_fitnessclub/embed';
+$instagram = 'https://www.instagram.com/tahua_club/';
+$instagram_embed = 'https://www.instagram.com/tahua_club/embed';
 $facebook = 'https://www.facebook.com/profile.php?id=61558006179160';
 $tiktok = 'https://www.tiktok.com/@tahua_fitnessclub';
 $whatsapp = 'https://wa.me/51992171475';

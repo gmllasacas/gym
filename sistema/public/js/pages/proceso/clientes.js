@@ -9,16 +9,16 @@ jQuery(function () {
     var registroform= '#registro-form';
     var cambiadatoregistro= '.cambiadatoregistro';
     var sin_membresias = $.fn.dataTable.absoluteOrderNumber( [
-        {
-            value: '',
-            position: 'bottom'
-        }
-    ] );
-    var fecha_fin = $.fn.dataTable.absoluteOrder( [
-        {
-            value: '',
-            position: 'bottom'
-        }
+      {
+        value: '',
+        position: 'bottom'
+      }
+  ] );
+  var fecha_fin = $.fn.dataTable.absoluteOrder( [
+      {
+        value: '',
+        position: 'bottom'
+      }
     ] );
     var listdt = jQuery(tablelist).DataTable({
         ajax: {
@@ -202,19 +202,19 @@ jQuery(function () {
     };
 
     jQuery('body').on('click', '#block-reload', function() {
-        listdt.ajax.reload(selectores());
+      listdt.ajax.reload(selectores());
     });
 
     jQuery('body').on('click', '.limpiarfiltros', function() {
-        jQuery('.table-custom-filter').val(null).trigger('change');
+      jQuery('.table-custom-filter').val(null).trigger('change');
     });
 
     jQuery('body').on('click', nuevoregistro, function() {
-        jQuery(registroform+' [name="id"]').val(null);
-        jQuery(registroform+' [name="distrito"]').html('');
-        reiniciarform(registroform,registrovalidate,'generico/nuevoregistro','<i class="fa fa-plus push-5-r"></i> Registrar');
-        jQuery('[name=fecha_nacimiento]').datepicker("setDate", fecha_nacimiento);
-        jQuery(registromodal).modal('toggle');
+      jQuery(registroform+' [name="id"]').val(null);
+      jQuery(registroform+' [name="distrito"]').html('');
+      reiniciarform(registroform,registrovalidate,'generico/nuevoregistro','<i class="fa fa-plus push-5-r"></i> Registrar');
+      jQuery('[name=fecha_nacimiento]').datepicker("setDate", fecha_nacimiento);
+      jQuery(registromodal).modal('toggle');
     });
 
     jQuery('body').on('click', editarregistro, function() {
@@ -314,51 +314,39 @@ jQuery(function () {
     });
 
     var registrovalidate = jQuery(registroform).validate({
-        submitHandler: function(form) {
-            var tipo_documento = jQuery(registroform + ' [name="tipo_documento"]').val();
-            var documento = jQuery(registroform + ' [name="documento"]').val();
-            var flag = false;
-            switch (tipo_documento) {
-                case '1': //DNI
-                    if(documento.length=='8') flag=true;
-                    break;
-                case '5': //RUC
-                    if(documento.length=='11') flag=true;
-                    break;
-                default:
-                    //if(documento.length<'15') flag=true;
-                    flag=false;
-                    break;
-            }
+      submitHandler: function(form) {
+        var tipo_documento = jQuery(registroform + ' [name="tipo_documento"]').val();
+        var documento = jQuery(registroform + ' [name="documento"]').val();
+        var validar = validarTipoDocumento(tipo_documento, documento);
 
-            if(flag){
-                jQuery.ajax({
-                    url: form.action,
-                    type: form.method,
-                    data: $(form).serialize(),
-                    dataType: 'json',
-                    timeout: 60000,
-                    success: function(response) {
-                        if(response.status=='500'){
-                            notifytemplate('fa fa-times', response.message, 'danger');
-                        }
-                        if(response.status=='200'){
-                            notifytemplate('fa fa-check', response.message, 'success');
-                            listdt.ajax.reload(selectores());
-                            jQuery(registromodal).modal('toggle');
-                        }
-                        if(response.status=='201'){
-                            notifytemplate('fa fa-check', response.message, 'success');
-                            listdt.ajax.reload(selectores());
-                            jQuery(registromodal).modal('toggle');
-                        }
-                    }
-                });
-            }else{
-                notifytemplate('fa fa-times', 'El número de documento es inválido para el tipo de documento seleccionado', 'danger');
-                jQuery(registroform + ' [name="documento"]').focus();
+        if(validar.flag){
+          jQuery.ajax({
+            url: form.action,
+            type: form.method,
+            data: $(form).serialize(),
+            dataType: 'json',
+            timeout: 60000,
+            success: function(response) {
+              if(response.status=='500'){
+                notifytemplate('fa fa-times', response.message, 'danger');
+              }
+              if(response.status=='200'){
+                notifytemplate('fa fa-check', response.message, 'success');
+                listdt.ajax.reload(selectores());
+                jQuery(registromodal).modal('toggle');
+              }
+              if(response.status=='201'){
+                notifytemplate('fa fa-check', response.message, 'success');
+                listdt.ajax.reload(selectores());
+                jQuery(registromodal).modal('toggle');
+              }
             }
+          });
+        }else{
+          notifytemplate('fa fa-times', validar.message, 'danger');
+          jQuery(registroform + ' [name="documento"]').focus();
         }
+      }
     });
 
     /**Credito */

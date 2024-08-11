@@ -323,6 +323,7 @@ if (! function_exists('registro_detalle_caja')) {
 
         if ($data['monto'] > 0.00) {
             $inputs = [
+                'tipo_caja_detalle' => isset($data['tipo_caja_detalle']) ? $data['tipo_caja_detalle'] : 1,
                 'caja' => $data['caja'],
                 'referencia' => $data['referencia'],
                 'monto' => $data['monto'],
