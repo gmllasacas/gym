@@ -4,6 +4,7 @@
         "greenter/htmltopdf": "^5.0",
         "greenter/report": "^5.0",
         "greenter/xml-parser": "^5.0",
-        "ticketpark/htmlphpexcel": "^2.2"
+        "ticketpark/htmlphpexcel": "^2.2",
+        "chillerlan/php-qrcode": "^5.0"
     }
 }

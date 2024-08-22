@@ -352,20 +352,29 @@ jQuery(function () {
                         var total = 0.00;
                         if (response.registro.detalles.length > 0) {
                             jQuery.each(response.registro.detalles, function(index, item) {
+                                switch (item.tipo_caja_detalle) {
+                                  case '1':
+                                    tipodescstr = '<label class="label label-info">'+item.tipodesc+'</label>';
+                                    break;
+                                  case '2':
+                                    tipodescstr = '<label class="label label-success">'+item.tipodesc+'</label>';
+                                    break;
+                                  case '3':
+                                    tipodescstr = '<label class="label label-danger">'+item.tipodesc+'</label>';
+                                    break;
+                                  default:
+                                    break;
+                                }
+
                                 var tr = '<tr>'+
-                                                '<td class="text-center">'+
-                                                    (index+1)+
-                                                '</td>'+
-                                                '<td class="text-center">'+
-                                                    item.fecha+
-                                                '</td>'+
-                                                '<td class="text-center">'+
-                                                    item.username+
-                                                '</td>'+
-                                                '<td>'+
-                                                    '<div class="input-group"><span class="input-group-addon">S/</span><input style="text-align:right" class="form-control input-subtotal" type="text" value="'+item.monto+'" readonly></div>'+
-                                                '</td>'+
-                                            '</tr>';
+                                            '<td class="text-center">'+item.fecha+'</td>'+
+                                            '<td class="text-center">'+item.username+'</td>'+
+                                            '<td class="text-center">'+(item.clientedesc || '')+'</td>'+
+                                            '<td class="text-center">'+tipodescstr+'</td>'+
+                                            '<td>'+
+                                                '<div class="input-group"><span class="input-group-addon">S/</span><input style="text-align:right" class="form-control input-subtotal" type="text" value="'+item.monto+'" readonly></div>'+
+                                            '</td>'+
+                                        '</tr>';
                                 jQuery(tabledetalles+' tbody').append(tr);
                                 total = total + Number(item.monto);
                             });

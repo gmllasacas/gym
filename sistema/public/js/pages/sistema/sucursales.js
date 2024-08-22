@@ -111,6 +111,22 @@ jQuery(function () {
     jQuery('body').on('click', '#block-reload', function() {
         listdt.ajax.reload();
     });
+
+    jQuery('body').on('change', registroform+' [name="sunat_integracion"]', function(e) {
+      var sunat_integracion = jQuery(registroform+' [name="sunat_integracion"]').val();
+      switch (sunat_integracion) {
+        case '1':
+          jQuery(registroform+' [name="sunat_api_ruta"]').addClass('required');
+          jQuery(registroform+' [name="sunat_api_token"]').addClass('required');
+          break;
+        case '2':
+          jQuery(registroform+' [name="sunat_api_ruta"]').removeClass('required');
+          jQuery(registroform+' [name="sunat_api_token"]').removeClass('required');
+          break;
+        default:
+          break;
+      }
+    });
     
     jQuery('body').on('click', nuevoregistro, function() {
         jQuery(registroform+' [name="id"]').val(null);
@@ -138,7 +154,8 @@ jQuery(function () {
                         }
                     });
 
-					jQuery(registroform+' select[name="usuarios[]"]').val(response.registro.usuarios).trigger('change');
+                    jQuery(registroform+' select[name="sunat_integracion"]').trigger('change');
+                    jQuery(registroform+' select[name="usuarios[]"]').val(response.registro.usuarios).trigger('change');
                     jQuery(registromodal).modal('toggle');
                 }
             }

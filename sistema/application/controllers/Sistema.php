@@ -10,6 +10,8 @@ class Sistema extends CI_Controller
         parent::__construct();
         $this->configuracion = basedetalleregistro('base_configuracion', ['id'=>1]);
         $this->configuracion['logo'] = ($this->configuracion['logo'] == '') ? 'public/img/recursos/logo.png' : $this->configuracion['logo'];
+        $this->menu_text = 'Sistema';
+        $this->menu = '1';
         $this->load->helper('text');
         $this->load->model('GenericoModelo', 'generico_modelo');
     }
@@ -121,7 +123,7 @@ class Sistema extends CI_Controller
     {
         $this->configuracion['dashboard'] = ($this->configuracion['dashboard'] == '') ? 'public/img/recursos/dashboard.jpg' : $this->configuracion['dashboard'];
         $datos = [
-            'menu_text' => 'Sistema',
+            'menu_text' => $this->menu_text,
             'submenu_text' => 'Configuración',
             'export_text' => 'Formulario',
             'registro_text' => '',
@@ -129,7 +131,7 @@ class Sistema extends CI_Controller
         ];
         
         $this->load->view('bases/cabezera');
-        $this->load->view('bases/menu', ['menu' =>1,'submenu' =>101]);
+        $this->load->view('bases/menu', ['menu' =>$this->menu,'submenu' =>101]);
         $this->load->view('bases/barra');
         $this->load->view('sistema/configuracion', $datos);
         $this->load->view('bases/pie');
@@ -139,14 +141,14 @@ class Sistema extends CI_Controller
     public function clientes()
     {
         $datos = [
-            'menu_text' => 'Sistema',
+            'menu_text' => $this->menu_text,
             'submenu_text' => 'Clientes del sistema',
             'export_text' => 'Listado de clientes del sistema',
             'registro_text' => 'cliente del sistema'
         ];
 
         $this->load->view('bases/cabezera');
-        $this->load->view('bases/menu', ['menu' =>1,'submenu' =>103]);
+        $this->load->view('bases/menu', ['menu' =>$this->menu,'submenu' =>103]);
         $this->load->view('bases/barra');
         $this->load->view('sistema/clientes', $datos);
         $this->load->view('bases/pie');
@@ -164,17 +166,16 @@ class Sistema extends CI_Controller
         }
 
         $datos = [
-            'menu_text' => 'Sistema',
+            'menu_text' => $this->menu_text,
             'submenu_text' => 'Usuarios',
             'export_text' => 'Listado de usuarios',
             'registro_text' => 'usuario',
-            'clientes_sistema'=>$clientes_sistema,
             'estados'=>$estados,
             'perfiles'=>$perfiles,
         ];
         
         $this->load->view('bases/cabezera');
-        $this->load->view('bases/menu', ['menu' =>1,'submenu' =>104]);
+        $this->load->view('bases/menu', ['menu' =>$this->menu,'submenu' =>104]);
         $this->load->view('bases/barra');
         $this->load->view('sistema/usuarios', $datos);
         $this->load->view('bases/pie');
@@ -184,19 +185,42 @@ class Sistema extends CI_Controller
     public function auditoria()
     {
         $datos = [
-            'menu_text' => 'Sistema',
+            'menu_text' => $this->menu_text,
             'submenu_text' => 'Auditoría',
             'export_text' => 'Listado de registros',
             'registro_text' => 'auditoría',
         ];
 
         $this->load->view('bases/cabezera');
-        $this->load->view('bases/menu', ['menu' =>1,'submenu' =>105]);
+        $this->load->view('bases/menu', ['menu' =>$this->menu,'submenu' =>105]);
         $this->load->view('bases/barra');
         $this->load->view('sistema/auditoria', $datos);
         $this->load->view('bases/pie');
         $this->load->view('bases/funciones', ['funciones' => ['sistema/auditoria']]);
     }
+
+    public function sucursales()
+    {
+        $usuarios = $this->generico_modelo->listado('base_usuario', '1');
+        $estados = $this->generico_modelo->listado('base_estado', '1');
+
+        $datos = [
+            'menu_text' => $this->menu_text,
+            'submenu_text' => 'Sucursales',
+            'export_text' => 'Listado de sucursales',
+            'registro_text' => 'sucursal',
+            'usuarios' => $usuarios,
+            'estados' => $estados,
+        ];
+
+        $this->load->view('bases/cabezera');
+        $this->load->view('bases/menu', ['menu' =>$this->menu,'submenu' =>106]);
+        $this->load->view('bases/barra');
+        $this->load->view('sistema/sucursales', $datos);
+        $this->load->view('bases/pie');
+        $this->load->view('bases/funciones', ['funciones' => ['sistema/sucursales']]);
+    }
+
 
     public function recuperar()
     {

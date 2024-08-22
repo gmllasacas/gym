@@ -13,8 +13,8 @@ jQuery(function () {
         value: '',
         position: 'bottom'
       }
-  ] );
-  var fecha_fin = $.fn.dataTable.absoluteOrder( [
+    ] );
+    var fecha_fin = $.fn.dataTable.absoluteOrder( [
       {
         value: '',
         position: 'bottom'
@@ -32,7 +32,11 @@ jQuery(function () {
             dataSrc: function (response) {
                 switch (response.status) {
                     case 200:
+                        var data = [];
                         for ( var i=0, ien=response.data.length ; i<ien ; i++ ) {
+                            if (response.data[i]['id'] == '1') {
+                                continue;
+                            }
                             switch (response.data[i]['estado']) {
                                 case '2':
                                     response.data[i]['acciones']='<div class="btn-group">'+
@@ -62,8 +66,9 @@ jQuery(function () {
                             response.data[i]['etiqueta'] = fomartted.etiqueta;
                             response.data[i]['dias_filter'] = fomartted.dias_filter;
                             response.data[i]['estadostr'] = '<label class="label label-'+response.data[i]['estadocol']+'">'+response.data[i]['estadodesc']+'</label>';
+                            data.push(response.data[i]);
                         }
-                        return response.data;
+                        return data;
                         break;
                     case 500:
                         notifytemplate('fa fa-times', response.message, 'danger');

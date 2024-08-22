@@ -5,6 +5,7 @@ class Generico extends CI_Controller
 {
     public $configuracion = [];
     public $sucursal = [];
+    public $usuario = 0;
 
     public function __construct()
     {
@@ -13,7 +14,8 @@ class Generico extends CI_Controller
         $this->configuracion['logo'] = ($this->configuracion['logo'] == '') ? 'public/img/recursos/logo.png' : $this->configuracion['logo'];
         $this->load->helper('text');
         $this->load->model('GenericoModelo', 'generico_modelo');
-        $sucursal['id'] = $this->session->userdata('sucursal');
+        $this->sucursal['id'] = $this->session->userdata('sucursal');
+        $this->usuario = $this->session->userdata('id');
     }
 
     public function nuevoregistro()
@@ -84,6 +86,7 @@ class Generico extends CI_Controller
                     $message = '';
                     $productos = $this->input->post('producto');
                     $tipo_venta_pago = $this->input->post('tipo_venta_pago');
+                    $tipo_comprobante = $this->input->post('tipo_comprobante');
                     $tipo_pago = $this->input->post('tipo_pago');
                     $numero_operacion = $this->input->post('numero_operacion');
                     $cliente = $this->input->post('cliente');
@@ -114,12 +117,19 @@ class Generico extends CI_Controller
                     }
 
                     if ($flag) {
-                        $usuario = $this->session->userdata('id');
-                        $inputs['sucursal'] = $this->session->userdata('sucursal');
-                        $inputs['usuario'] = $usuario;
+                        $this->db->trans_begin();
+
+                        $sucursal = basedetalleregistro('base_sucursal', ['id'=>$this->sucursal['id']]);
+                        $numeracion_actual = numeracion_actual($tipo_comprobante);
+                        $comprobante = $numeracion_actual['comprobante'];
+                        $comprobante_ = explode("-", $comprobante);
+                        $inputs['sunat'] = $sucursal['sunat_integracion'] == '1' ? 1 : 0;
+                        $inputs['sucursal'] = $this->sucursal['id'];
+                        $inputs['comprobante'] = $comprobante;
+                        $inputs['usuario'] = $this->usuario;
                         $inputs['fecha'] = $fecha;
-                        $exclude=array('id','table','counter','producto_sel','producto','tipo_pago','numero_operacion');
-                        $registro=basenuevoregistro($inputs, $table, $exclude);
+                        $exclude = array('id','table','counter','producto_sel','producto','tipo_pago','numero_operacion');
+                        $registro = basenuevoregistro($inputs, $table, $exclude);
                         if ($registro) {
                             if ($tipo_pago == '1') {
                                 /**Detalle de caja */
@@ -130,6 +140,7 @@ class Generico extends CI_Controller
                                 registro_detalle_caja($inputs_dc);
                                 /**Detalle de caja */
                             }
+
                             foreach ($productos as $item) {
                                 /**Kardex */
                                 registro_kardex($registro['id'], $item, 2);//Venta
@@ -154,7 +165,7 @@ class Generico extends CI_Controller
                                     $inputs_cs['venta'] = $registro['id'];
                                     $inputs_cs['producto'] = $item['id'];
                                     $inputs_cs['fecha_fin'] = date('Y-m-d', $fecha_fin);
-                                    $inputs_cs['usuario'] = $this->session->userdata('id');
+                                    $inputs_cs['usuario'] = $this->usuario;
                                     $inputs_cs['fecha'] = $fecha;
                                     $registro_cs = basenuevoregistro($inputs_cs, 'proceso_cliente_servicio', []);
                                     /**Cliente servicio */
@@ -163,22 +174,8 @@ class Generico extends CI_Controller
                                 }
                             }
 
-                            //baseeliminarregistro('proceso_venta_detalle',['venta'=>$registro['id']]);
                             switch ($tipo_venta_pago) {
-                                case 1:
-                                    /**Crédito */
-                                    $proceso_credito = basedetalleregistro('proceso_credito', ['estado'=>'1','cliente'=>$cliente]);
-                                    $credito = (isset($proceso_credito['credito']) ? $proceso_credito['credito'] : 0);
-                                    $inputs_c['tipo_credito']='1'; //Credito
-                                    $inputs_c['referencia']=$registro['id'];//Venta
-                                    $inputs_c['cliente']=$cliente;
-                                    $inputs_c['total']=$total_venta;
-                                    $inputs_c['credito']=$credito+$total_venta;
-                                    $inputs_c['fecha']=date('Y-m-d H:i:s');
-                                    $registro_c=basenuevoregistro($inputs_c, 'proceso_credito', []);
-                                    /**Crédito */
-                                    break;
-                                case 2:
+                                case 2://Contado
                                     /**Pago */
                                     $inputs_pa['tipo_pago'] = $tipo_pago;
                                     $inputs_pa['venta'] = $registro['id'];
@@ -192,6 +189,26 @@ class Generico extends CI_Controller
                                     break;
                                 default:
                                     break;
+                            }
+
+                            if ($sucursal['sunat_integracion'] == '1') {
+                                $sunat_comprobante = sunat_comprobante(['venta' => $registro['id']], 'generar_comprobante');
+                                if ($sunat_comprobante['proceso'] && $this->db->trans_status() !== false) {
+                                    baseactualizarregistro([$numeracion_actual['campo'] => $comprobante_[1]+1], 'base_sucursal', ['id' => $this->sucursal['id']], []);
+                                    basenuevoregistro($sunat_comprobante['inputs'], 'proceso_envio_sunat', []);
+                                    $this->db->trans_commit();
+                                } else {
+                                    $this->db->trans_rollback();
+                                    basenuevoregistro($sunat_comprobante['inputs'], 'proceso_envio_sunat', []);
+                                    response(['message'=>'Error al registrar el comprobante en la SUNAT, intente nuevamente'], 500);
+                                }
+                            } else {
+                                if ($this->db->trans_status() !== false) {
+                                    baseactualizarregistro([$numeracion_actual['campo'] => $comprobante_[1]+1], 'base_sucursal', ['id' => $this->sucursal['id']], []);
+                                    $this->db->trans_commit();
+                                } else {
+                                    $this->db->trans_rollback();
+                                }
                             }
 
                             response(['message'=>'Registro correcto']);
@@ -209,7 +226,7 @@ class Generico extends CI_Controller
                     $proveedor = $this->input->post('proveedor');
                     $total = $this->input->post('total');
                     $inputs['tipo_ingreso_pago'] = $tipo_ingreso_pago == '' ? null : $tipo_ingreso_pago;
-                    $inputs['sucursal'] = $this->session->userdata('sucursal');
+                    $inputs['sucursal'] = $this->sucursal['id'];
                     $inputs['tipo_comprobante'] = ($tipo_comprobante=='' ? null : $tipo_comprobante);
                     $inputs['usuario'] = $this->session->userdata('id');
                     $inputs['fecha'] = date('Y-m-d H:i:s');
@@ -260,19 +277,6 @@ class Generico extends CI_Controller
                     $exclude=array('id','table','credito');
                     $registro=basenuevoregistro($inputs, $table, $exclude);
                     if ($registro) {
-
-                        /**Crédito pago */
-                        $proceso_credito_last = basedetalleregistro('proceso_credito', ['estado'=>'1','cliente'=>$cliente]);
-                        $credito_last = (isset($proceso_credito_last['credito']) ? $proceso_credito_last['credito'] : 0);
-                        $inputs_cp['tipo_credito']='2'; //Pago
-                        $inputs_cp['referencia']=$registro['id'];//Pago
-                        $inputs_cp['cliente']=$cliente;
-                        $inputs_cp['total']=$pago;
-                        $inputs_cp['credito']=$credito_last-$pago;
-                        $inputs_cp['fecha']=date('Y-m-d H:i:s');
-                        $registro_cp=basenuevoregistro($inputs_cp, 'proceso_credito', []);
-                        /**Crédito pago */
-
                         response(['message'=>'Registro correcto']);
                     } else {
                         response(['message'=>'Error al escribir en la BD'], 500);
@@ -299,7 +303,7 @@ class Generico extends CI_Controller
                     $fecha = date('Y-m-d H:i:s');
 
                     $inputs_c['apertura'] = $apertura;
-                    $inputs_c['sucursal'] = $this->session->userdata('sucursal');
+                    $inputs_c['sucursal'] = $this->sucursal['id'];
                     $inputs_c['notas'] = $this->input->post('notas');
                     $inputs_c['usuario'] = $usuario;
                     $inputs_c['fecha'] = $fecha;
@@ -405,7 +409,6 @@ class Generico extends CI_Controller
                     $where  =array('id'=>$id);
                     $registro=baseactualizarregistro($inputs, 'proceso_pago', $where, $exclude);
                     if ($registro) {
-
                         /**Anulacion de pago */
                         $inputs_a['pago']=$id;
                         $inputs_a['motivo']=$this->input->post('motivo');
@@ -414,18 +417,6 @@ class Generico extends CI_Controller
                         $exclude=array('id','table','producto','total');
                         $registro_a=basenuevoregistro($inputs_a, 'proceso_pago_anulacion', $exclude);
                         /**Anulacion de pago */
-
-                        /**Crédito de pago anulado*/
-                        $proceso_credito_last = basedetalleregistro('proceso_credito', ['estado'=>'1','cliente'=>$registro['cliente']]);
-                        $credito_last = (isset($proceso_credito_last['credito']) ? $proceso_credito_last['credito'] : 0);
-                        $inputs_c['tipo_credito']='4'; //Pago anulado
-                        $inputs_c['referencia']=$registro_a['id'];//Registro de anulacion
-                        $inputs_c['cliente']=$registro['cliente'];
-                        $inputs_c['total']=$registro['pago'];
-                        $inputs_c['credito']=$credito_last+$registro['pago'];
-                        $inputs_c['fecha']=date('Y-m-d H:i:s');
-                        $registro_p=basenuevoregistro($inputs_c, 'proceso_credito', []);
-                        /**Crédito de pago anulado*/
                         response(['message'=>'Registro actualizado'], 201);
                     } else {
                         response(['message'=>'Error al escribir en la BD'], 500);
@@ -494,6 +485,13 @@ class Generico extends CI_Controller
                     }
                     break;
                 case 'proceso_venta_anular':
+                    $caja_actual = caja_actual();
+                    if (!$caja_actual) {
+                        response(['message' => 'No se puede anular la venta, la caja está cerrada'], 500);
+                    }
+
+                    $this->db->trans_begin();
+                    $motivo = $this->input->post('motivo');
                     $inputs['estado']= 3;
                     $exclude=array('id','table','motivo');
                     $where  =array('id'=>$id);
@@ -502,7 +500,7 @@ class Generico extends CI_Controller
                         $detalles = $this->generico_modelo->listado('proceso_venta_detalle', '1', ['venta'=>$id]);
                         /**Anulacion de venta */
                         $inputs_a['venta']=$id;
-                        $inputs_a['motivo']=$this->input->post('motivo');
+                        $inputs_a['motivo']=$motivo;
                         $inputs_a['usuario']=$this->session->userdata('id');
                         $inputs_a['fecha']=date('Y-m-d H:i:s');
                         $exclude=array('id','table','counter','producto_sel','producto','total');
@@ -510,38 +508,60 @@ class Generico extends CI_Controller
                         /**Anulacion de venta */
                         foreach ($detalles as $item) {
                             /**Kardex inverso*/
-                            registro_kardex($registro_a['id'], $item, 4);//Venta anulada
+                            $producto = basedetalleregistro('proceso_producto', ['estado'=>'1','id'=>$item['producto']]);
+                            $item_['id'] = $item['producto'];
+                            $item_['cantidad'] = $item['cantidad'];
+                            $item_['precio'] = $item['precio'];
+                            $item_['subtotal'] = $item['subtotal'];
+                            $item_['tipo'] = $producto['tipo'];
+
+                            registro_kardex($id, $item_, 4);//Venta anulada
                             /**Kardex inverso*/
                         }
 
                         switch ($registro['tipo_venta_pago']) {
-                            case 1:
-                                /**Crédito de venta anulada*/
-                                $proceso_credito_last = basedetalleregistro('proceso_credito', ['estado'=>'1','cliente'=>$registro['cliente']]);
-                                $credito_last = (isset($proceso_credito_last['credito']) ? $proceso_credito_last['credito'] : 0);
-                                $inputs_c['tipo_credito']='5'; //Venta anulada
-                                $inputs_c['referencia']=$id;//Registro de venta
-                                $inputs_c['cliente']=$registro['cliente'];
-                                $inputs_c['total']=$registro['total'];
-                                $inputs_c['credito']=$credito_last-$registro['total'];
-                                $inputs_c['fecha']=date('Y-m-d H:i:s');
-                                $registro_p=basenuevoregistro($inputs_c, 'proceso_credito', []);
-                                /**Crédito de venta anulada*/
+                            case 1: /**Crédito de venta anulada*/
                                 break;
                             case 2:
-                                //TODO ??
-
                                 /**Anulacion de pago */
+                                    $inputs_p['estado']= 3;
+                                    $registro_p=baseactualizarregistro($inputs_p, 'proceso_pago', ['venta'=>$id], []);
+
+                                    $inputs_an['pago']=$registro_p['id'];
+                                    $inputs_an['motivo']='Anulación automática debido a que la venta relacionada ha sido anulada';
+                                    $inputs_an['usuario']=$this->session->userdata('id');
+                                    $inputs_an['fecha']=date('Y-m-d H:i:s');
+                                    $registro_an=basenuevoregistro($inputs_an, 'proceso_pago_anulacion', []);
                                 /**Anulacion de pago */
 
-                                /**Crédito de pago anulado*/
-                                /**Crédito de pago anulado*/
-
+                                /**Anulacion de detalle de caja */
+                                    $inputs_dc['monto']= $registro_p['pago']*(-1);
+                                    $inputs_dc['tipo_caja_detalle']= 3;
+                                    $registro_dc=baseactualizarregistro($inputs_dc, 'proceso_caja_detalle', ['referencia'=>$id], []);
+                                /**Anulacion de detalle de caja */
                                 break;
                             default:
                                 break;
                         }
-                        
+
+                        $sucursal = basedetalleregistro('base_sucursal', ['id'=>$this->sucursal['id']]);
+                        if ($sucursal['sunat_integracion'] == '1') {
+                            $sunat_comprobante = sunat_comprobante(['venta' => $id, 'motivo' => $motivo], 'generar_anulacion');
+                            if ($sunat_comprobante['proceso'] && $this->db->trans_status() !== false) {
+                                basenuevoregistro($sunat_comprobante['inputs'], 'proceso_envio_sunat', []);
+                                $this->db->trans_commit();
+                            } else {
+                                $this->db->trans_rollback();
+                                basenuevoregistro($sunat_comprobante['inputs'], 'proceso_envio_sunat', []);
+                                response(['message'=>'Error al registrar en la SUNAT, intente nuevamente'], 500);
+                            }
+                        } else {
+                            if ($this->db->trans_status() !== false) {
+                                $this->db->trans_commit();
+                            } else {
+                                $this->db->trans_rollback();
+                            }
+                        }
 
                         response(['message'=>'Registro anulado']);
                     } else {
@@ -596,7 +616,7 @@ class Generico extends CI_Controller
                 case 'proceso_caja':
                     $apertura = $this->input->post('apertura');
                     $cierre = $this->input->post('cierre');
-                    $sucursal = $this->session->userdata('sucursal');
+                    $sucursal = $this->sucursal['id'];
                     $usuario = $this->session->userdata('id');
                     $perfil = $this->session->userdata('perfil');
                     $caja_actual = caja_actual();
@@ -635,7 +655,12 @@ class Generico extends CI_Controller
                     $usuarios = $this->input->post('usuarios');
                     $fecha = date('Y-m-d H:i:s');
 
-                    $registro = baseactualizarregistro($inputs, $table, ['id' => $id], ['id', 'table', 'usuarios', 'numeracion_boleta_actual', 'numeracion_factura_actual']);
+                    $registro = baseactualizarregistro(
+                        $inputs,
+                        $table,
+                        ['id' => $id],
+                        ['id', 'table', 'usuarios', 'numeracion_boleta_actual', 'numeracion_factura_actual', 'numeracion_nota_venta_actual']
+                    );
                     if ($registro) {
                         $this->db->delete('base_usuario_sucursal', ['sucursal' => $id]);
                         foreach ($usuarios as $item) {
@@ -715,6 +740,7 @@ class Generico extends CI_Controller
                         $registro = basedetalleregistro($table, $where, true);
                         $registro['detalles'] = $this->generico_modelo->listado('proceso_venta_detalle', '1', ['venta'=>$id]);
                         $registro['sucursal'] = basedetalleregistro('base_sucursal', ['estado'=>'1','id'=>$registro['sucursal']]);
+                        $registro['pago'] = basedetalleregistro('proceso_pago', ['estado'=>'1','venta'=>$id]);
                         foreach ($registro['detalles'] as &$item) {
                             $item['codigo'] = spd($item['producto'], 6, '0');
                             $producto = basedetalleregistro('proceso_producto', ['estado'=>'1','id'=>$item['producto']]);
@@ -731,6 +757,7 @@ class Generico extends CI_Controller
                         $registro['anulacion'] = basedetalleregistro('proceso_venta_anulacion', ['estado'=>'1','venta'=>$id]);
                         if ($registro['anulacion']) {
                             $registro['anulacion']['usuario'] = basedetalleregistro('base_usuario', ['id'=>$registro['anulacion']['usuario']]);
+                            $registro['pago'] = basedetalleregistro('proceso_pago', ['venta'=>$id]);
                         }
                         break;
                     case 'proceso_ingreso':
@@ -783,7 +810,7 @@ class Generico extends CI_Controller
                         }
                         break;
                     case 'proceso_caja':
-                        $sucursal = $this->session->userdata('sucursal');
+                        $sucursal = $this->sucursal['id'];
                         $action = $this->input->post('action') ?? '';
                         $estado = $this->input->post('estado') ?? 1;
 
@@ -807,16 +834,13 @@ class Generico extends CI_Controller
                         $usuarios = $this->generico_modelo->listado('base_usuario_sucursal', '1', ['where' => ['sucursal' => $id]]);
                         $ids = array_column($usuarios, 'usuario');
                         $registro['usuarios'] = $ids;
-                        $registro['numeracion'] = match ((int) $tipo_comprobante) {
-                            3 => $registro['serie_boleta'] . '-' . spd($registro['numeracion_boleta'], 6, '0'),
-                            1 => $registro['serie_factura'] . '-' . spd($registro['numeracion_factura'], 6, '0'),
-                            default => ''
-                        };
+                        $numeracion_actual = numeracion_actual($tipo_comprobante);
+                        $registro['numeracion'] = $numeracion_actual['comprobante'];
                         break;
                     case 'proceso_proveedor':
                         $tipo_comprobante = $this->input->post('tipo_comprobante');
                         $registro = basedetalleregistro($table, ['id' => $id], true);
-                        $registro['ultimo_ingreso'] = basedetalleregistro('proceso_ingreso', ['estado'=>'1','sucursal'=>$this->session->userdata('sucursal'), 'proveedor'=>$id]);
+                        $registro['ultimo_ingreso'] = basedetalleregistro('proceso_ingreso', ['estado'=>'1','sucursal'=>$this->sucursal['id'], 'proveedor'=>$id]);
                         break;
                     default:
                         $where = array('id' => $id);
@@ -875,11 +899,6 @@ class Generico extends CI_Controller
                             $item['existencias'] = (isset($kardex['saldo']) ? ($kardex['saldo']>0 ? $kardex['saldo'] : 0) : 0);
                         }
                         $clientes = $this->generico_modelo->listado('proceso_cliente', $estado, [], true);
-                        foreach ($clientes as &$item) {
-                            //$proceso_credito_last = basedetalleregistro('proceso_credito', ['estado'=>'1','cliente'=>$item['id']]);
-                            //$item['credito'] = (isset($proceso_credito_last['credito']) ? $proceso_credito_last['credito'] : 0);
-                            //$item['credito'] = (isset($proceso_credito_last['credito']) ? ($proceso_credito_last['credito']>0 ? $proceso_credito_last['credito'] : 0) : 0);
-                        }
                         $registros = [
                             'productos'=>$productos,
                             'date'=>date('Y-m-d H:i:s'),
@@ -991,7 +1010,7 @@ class Generico extends CI_Controller
                         }
                         break;
                     case 'proceso_caja':
-                        $params['sucursal'] = $this->session->userdata('sucursal');
+                        $params['sucursal'] = $this->sucursal['id'];
                         $params['perfil'] = $this->session->userdata('perfil');
                         $registros = $this->generico_modelo->busqueda($table, $params);
                         /*foreach ($registros as &$item) {
@@ -999,8 +1018,11 @@ class Generico extends CI_Controller
                         }*/
                         break;
                     case 'proceso_auditoria':
-                        $params['sucursal'] = $this->session->userdata('sucursal');
+                        $params['sucursal'] = $this->sucursal['id'];
                         $params['perfil'] = $this->session->userdata('perfil');
+                        $registros = $this->generico_modelo->busqueda($table, $params);
+                        break;
+                    case 'proceso_contacto_externo':
                         $registros = $this->generico_modelo->busqueda($table, $params);
                         break;
                     default:

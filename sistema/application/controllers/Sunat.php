@@ -1,8 +1,6 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
 
-//require FCPATH . 'vendor/autoload.php';
-
 use Greenter\Ws\Services\SunatEndpoints;
 use Greenter\See;
 use Greenter\Model\Client\Client;

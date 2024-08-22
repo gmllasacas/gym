@@ -1,4 +1,10 @@
 
+            <style>
+                .table-responsive >.table {
+                    margin-bottom: 0px;
+                    min-width: initial;
+                }
+            </style>
             <main id="main-container" >
                 <div class="content-mini-barra bg-gray-lighter">
                     <div class="row">
@@ -150,7 +156,7 @@
                                         <div class="col-xs-12 col-sm-2">
                                         </div>
                                         <div class="col-xs-12 col-sm-8">                                            
-                                            <div class="">
+                                            <div class="table-responsive">
                                                 <table class="table table-condensed table-hover table-bordered" id="table-detalles">
                                                     <thead>
                                                         <tr>

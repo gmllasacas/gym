@@ -152,7 +152,7 @@ jQuery(function () {
                             '</td>'+
                             '<td>';
                 if (response.registro['tipo'] == 1) {
-                          tr += '<div class="form-group"><div class="col-xs-12"><div class="input-group"><input class="form-control input-cantidad required" type="number" step="1" min="0" max="'+response.registro.existencias+'" name="producto['+counter+'][cantidad]" value=""><span class="input-group-addon">'+response.registro.abreviatura+'</span></div></div></div>';
+                          tr += '<div class="form-group"><div class="col-xs-12"><div class="input-group"><input class="form-control input-cantidad required" type="number" step="1" min="0" max="'+response.registro.existencias+'" name="producto['+counter+'][cantidad]" value="1"><span class="input-group-addon">'+response.registro.abreviatura+'</span></div></div></div>';
                 } else {
                           tr += '<div class="form-group"><div class="col-xs-12"><div class="input-group"><input class="form-control input-cantidad required" type="number" name="producto['+counter+'][cantidad]" value="1" readonly><span class="input-group-addon">'+response.registro.abreviatura+'</span></div></div></div>';
                 }
@@ -489,14 +489,14 @@ jQuery(function () {
             notifytemplate('fa fa-times', response.message, 'danger');
         }
         if(response.status=='200'){
-          reiniciarform(registroform,registrovalidate,'generico/nuevoregistro','<i class="fa fa-plus push-5-r"></i> Registrar venta');
+          reiniciarform(registroform,registrovalidate,'generico/nuevoregistro','<i class="fa fa-plus push-5-r"></i> REGISTRAR VENTA');
           jQuery(registroform+' [name="id"]').val(null);
           jQuery(registroform+' [name="estado"]').val(1);
           jQuery(registroform+' [name="counter"]').val(0);
           jQuery(tabledetalles+' tbody').html('');
           var productos_selector = '<option value="">Seleccione</option>';
-          var servicios = '<optgroup label="Servicios">';
-          var productos = '<optgroup label="Productos">';
+          var servicios = '<optgroup label="SERVICIOS">';
+          var productos = '<optgroup label="PRODUCTOS">';
           var favoritos = '';
           jQuery.each(response.data.productos, function(index, item) {
             var subdesc = '';
@@ -546,7 +546,7 @@ jQuery(function () {
 
           var clientes = '<option value="">Seleccione</option>';
           jQuery.each(response.data.clientes, function(index, item) {
-            clientes += '<option value="'+item.id+'">'+item.documento+' - '+item.nombre_o_razon_social+'</option>';
+            clientes += '<option value="'+item.id+'">'+item.tipodesc+ ' ' +item.documento+' | '+item.nombre_o_razon_social+'</option>';
           });
           jQuery(registroform+' [name="cliente"]').html(clientes).trigger('change');
           jQuery(registroform+' [name="sucursal"]').val(response.meta.sucursal);
@@ -606,26 +606,32 @@ jQuery(function () {
                 switch (item.tipo_caja_detalle) {
                   case '1':
                     if (item.monto > 0) {
-                      icon = 'si si-shuffle text-info';
+                      icon = 'fa fa-plus-circle text-info';
                       montostr = '<span class="pull-right text-success">+ S/ '+monto.toFixed(2)+'</span>';
                     } else {
-                      icon = 'si si-share-alt text-danger';
+                      icon = 'fa fa-minus-circle text-danger';
                       montostr = '<span class="pull-right text-danger">- S/ '+Math.abs(monto).toFixed(2)+'</span>';
                     }
                     element ='<li>'+
                             '  <i class="'+icon+'"></i>'+
                             '  <div class="font-w600"><span class="text-muted">Usuario:</span> '+item.username+' '+montostr+'</div>'+
-                            '  <div><span class="text-info">'+item.tipodesc+'</span></div>'+
-                            '  <div><small class="text-muted">'+item.fecha+'</small></div>'+
+                            '  <div><span class="text-info">'+item.tipodesc+'</span><small class="pull-right text-muted">'+item.fecha+'</small></div>'+
                             '</li>';
                     break;
                   case '2':
-                    icon = 'si si-wallet text-success';
+                    icon = 'si si-basket text-success';
                     element ='<li>'+
                             '  <i class="'+icon+'"></i>'+
                             '  <div class="font-w600"><span class="text-muted">Cliente:</span> '+item.clientedesc+' <br> <span class="text-muted">Usuario:</span> '+item.username+' <span class="pull-right text-success">+ S/ '+monto.toFixed(2)+'</span></div>'+
-                            '  <div><a class="text-info link-effect" href="#"><i class="fa fa-file-pdf-o push-5-r"></i>'+item.tipodesc+'</a></div>'+
-                            '  <div><small class="text-muted">'+item.fecha+'</small></div>'+
+                            '  <div><a class="text-info link-effect" target="_blank" href="'+ base_url + 'transaccion/comprobante/' + item.referencia + '"><i class="fa fa-file-pdf-o push-5-r"></i>'+item.tipodesc+'<i class="si si-share-alt push-10-l"></i></a><small class="pull-right text-muted">'+item.fecha+'</small></div>'+
+                            '</li>';
+                    break;
+                  case '3':
+                    icon = 'fa fa-minus-circle text-danger';
+                    element ='<li>'+
+                            '  <i class="'+icon+'"></i>'+
+                            '  <div class="font-w600"><span class="text-muted">Cliente:</span> '+item.clientedesc+' <br> <span class="text-muted">Usuario:</span> '+item.username+' <span class="pull-right text-danger">- S/ '+Math.abs(monto).toFixed(2)+'</span></div>'+
+                            '  <div><a class="text-info link-effect" target="_blank" href="'+ base_url + 'transaccion/comprobante_anulacion/' + item.referencia + '"><i class="fa fa-file-pdf-o push-5-r"></i>'+item.tipodesc+'<i class="si si-share-alt push-10-l"></i></a><small class="pull-right text-muted">'+item.fecha+'</small></div>'+
                             '</li>';
                     break;
                   default:

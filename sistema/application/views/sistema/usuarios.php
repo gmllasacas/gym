@@ -64,6 +64,7 @@
                                 <form class="form-horizontal push-10-t push-10" method="post" action="" id="registro-form" autocomplete="off">
                                     <input type="hidden" name="id" value="">
                                     <input type="hidden" name="table" value="base_usuario">
+                                    <input type="hidden" name="cliente_sistema" value="1">
                                     <h3 class="h5 font-w600 text-uppercase push-15"><i class="fa fa-info text-primary push-5-r"></i> Datos generales</h3>
                                     <div class="row">
                                         <div class="col-xs-12 col-sm-6">
@@ -153,23 +154,6 @@
                                         </div>
                                     </div>
                                     <h3 class="h5 font-w600 text-uppercase push-15"><i class="fa fa-cog text-primary push-5-r"></i> Datos de acceso</h3>
-                                    <div class="row">
-                                        <div class="col-xs-12">
-                                            <div class="form-group">
-                                                <div class="col-xs-12">
-                                                    <div class="form-material form-material-info">
-                                                        <select class="form-control required select2" name="cliente_sistema" style="width: 100%;" data-placeholder="Seleccione cliente">
-                                                            <option value="">Seleccione</option>
-                                                            <?php foreach ($clientes_sistema as $item) :?>
-                                                            <option value="<?php echo $item['id']; ?>" ><?php echo $item['ruc'].' - '.$item['nombre_o_razon_social']; ?></option>
-                                                            <?php endforeach;?>
-                                                        </select>
-                                                        <label>Cliente de sistema</label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
                                     <div class="row">
                                         <div class="col-xs-12 col-sm-6">
                                             <div class="form-group">
