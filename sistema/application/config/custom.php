@@ -9,6 +9,7 @@ $config['date_format_mysql'] = '%d-%m-%Y'; //Formato de fecha para la funcion DA
 $config['contact_email'] = 'contacto@tahuaclub.com';
 $config['system_email'] = 'sistema@tahuaclub.com';
 $config['system_username'] = 'Tahua Fitness Club';
+$config['system_ruc'] = '20610902961';
 $config['user_logging_waiting_time'] = 15; //minutos
 $config['user_logging_attempts'] = 3; //intentos
 $config['user_recovery_token_time'] = 180; //minutos

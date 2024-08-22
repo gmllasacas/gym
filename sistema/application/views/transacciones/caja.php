@@ -290,26 +290,27 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <h3 class="h5 font-w600 text-uppercase push-15"><i class="fa fa-list text-primary push-5-r"></i> Detalles de la caja</h3>
+                                    <h3 class="h5 font-w600 text-uppercase push-15"><i class="fa fa-list text-primary push-5-r"></i> Movimientos</h3>
                                     <div class="row">
-                                        <div class="col-xs-12 col-md-8 col-md-offset-2">
+                                        <div class="col-xs-12">
                                             <table class="table table-condensed table-hover table-bordered" id="table-detalles">
                                                 <thead>
                                                     <tr>
-                                                        <th width="10%" class="text-center">#</th>
-                                                        <th width="30%" class="text-center">Fecha</th>
-                                                        <th width="30%" class="text-center">Usuario</th>
-                                                        <th width="30%" class="text-center">Monto</th>
+                                                        <th width="20%" class="text-center">Fecha</th>
+                                                        <th width="20%" class="text-center">Usuario</th>
+                                                        <th width="20%" class="text-center">Cliente</th>
+                                                        <th width="20%" class="text-center">Tipo</th>
+                                                        <th width="20%" class="text-center">Monto</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
                                                     <tr>
-                                                        <td colspan="4">Sin detalles</td>
+                                                        <td colspan="5">Sin detalles</td>
                                                     </tr>
                                                 </tbody>
                                                 <tfoot>
                                                     <tr>
-                                                        <th colspan="3" class="text-right">Total</th>
+                                                        <th colspan="4" class="text-right">Total</th>
                                                         <th>
                                                             <div class="input-group"><span class="input-group-addon">S/</span><input style="text-align:right" class="form-control" type="text" name="total" readonly tabindex="-1"></div>
                                                         </th>

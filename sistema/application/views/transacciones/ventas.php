@@ -21,13 +21,6 @@
                         </script>
                         <div class="block-header bg-gray-lighter">
                             <div class="block-options-simple">
-                                <?php if ($this->session->userdata('caja')) { ?>
-                                <button class="btn btn-xs btn-success nuevoregistro" type="button">
-                                <?php } else {?>
-                                <button class="btn btn-xs btn-danger text-white" data-toggle="popover" data-placement="left" data-content="La caja de la sucursal está cerrada." disabled>
-                                <?php } ?>
-                                    <i class="fa fa-plus"></i><span class="hidden-xs push-5-l">REGISTRAR <?php echo $registro_text;?></span>
-                                </button>
                             </div>
                             <h3 class="block-title"><?php echo $export_text;?> por fecha</h3>
                         </div>
@@ -138,7 +131,7 @@
                                         <i class="fa fa-info text-danger push-5-r"></i> Datos de Anulación <br>
                                     </h3>
                                     <p>
-                                        <b><span class="text-danger">Importante:</span></b> Se agregarán las existencias de los productos de la venta y adicionalmente se disminuirá el crédito al cliente relacionado por el total de la venta anulada.
+                                        <b><span class="text-danger">Importante:</span></b> Se agregarán las existencias de los productos de la venta, se anulará el pago y detalle de caja por el total de la venta anulada.
                                     </p>
                                     <div class="row datos">
                                         <div class="col-xs-12 col-sm-3">
@@ -194,17 +187,12 @@
                                     <h3 class="h5 font-w600 text-uppercase push-15"><i class="fa fa-info text-primary push-5-r"></i> Datos generales</h3>
                                     <div class="row">
                                         <div class="col-xs-12">
-                                            <div class="form-group no-sides-form-group">
-                                                <div class="row">
-                                                    <label class="col-xs-12">Cliente</label>
-                                                    <div class="col-xs-12">
-                                                        <div class="input-group push-10">
-                                                            <select class="form-control select2 required" name="cliente" style="width: 100%;" data-placeholder="Seleccione cliente">
-                                                            </select>
-                                                            <span class="input-group-btn">
-                                                                <button class="btn btn-success" type="button"><i class="fa fa-plus"></i><span class="hidden-xs push-10-l">Crear cliente</span></button>
-                                                            </span>
-                                                        </div>
+                                            <div class="form-group">
+                                                <div class="col-xs-12">
+                                                    <div class="form-material form-material-info">
+                                                        <select class="form-control select2 required" name="cliente" style="width: 100%;" data-placeholder="Seleccione cliente">
+                                                        </select>
+                                                        <label>Cliente</label>
                                                     </div>
                                                 </div>
                                             </div>
@@ -217,7 +205,7 @@
                                                     <div class="form-material form-material-info">
                                                         <select class="form-control required" name="tipo_comprobante" style="width: 100%;" data-placeholder="Seleccione">
                                                             <option value="">Seleccione</option>
-                                                            <?php foreach ($tipocomprobantes as $item) :?>
+                                                            <?php foreach ((array)$tipocomprobantes as $item) :?>
                                                             <option value="<?php echo $item['id']; ?>" ><?php echo $item['descripcion']; ?></option>
                                                             <?php endforeach;?>
                                                         </select>
@@ -242,7 +230,7 @@
                                                 <div class="col-xs-12">
                                                     <div class="form-material form-material-info">
                                                         <select class="form-control" name="tipo_pago" style="width: 100%;" data-placeholder="Seleccione">
-                                                            <?php foreach ($tipo_pagos as $item) :?>
+                                                            <?php foreach ((array)$tipo_pagos as $item) :?>
                                                             <option value="<?php echo $item['id']; ?>" ><?php echo $item['descripcion']; ?></option>
                                                             <?php endforeach;?>
                                                         </select>
@@ -279,7 +267,7 @@
                                             <div class="form-group">
                                                 <div class="col-xs-12">
                                                     <div class="input-group form-material form-material-info">
-                                                        <input class="form-control" type="text" name="fecha" disabled>
+                                                        <input class="form-control" type="text" name="fecha" readonly>
                                                         <label>Fecha</label>
                                                         <span class="input-group-addon"><i class="si si-calendar"></i></span>
                                                     </div>
@@ -338,9 +326,23 @@
                                             </tbody>
                                             <tfoot>
                                                 <tr>
-                                                    <th colspan="6" class="text-right">Subtotal</th>
+                                                    <th colspan="6" class="text-right text-info">TOTAL SIN DESC.</th>
                                                     <th>
-                                                        <div class="input-group"><span class="input-group-addon">S/</span><input style="text-align:right" class="form-control" type="text" name="subtotal" readonly tabindex="-1"></div>
+                                                        <div class="input-group"><span class="input-group-addon">S/</span><input style="text-align:right" class="form-control text-info" type="text" name="total_inicial" readonly tabindex="-1"></div>
+                                                    </th>
+                                                    <th></th>
+                                                </tr>
+                                                <tr class="text-muted">
+                                                    <th colspan="6" class="text-right">Descuento</th>
+                                                    <th>
+                                                        <div class="input-group"><span class="input-group-addon">S/</span><input style="text-align:right" class="form-control" type="text" name="descuento" readonly tabindex="-1"></div>
+                                                    </th>
+                                                    <th></th>
+                                                </tr>
+                                                <tr>
+                                                    <th colspan="6" class="text-right text-success">Total</th>
+                                                    <th>
+                                                        <div class="input-group"><span class="input-group-addon">S/</span><input style="text-align:right" class="form-control" type="text" name="total" readonly tabindex="-1"></div>
                                                     </th>
                                                     <th></th>
                                                 </tr>
@@ -352,9 +354,9 @@
                                                     <th></th>
                                                 </tr>
                                                 <tr>
-                                                    <th colspan="6" class="text-right">Total</th>
+                                                    <th colspan="6" class="text-right">Gravada</th>
                                                     <th>
-                                                        <div class="input-group"><span class="input-group-addon">S/</span><input style="text-align:right" class="form-control" type="text" name="total" readonly tabindex="-1"></div>
+                                                        <div class="input-group"><span class="input-group-addon">S/</span><input style="text-align:right" class="form-control" type="text" name="subtotal" readonly tabindex="-1"></div>
                                                     </th>
                                                     <th></th>
                                                 </tr>

@@ -12,6 +12,8 @@ class Reportes extends CI_Controller
         parent::__construct();
         $this->configuracion = basedetalleregistro('base_configuracion', ['id' => 1]);
         $this->configuracion['logo'] = ($this->configuracion['logo'] == '') ? 'public/img/recursos/logo.png' : $this->configuracion['logo'];
+        $this->menu_text = 'Reportes';
+        $this->menu = '8';
         $this->load->helper('text');
         $this->load->model('GenericoModelo', 'generico_modelo');
     }
@@ -23,7 +25,7 @@ class Reportes extends CI_Controller
         $provincias = $this->generico_modelo->listado('proceso_provincia', '1', ['where' => ['iddepartamento' => 2]]);
 
         $datos = [
-            'menu_text' => 'Reportes',
+            'menu_text' => $this->menu_text,
             'submenu_text' => 'Clientes',
             'export_text' => 'Clientes nuevos por fecha de registro',
             'export_text_2' => 'Clientes inactivos (Sin membresía)',
@@ -35,7 +37,7 @@ class Reportes extends CI_Controller
         ];
 
         $this->load->view('bases/cabezera');
-        $this->load->view('bases/menu', ['menu' =>4,'submenu' =>401]);
+        $this->load->view('bases/menu', ['menu' =>$this->menu,'submenu' =>801]);
         $this->load->view('bases/barra');
         $this->load->view('reportes/clientes', $datos);
         $this->load->view('bases/pie');
@@ -49,7 +51,7 @@ class Reportes extends CI_Controller
         $provincias = $this->generico_modelo->listado('proceso_provincia', '1', ['where' => ['iddepartamento' => 2]]);
 
         $datos = [
-            'menu_text' => 'Reportes',
+            'menu_text' => $this->menu_text,
             'submenu_text' => 'Transacciones',
             'export_text' => 'Reporte contable',
             'export_text_2' => '',
@@ -61,11 +63,47 @@ class Reportes extends CI_Controller
         ];
 
         $this->load->view('bases/cabezera');
-        $this->load->view('bases/menu', ['menu' =>4,'submenu' =>402]);
+        $this->load->view('bases/menu', ['menu' =>$this->menu,'submenu' =>802]);
         $this->load->view('bases/barra');
         $this->load->view('reportes/transacciones', $datos);
         $this->load->view('bases/pie');
         $this->load->view('bases/funciones', ['funciones' => ['reportes/transacciones']]);
+    }
+
+    
+    public function kardex()
+    {
+        $estados = $this->generico_modelo->listado('base_estado', '1');
+        $clientes = $this->generico_modelo->listado('proceso_cliente', '1');
+        $productos = $this->generico_modelo->listado('proceso_producto', '1');
+        foreach ($productos as &$item) {
+            $item['codigo'] = spd($item['id'], 6, '0');
+        }
+        $tipocomprobantes = $this->generico_modelo->listado('proceso_tipo_comprobante', '1', ['orderby'=>'id','direction'=>'asc']);
+        $tipo_venta_pagos = $this->generico_modelo->listado('proceso_tipo_venta_pago', '1', ['orderby'=>'id','direction'=>'asc']);
+        $tipo_pagos = $this->generico_modelo->listado('proceso_tipo_pago', '1', ['orderby'=>'id','direction'=>'asc']);
+        $proveedores = $this->generico_modelo->listado('proceso_proveedor', '1');
+
+        $datos = [
+            'menu_text' => $this->menu_text,
+            'submenu_text' => 'Kardex',
+            'export_text' => 'Listado de registros',
+            'registro_text' => 'kardex',
+            'productos'=>$productos,
+            'tipocomprobantes'=>$tipocomprobantes,
+            'tipo_venta_pagos'=>$tipo_venta_pagos,
+            'tipo_pagos'=>$tipo_pagos,
+            'clientes'=>$clientes,
+            'proveedores'=>$proveedores,
+            'estados'=>$estados,
+        ];
+
+        $this->load->view('bases/cabezera');
+        $this->load->view('bases/menu', ['menu' =>$this->menu,'submenu' =>804]);
+        $this->load->view('bases/barra');
+        $this->load->view('reportes/kardex', $datos);
+        $this->load->view('bases/pie');
+        $this->load->view('bases/funciones', ['funciones' => ['reportes/kardex']]);
     }
 
     public function reporteContable($date = null)

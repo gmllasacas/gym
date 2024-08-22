@@ -89,12 +89,50 @@
                                     </div>
                                     <h3 class="h5 font-w600 text-uppercase push-15"><i class="fa fa-info text-primary push-5-r"></i> Configuración</h3>
                                     <div class="row">
-                                        <div class="col-xs-12 col-sm-3 col-sm-offset-1">
+                                        <div class="col-xs-12 col-sm-6 col-sm-offset-3">
+                                            <div class="form-group">
+                                                <div class="col-xs-12">
+                                                    <div class="form-material form-material-info">
+                                                        <select class="form-control required" name="sunat_integracion" style="width: 100%;">
+                                                            <?php foreach ($estados as $item) :?>
+                                                            <option value="<?php echo $item['id']; ?>" ><?php echo $item['descripcion']; ?></option>
+                                                            <?php endforeach;?>
+                                                        </select>
+                                                        <label>Envío de comprobantes a SUNAT</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-12 col-sm-8 col-sm-offset-2">
                                             <div class="form-group">
                                                 <div class="col-xs-12">
                                                     <div class="input-group form-material form-material-info">
-                                                        <input class="form-control required textoinput" type="text" name="serie_boleta">
-                                                        <label>Serie de boleta</label>
+                                                        <input class="form-control required textoinput" type="text" name="sunat_api_ruta" value="<?php echo $configuracion['sunat_api_url'];?>">
+                                                        <label>Ruta de API</label>
+                                                        <span class="input-group-addon"><i class="si si-share"></i></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-12 col-sm-8 col-sm-offset-2">
+                                            <div class="form-group">
+                                                <div class="col-xs-12">
+                                                    <div class="input-group form-material form-material-info">
+                                                        <input class="form-control required textoinput" type="text" name="sunat_api_token" value="<?php echo $configuracion['sunat_api_token'];?>">
+                                                        <label>Token de API</label>
+                                                        <span class="input-group-addon"><i class="si si-key"></i></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-xs-12 col-sm-2 col-sm-offset-2">
+                                            <div class="form-group">
+                                                <div class="col-xs-12">
+                                                    <div class="input-group form-material form-material-info">
+                                                        <input class="form-control required number" type="number" name="serie_boleta">
+                                                        <label>Serie de Boleta</label>
                                                         <span class="input-group-addon"><i class="si si-doc"></i></span>
                                                     </div>
                                                 </div>
@@ -105,31 +143,7 @@
                                                 <div class="col-xs-12">
                                                     <div class="input-group form-material form-material-info">
                                                         <input class="form-control required number" type="number" name="numeracion_boleta">
-                                                        <label>Numeración de boleta</label>
-                                                        <span class="input-group-addon"><i class="fa fa-barcode"></i></span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                       <div class="col-xs-12 col-sm-3">
-                                            <div class="form-group">
-                                                <div class="col-xs-12">
-                                                    <div class="input-group form-material form-material-info">
-                                                        <input class="form-control" type="text" name="numeracion_boleta_actual" readonly>
-                                                        <label>Última boleta</label>
-                                                        <span class="input-group-addon"><i class="fa fa-barcode"></i></span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-xs-12 col-sm-3 col-sm-offset-1">
-                                            <div class="form-group">
-                                                <div class="col-xs-12">
-                                                    <div class="input-group form-material form-material-info">
-                                                        <input class="form-control required textoinput" type="text" name="serie_factura">
-                                                        <label>Serie de factura</label>
+                                                        <label>Numeración de Boleta</label>
                                                         <span class="input-group-addon"><i class="fa fa-barcode"></i></span>
                                                     </div>
                                                 </div>
@@ -139,8 +153,32 @@
                                             <div class="form-group">
                                                 <div class="col-xs-12">
                                                     <div class="input-group form-material form-material-info">
+                                                        <input class="form-control" type="text" name="numeracion_boleta_actual" readonly>
+                                                        <label>Última Boleta</label>
+                                                        <span class="input-group-addon"><i class="fa fa-doc"></i></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-xs-12 col-sm-2 col-sm-offset-2">
+                                            <div class="form-group">
+                                                <div class="col-xs-12">
+                                                    <div class="input-group form-material form-material-info">
+                                                        <input class="form-control required number" type="number" name="serie_factura">
+                                                        <label>Serie de Factura</label>
+                                                        <span class="input-group-addon"><i class="fa fa-doc"></i></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-12 col-sm-3">
+                                            <div class="form-group">
+                                                <div class="col-xs-12">
+                                                    <div class="input-group form-material form-material-info">
                                                         <input class="form-control required number" type="number" name="numeracion_factura">
-                                                        <label>Numeración de factura</label>
+                                                        <label>Numeración de Factura</label>
                                                         <span class="input-group-addon"><i class="fa fa-barcode"></i></span>
                                                     </div>
                                                 </div>
@@ -151,15 +189,16 @@
                                                 <div class="col-xs-12">
                                                     <div class="input-group form-material form-material-info">
                                                         <input class="form-control" type="text" name="numeracion_factura_actual" readonly>
-                                                        <label>Última factura</label>
-                                                        <span class="input-group-addon"><i class="fa fa-barcode"></i></span>
+                                                        <label>Última Factura</label>
+                                                        <span class="input-group-addon"><i class="fa fa-doc"></i></span>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
+                                    <h3 class="h5 font-w600 text-uppercase push-15"><i class="fa fa-info text-primary push-5-r"></i> Usuarios de la sucursal</h3>
                                     <div class="row">
-                                        <div class="col-xs-12">
+                                        <div class="col-xs-12 col-sm-4 col-sm-offset-4">
                                             <div class="form-group">
                                                 <div class="col-xs-12">
                                                     <div class="form-material form-material-info">
@@ -168,7 +207,7 @@
                                                             <option value="<?php echo $item['id']; ?>" ><?php echo $item['username'].' - '.$item['nombres']. ' ' .$item['apellidos']; ?></option>
                                                             <?php endforeach;?>
                                                         </select>
-                                                        <label>Usuarios de la sucursal</label>
+                                                        <label>Seleccione usuarios</label>
                                                     </div>
                                                 </div>
                                             </div>

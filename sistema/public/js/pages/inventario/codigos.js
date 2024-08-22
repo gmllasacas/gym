@@ -43,7 +43,7 @@ jQuery(function () {
                 }
                 response.data[i]['descuentostr'] = response.data[i]['descuento_tipo'] + '' +response.data[i]['descuento_cantidad'];
                 response.data[i]['estadostr'] = '<label class="label label-'+response.data[i]['estadocol']+'">'+response.data[i]['estadodesc']+'</label>';
-                response.data[i]['acciones'] += '<button class="btn btn-xs btn-danger cambiadatoregistro" data-toggle="tooltip" data-placement="top" title="Eliminar" data-id="' + response.data[i]['id'] + '" data-table="base_cliente_sistema" data-valor="5" data-campo="estado">' +
+                response.data[i]['acciones'] += '<button class="btn btn-xs btn-danger cambiadatoregistro" data-toggle="tooltip" data-placement="top" title="Eliminar" data-id="' + response.data[i]['id'] + '" data-table="proceso_codigo_descuento" data-valor="5" data-campo="estado">' +
                                                 '        <i class="fa fa-times"></i>'+
                                                 '    </button>'+
                                                 '</div>';

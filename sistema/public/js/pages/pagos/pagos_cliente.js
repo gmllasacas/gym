@@ -363,7 +363,7 @@ jQuery(function () {
                                 reiniciarform(registroform,registrovalidate,'generico/actualizarregistro','<i class="fa fa-edit push-5-r"></i> Editar');
                                 var clientes = '<option value=""></option>';
                                 jQuery.each(responseouter.data, function(index, item) {
-                                    clientes += '<option value="'+item.id+'">'+item.documento+' - '+item.nombre_o_razon_social+' (Crédito: S/ '+item.credito+')</option>';
+                                    clientes += '<option value="'+item.id+'">'+item.documento+' - '+item.nombre_o_razon_social+'</option>';
                                 });
                                 jQuery(registroform+' [name="cliente"]').html(clientes).trigger('change');
                                 jQuery.each(response.registro, function(index, item) {

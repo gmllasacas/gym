@@ -157,7 +157,7 @@ jQuery(function () {
                                 var clientes = '<option value=""></option>';
                                 jQuery.each(responseouter.data.clientes, function(index, item) {
                                     var disabled = (item.credito> 0 ? 'disabled' : '');
-                                    clientes += '<option value="'+item.id+'" '+disabled+'>'+item.documento+' - '+item.nombre_o_razon_social+' (Crédito: S/ '+item.credito+')</option>';
+                                    clientes += '<option value="'+item.id+'" '+disabled+'>'+item.documento+' - '+item.nombre_o_razon_social+'</option>';
                                 });
                                 jQuery(registroform+' [name="cliente"]').html(clientes).trigger('change');
 
@@ -166,10 +166,12 @@ jQuery(function () {
                                         jQuery(registroform+' [name='+index+']').val(item).trigger("change");
                                     }
                                 });
+                                jQuery(registroform+' [name="sucursal"]').val(response.registro.sucursal.sucursal);
+                                jQuery(registroform+' [name="tipo_pago"]').val(response.registro.pago.tipo_pago).trigger("change").prop('disabled',true);
+                                jQuery(registroform+' [name="numero_operacion"]').val(response.registro.pago.numero_operacion).prop('readonly',true);
                                 jQuery(registroform+' [name="cliente"]').prop('disabled',true);
                                 jQuery(registroform+' [name="tipo_comprobante"]').prop('disabled',true);
-                                jQuery(registroform+' [name="comprobante"]').prop('disabled',true);
-                                jQuery(registroform+' [name="tipo_pago"]').prop('disabled',true);
+                                jQuery(registroform+' [name="comprobante"]').prop('readonly',true);
                                 jQuery(registroform+' [name="datos_adicionales"]').prop('disabled',true);
                                 jQuery(tabledetalles+' tbody').html('');
                                 var counter = 1;
@@ -203,6 +205,8 @@ jQuery(function () {
                                     counter++;
                                 });
 
+                                jQuery(registroform+' [name="total_inicial"]').val(response.registro.total_inicial);
+                                jQuery(registroform+' [name="descuento"]').val(response.registro.descuento);
                                 jQuery(registroform+' [name="subtotal"]').val(response.registro.subtotal);
                                 jQuery(registroform+' [name="igv"]').val(response.registro.igv);
                                 jQuery(registroform+' [name="total"]').val(response.registro.total);
@@ -262,7 +266,7 @@ jQuery(function () {
                                 var clientes = '<option value=""></option>';
                                 jQuery.each(responseouter.clientes, function(index, item) {
                                     var disabled = (item.credito> 0 ? 'disabled' : '');
-                                    clientes += '<option value="'+item.id+'" '+disabled+'>'+item.documento+' - '+item.nombre_o_razon_social+' (Crédito: S/ '+item.credito+')</option>';
+                                    clientes += '<option value="'+item.id+'" '+disabled+'>'+item.documento+' - '+item.nombre_o_razon_social+'</option>';
                                 });
                                 jQuery(registroform+' [name="cliente"]').html(clientes).trigger('change');
 
@@ -271,10 +275,12 @@ jQuery(function () {
                                         jQuery(registroform+' [name='+index+']').val(item).trigger("change");
                                     }
                                 });
+                                jQuery(registroform+' [name="sucursal"]').val(response.registro.sucursal.sucursal);
+                                jQuery(registroform+' [name="tipo_pago"]').val(response.registro.pago.tipo_pago).trigger("change").prop('disabled',true);
+                                jQuery(registroform+' [name="numero_operacion"]').val(response.registro.pago.numero_operacion).prop('readonly',true);
                                 jQuery(registroform+' [name="cliente"]').prop('disabled',true);
                                 jQuery(registroform+' [name="tipo_comprobante"]').prop('disabled',true);
-                                jQuery(registroform+' [name="comprobante"]').prop('disabled',true);
-                                jQuery(registroform+' [name="tipo_pago"]').prop('disabled',true);
+                                jQuery(registroform+' [name="comprobante"]').prop('readonly',true);
                                 jQuery(registroform+' [name="datos_adicionales"]').prop('disabled',true);
                                 jQuery(tabledetalles+' tbody').html('');
                                 var counter = 1;
@@ -378,8 +384,6 @@ jQuery(function () {
                                     break;
                             }
                             response.data[i]['totalsum']=response.data[i]['totalsum'];
-                            response.data[i]['cantidadsum']=response.data[i]['cantidad'];
-                            response.data[i]['cantidadstr'] = response.data[i]['cantidad']+' unid. ('+response.data[i]['cantidad_docenas']+')';
                             response.data[i]['estadostr']='<label class="label label-'+response.data[i]['estadocol']+'">'+response.data[i]['estadodesc']+'</label>';
                             response.data[i]['comprobantestr']=response.data[i]['tipo_comprobantedesc']+' - '+response.data[i]['comprobante'];
                         }
@@ -555,7 +559,7 @@ jQuery(function () {
         calcular_total();
     });
 
-    jQuery('body').on('change', registroform+' [name="tipo_comprobante"]', function() {
+    /*jQuery('body').on('change', registroform+' [name="tipo_comprobante"]', function() {
       var tipo_comprobante = $(this).val();
       if(tipo_comprobante){
         jQuery.ajax({
@@ -581,7 +585,7 @@ jQuery(function () {
       }else{
         jQuery(registroform+' [name="comprobante"]').addClass('required');
       }
-    });
+    });*/
 
     jQuery('body').on('change', registroform+' [name="tipo_venta_pago"]', function() {
         if($(this).val()=='2'){

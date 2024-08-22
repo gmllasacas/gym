@@ -23,7 +23,18 @@
     }
     tfoot .text-muted .form-control{
         color: #b9b9b9 !important;
-    } 
+    }
+    .list-activity > li > i:first-child {
+        position: absolute;
+        left: 10px;
+        top: 10px;
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        line-height: 20px;
+        font-size: 18px;
+        text-align: center;
+    }
 </style>
 
 <main id="main-container" >
@@ -187,7 +198,7 @@
                                     </tbody>
                                     <tfoot>
                                         <tr>
-                                            <th colspan="6" class="text-right text-info">Total Inicial</th>
+                                            <th colspan="6" class="text-right text-info">TOTAL SIN DESC.</th>
                                             <th>
                                                 <div class="input-group"><span class="input-group-addon">S/</span><input style="text-align:right" class="form-control text-info" type="text" name="total_inicial" readonly tabindex="-1"></div>
                                             </th>
@@ -227,7 +238,7 @@
 
                             <div class="form-group">
                                 <div class="col-xs-12 text-center">
-                                    <a class="btn btn-minw btn-square btn-muted push-5-r clear-form"><i class="fa fa-times push-5-r"></i> Limpiar</a>
+                                    <a class="btn btn-minw btn-square btn-muted push-5-r clear-form"><i class="fa fa-times push-5-r"></i> LIMPIAR</a>
                                     <button class="btn btn-minw btn-square btn-success" type="submit"></button>
                                 </div>
                             </div>
@@ -283,7 +294,7 @@
                             <?php } ?>
                         </div>
                     </div>
-                    <div class="block-content">
+                    <div class="block-content" data-toggle="slimscroll" data-height="547px" data-always-visible="true">
                         <ul class="list list-activity caja-detalles">
                         </ul>
                     </div>

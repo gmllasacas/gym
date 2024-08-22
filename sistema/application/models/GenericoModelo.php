@@ -153,7 +153,10 @@ class GenericoModelo extends CI_Model
             case 'proceso_venta_detalle':
                 $query = $this->db->query(
                     "SELECT proceso_venta_detalle.*,
-                    proceso_producto.descripcion
+                    proceso_producto.descripcion,
+                    proceso_producto.tipo as producto_tipo,
+                    proceso_producto.unidad as producto_unidad,
+                    proceso_producto.duracion_unidad as producto_duracion_unidad
                     FROM proceso_venta_detalle 
                     INNER JOIN proceso_producto ON proceso_venta_detalle.producto=proceso_producto.id
                     WHERE proceso_venta_detalle.estado REGEXP ? AND proceso_venta_detalle.venta = ?",
@@ -285,22 +288,19 @@ class GenericoModelo extends CI_Model
                     base_estado.color as estadocol,
                     proceso_cliente.nombre_o_razon_social as clientedesc,
                     base_usuario.username,
-                    proceso_tipo_venta_pago.descripcion as tipodesc,
+                    proceso_tipo_pago.descripcion as tipodesc,
                     proceso_tipo_comprobante.descripcion as tipo_comprobantedesc,
-                        (
-                        SELECT SUM(proceso_venta_detalle.cantidad) FROM proceso_venta_detalle
-                        WHERE proceso_venta_detalle.estado REGEXP ? AND proceso_venta_detalle.venta = proceso_venta.id
-                        ) as cantidad,
                     base_sucursal.sucursal as sucursaldesc
                     FROM proceso_venta 
                     INNER JOIN base_estado ON proceso_venta.estado=base_estado.id
                     INNER JOIN proceso_cliente ON proceso_venta.cliente=proceso_cliente.id
                     INNER JOIN base_usuario ON base_usuario.id=proceso_venta.usuario $usuario_sesion
-                    INNER JOIN proceso_tipo_venta_pago ON proceso_venta.tipo_venta_pago=proceso_tipo_venta_pago.id
+                    INNER JOIN proceso_pago ON proceso_venta.id=proceso_pago.venta
+                    INNER JOIN proceso_tipo_pago ON proceso_pago.tipo_pago=proceso_tipo_pago.id
                     INNER JOIN proceso_tipo_comprobante ON proceso_venta.tipo_comprobante=proceso_tipo_comprobante.id
                     INNER JOIN base_sucursal ON proceso_venta.sucursal = base_sucursal.id $con_where
                     WHERE (DATE(proceso_venta.fecha) BETWEEN ? AND ?) AND proceso_venta.estado REGEXP ?",
-                    array('^['.$estado.']',$fechainicio,$fechafin,'^['.$estado.']')
+                    array($fechainicio,$fechafin,'^['.$estado.']')
                 );
                 break;
             case 'reporte_contable':
@@ -508,6 +508,18 @@ class GenericoModelo extends CI_Model
                     INNER JOIN base_usuario ON base_usuario.id = proceso_auditoria.usuario
                     LEFT JOIN base_sucursal ON proceso_auditoria.sucursal = base_sucursal.id 
                     WHERE (DATE(proceso_auditoria.fecha) BETWEEN ? AND ?) AND proceso_auditoria.estado REGEXP ? $con_where",
+                    array($fechainicio, $fechafin, '^['.$estado.']')
+                );
+                break;
+            case 'proceso_contacto_externo':
+                $fechainicio = $params['fechainicio'];
+                $fechafin = $params['fechafin'];
+                $estado = $params['estado'];
+
+                $query = $this->db->query(
+                    "SELECT proceso_contacto_externo.*
+                    FROM proceso_contacto_externo 
+                    WHERE (DATE(proceso_contacto_externo.fecha) BETWEEN ? AND ?) AND proceso_contacto_externo.estado REGEXP ?",
                     array($fechainicio, $fechafin, '^['.$estado.']')
                 );
                 break;

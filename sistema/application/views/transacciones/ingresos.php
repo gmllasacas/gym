@@ -166,7 +166,7 @@
                                                     <div class="form-material form-material-info">
                                                         <select class="form-control select2 required" name="proveedor" style="width: 100%;" data-placeholder="Seleccione proveedor">
                                                             <option value="">Seleccione</option>
-                                                            <?php foreach ($proveedores as $item) :?>
+                                                            <?php foreach ((array)$proveedores as $item) :?>
                                                             <option value="<?php echo $item['id']; ?>" ><?php echo $item['ruc'].' - '.$item['nombre_o_razon_social']; ?></option>
                                                             <?php endforeach;?>
                                                         </select>
@@ -183,7 +183,7 @@
                                                     <div class="form-material form-material-info">
                                                         <select class="form-control" name="tipo_comprobante" style="width: 100%;" data-placeholder="Seleccione">
                                                             <option value="">Seleccione</option>
-                                                            <?php foreach ($tipocomprobantes as $item) :?>
+                                                            <?php foreach ((array)$tipocomprobantes as $item) :?>
                                                             <option value="<?php echo $item['id']; ?>" ><?php echo $item['descripcion']; ?></option>
                                                             <?php endforeach;?>
                                                         </select>
@@ -209,7 +209,7 @@
                                                     <div class="form-material form-material-info">
                                                         <select class="form-control" name="tipo_ingreso_pago" style="width: 100%;" data-placeholder="Seleccione">
                                                             <option value="">Seleccione</option>
-                                                            <?php foreach ($tipos_ingreso_pago as $item) :?>
+                                                            <?php foreach ((array)$tipos_ingreso_pago as $item) :?>
                                                             <option value="<?php echo $item['id']; ?>" ><?php echo $item['descripcion']; ?></option>
                                                             <?php endforeach;?>
                                                         </select>
