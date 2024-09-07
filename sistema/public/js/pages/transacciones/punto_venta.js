@@ -12,6 +12,10 @@ jQuery(function () {
       calcular_total();
     });
 
+    jQuery('body').on('change', registroform+' [name="igv_percent"]', function() {
+      calcular_total();
+    });
+
     jQuery('body').on('change', tabledetalles+' .input-cantidad', function() {
       var cantidad = parseFloat($(this).closest('tr').find('.input-cantidad').val());
       if(cantidad == 0){ 
@@ -153,8 +157,10 @@ jQuery(function () {
                             '<td>';
                 if (response.registro['tipo'] == 1) {
                           tr += '<div class="form-group"><div class="col-xs-12"><div class="input-group"><input class="form-control input-cantidad required" type="number" step="1" min="0" max="'+response.registro.existencias+'" name="producto['+counter+'][cantidad]" value="1"><span class="input-group-addon">'+response.registro.abreviatura+'</span></div></div></div>';
-                } else {
+                } else if (response.registro['tipo'] == 2) {
                           tr += '<div class="form-group"><div class="col-xs-12"><div class="input-group"><input class="form-control input-cantidad required" type="number" name="producto['+counter+'][cantidad]" value="1" readonly><span class="input-group-addon">'+response.registro.abreviatura+'</span></div></div></div>';
+                } else {
+                          tr += '<div class="form-group"><div class="col-xs-12"><div class="input-group"><input class="form-control input-cantidad required" type="number" name="producto['+counter+'][cantidad]" value="1"><span class="input-group-addon">'+response.registro.abreviatura+'</span></div></div></div>';
                 }
                         tr += '</td>'+
                                 '<td>'+
@@ -166,8 +172,10 @@ jQuery(function () {
                                 '<td>';
                 if (response.registro['tipo'] == 1) {
                             tr += '<div class="form-group"><div class="col-xs-12"><div class="input-group"><input class="form-control" type="text" value="'+response.registro.existencias+'" readonly tabindex="-1"><span class="input-group-addon">'+response.registro.abreviatura+'</span></div></div></div>';
-                } else {
+                } else if (response.registro['tipo'] == 2) {
                             tr += '<div class="form-group"><div class="col-xs-12"><div class="input-group"><input class="form-control" type="text" value="'+response.registro.duracion+'" readonly tabindex="-1"><span class="input-group-addon">'+response.registro.duracion_unidad_desc+'</span></div></div></div>';
+                } else {
+                            tr += '';
                 }
                         tr += '</td>'+
                                 '<td>'+
@@ -495,8 +503,9 @@ jQuery(function () {
           jQuery(registroform+' [name="counter"]').val(0);
           jQuery(tabledetalles+' tbody').html('');
           var productos_selector = '<option value="">Seleccione</option>';
-          var servicios = '<optgroup label="SERVICIOS">';
-          var productos = '<optgroup label="PRODUCTOS">';
+          var membresias = '';
+          var servicios = '';
+          var productos = '';
           var favoritos = '';
           jQuery.each(response.data.productos, function(index, item) {
             var subdesc = '';
@@ -505,7 +514,8 @@ jQuery(function () {
             var tipo_color = '';
             switch (item.tipo) {
               case '1':
-                tipo = 'Producto';
+                tipo = item.tipodesc;
+                if (productos == '') productos += '<optgroup label="'+tipo.toUpperCase()+'">';
                 tipo_color = 'primary';
                 if(item.existencias>0) {
                   subdesc = item.existencias+' '+item.abreviatura;
@@ -513,13 +523,20 @@ jQuery(function () {
                   subdesc = 'Sin existencias';
                   disabled = 'disabled';
                 }
-                productos += '<option data-tipo="'+item.tipo+'" value="'+item.id+'" '+disabled+'>'+item.codigo+' - '+item.descripcion+' ('+subdesc+')</option>';
+                productos += '<option data-tipo="'+item.tipo+'" value="'+item.id+'" '+disabled+'>'+item.codigo+' | '+item.categoriadesc+' - '+item.descripcion+' ('+subdesc+')</option>';
                 break;
               case '2':
-                tipo = 'Servicio';
+                tipo = item.tipodesc;
+                if (membresias == '') membresias += '<optgroup label="'+tipo.toUpperCase()+'">';
                 tipo_color = 'success';
                 subdesc = item.duracion+' '+item.duracion_unidad_desc;
-                servicios += '<option data-tipo="'+item.tipo+'" value="'+item.id+'" '+disabled+'>'+item.codigo+' - '+item.descripcion+' ('+ subdesc+')</option>';
+                membresias += '<option data-tipo="'+item.tipo+'" value="'+item.id+'">'+item.codigo+' | '+item.descripcion+' ('+ subdesc+')</option>';
+                break;
+              case '3':
+                tipo = item.tipodesc;
+                if (servicios == '') servicios += '<optgroup label="'+tipo.toUpperCase()+'">';
+                tipo_color = 'primary';
+                servicios += '<option data-tipo="'+item.tipo+'" value="'+item.id+'">'+item.codigo+' | '+item.categoriadesc+' - '+item.descripcion+'</option>';
               default:
                   break;
             }
@@ -540,7 +557,7 @@ jQuery(function () {
 
           });
           ;
-          productos_selector += servicios + '</optgroup>' + productos + '</optgroup>';
+          productos_selector += productos + '</optgroup>' + membresias + '</optgroup>' + servicios + '</optgroup>';
           jQuery(registroform+' [name="producto_sel"]').html(productos_selector).trigger('change');
           jQuery(registroform+' .favoritos').html(favoritos);
 
@@ -558,6 +575,7 @@ jQuery(function () {
           jQuery(registroform+' [name="comprobante"]').prop('disabled',false);
           jQuery(registroform+' [name="tipo_pago"]').prop('disabled',false).trigger('change');
           jQuery(registroform+' [name="datos_adicionales"]').prop('disabled',false);
+          jQuery(registroform+' [name="igv_percent"]').val(igv_id);
         }
         if(load_detalle){
           detalle();
@@ -623,7 +641,7 @@ jQuery(function () {
                     element ='<li>'+
                             '  <i class="'+icon+'"></i>'+
                             '  <div class="font-w600"><span class="text-muted">Cliente:</span> '+item.clientedesc+' <br> <span class="text-muted">Usuario:</span> '+item.username+' <span class="pull-right text-success">+ S/ '+monto.toFixed(2)+'</span></div>'+
-                            '  <div><a class="text-info link-effect" target="_blank" href="'+ base_url + 'transaccion/comprobante/' + item.referencia + '"><i class="fa fa-file-pdf-o push-5-r"></i>'+item.tipodesc+'<i class="si si-share-alt push-10-l"></i></a><small class="pull-right text-muted">'+item.fecha+'</small></div>'+
+                            '  <div><a class="text-info link-effect" target="_blank" href="'+ base_url + 'transacciones/comprobante/' + item.referencia + '"><i class="fa fa-file-pdf-o push-5-r"></i>'+item.tipodesc+'<i class="si si-share-alt push-10-l"></i></a><small class="pull-right text-muted">'+item.fecha+'</small></div>'+
                             '</li>';
                     break;
                   case '3':
@@ -631,7 +649,7 @@ jQuery(function () {
                     element ='<li>'+
                             '  <i class="'+icon+'"></i>'+
                             '  <div class="font-w600"><span class="text-muted">Cliente:</span> '+item.clientedesc+' <br> <span class="text-muted">Usuario:</span> '+item.username+' <span class="pull-right text-danger">- S/ '+Math.abs(monto).toFixed(2)+'</span></div>'+
-                            '  <div><a class="text-info link-effect" target="_blank" href="'+ base_url + 'transaccion/comprobante_anulacion/' + item.referencia + '"><i class="fa fa-file-pdf-o push-5-r"></i>'+item.tipodesc+'<i class="si si-share-alt push-10-l"></i></a><small class="pull-right text-muted">'+item.fecha+'</small></div>'+
+                            '  <div><a class="text-info link-effect" target="_blank" href="'+ base_url + 'transacciones/comprobante_anulacion/' + item.referencia + '"><i class="fa fa-file-pdf-o push-5-r"></i>'+item.tipodesc+'<i class="si si-share-alt push-10-l"></i></a><small class="pull-right text-muted">'+item.fecha+'</small></div>'+
                             '</li>';
                     break;
                   default:
@@ -653,7 +671,7 @@ jQuery(function () {
 
   function calcular_total() {
     var subtotales = jQuery(tabledetalles+' .input-subtotal');
-    var igv_percent = parseFloat(jQuery(registroform+' [name="igv"]').data('igv'));
+    var igv_percent = parseFloat(jQuery(registroform+' [name="igv_percent"]').find("option:selected").attr('data-value'));
     var descuento_tipo = jQuery(registroform+' [name="codigo_descuento"]').find("option:selected").data('descuento_tipo');
     var descuento_cantidad = parseFloat(jQuery(registroform+' [name="codigo_descuento"]').find("option:selected").data('descuento_cantidad'));
     var igv = 0;

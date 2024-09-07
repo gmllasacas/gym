@@ -51,11 +51,19 @@
     <div class="content">
         <div class="row">
             <div class="col-md-8">
+                <?php if (!isset($caja['id'])) { ?>
+                    <div class="alert alert-danger alert-dismissable">
+                        <button type="button" class="close" data-dismiss="alert">×</button>
+                        <h3 class="font-w300 push-15">Caja cerrada</h3>
+                        <p>La caja se encuentra cerrada, para realizar ventas se necesita abrir la caja.</p>
+                    </div>
+                <?php } ?>
                 <div class="block" style="position: relative;">
                     <div class="<?php echo (!isset($caja['id']) ? 'block-blocker' : '') ?>">
                     </div>
                     <script type="text/javascript">
                         var reportetext='<?php echo $export_text;?>';
+                        var igv_id ='<?php echo $this->configuracion['igv'];?>';
                     </script>
                     <div class="block-header bg-gray-lighter">
                         <h3 class="block-title"><?php echo $export_text;?></h3>
@@ -173,9 +181,9 @@
                                 <table class="table table-condensed table-hover table-bordered" id="table-detalles">
                                     <thead>
                                         <tr>
-                                            <th colspan="3" class="text-right" style="vertical-align:middle">Producto o Servicio</th>
+                                            <th colspan="3" class="text-right" style="vertical-align:middle">Producto - Servicio</th>
                                             <th colspan="3">
-                                                <select class="form-control select2" name="producto_sel" style="width: 100%;" data-placeholder="Seleccione producto o servicio">
+                                                <select class="form-control select2" name="producto_sel" style="width: 100%;" data-placeholder="Seleccione producto - servicio">
                                                 </select>
                                             </th>
                                             <th colspan="2" class="text-center"><button class="btn btn-success btn-producto" type="button"><i class="fa fa-plus"></i><span class=" push-10-l">AGREGAR DETALLE</button></th>
@@ -211,24 +219,32 @@
                                             </th>
                                             <th></th>
                                         </tr>
-                                        <tr>
-                                            <th colspan="6" class="text-right text-success">Total</th>
-                                            <th>
-                                                <div class="input-group"><span class="input-group-addon">S/</span><input style="text-align:right" class="form-control text-success" type="text" name="total" readonly tabindex="-1"></div>
-                                            </th>
-                                            <th></th>
-                                        </tr>
-                                        <tr class="text-muted">
-                                            <th colspan="6" class="text-right">IGV</th>
-                                            <th>
-                                                <div class="input-group"><span class="input-group-addon">S/</span><input style="text-align:right" class="form-control" type="text" name="igv" readonly tabindex="-1" data-igv="<?php echo $this->configuracion['igv'];?>"></div>
-                                            </th>
-                                            <th></th>
-                                        </tr>
                                         <tr class="text-muted">
                                             <th colspan="6" class="text-right">Gravada</th>
                                             <th>
                                                 <div class="input-group"><span class="input-group-addon">S/</span><input style="text-align:right" class="form-control" type="text" name="subtotal" readonly tabindex="-1"></div>
+                                            </th>
+                                            <th></th>
+                                        </tr>
+                                        <tr class="">
+                                            <th colspan="5" class="text-right"></th>
+                                            <th>
+                                                <span class="pull-left">IGV</span>
+                                                <select class="form-control pull-right" name="igv_percent" style="width: 70%;height: 24px;font-size: 10px;padding: 0px 4px;">
+                                                    <?php foreach ((array)$igvs as $item) :?>
+                                                    <option value="<?php echo $item['id']; ?>" data-value="<?php echo $item['descripcion']; ?>"><?php echo $item['descripcion']; ?>%</option>
+                                                    <?php endforeach;?>
+                                                </select>
+                                            </th>
+                                            <th>
+                                                <div class="input-group"><span class="input-group-addon">S/</span><input style="text-align:right" class="form-control" type="text" name="igv" readonly tabindex="-1"></div>
+                                            </th>
+                                            <th></th>
+                                        </tr>
+                                        <tr>
+                                            <th colspan="6" class="text-right text-success">Total</th>
+                                            <th>
+                                                <div class="input-group"><span class="input-group-addon">S/</span><input style="text-align:right" class="form-control text-success" type="text" name="total" readonly tabindex="-1"></div>
                                             </th>
                                             <th></th>
                                         </tr>
@@ -299,13 +315,6 @@
                         </ul>
                     </div>
                 </div>
-                <?php if (!isset($caja['id'])) { ?>
-                    <div class="alert alert-danger alert-dismissable">
-                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                        <h3 class="font-w300 push-15">Caja cerrada</h3>
-                        <p>La caja se encuentra cerrada, para realizar ventas se necesita abrir la caja.</p>
-                    </div>
-                <?php } ?>
             </div>
         </div>
     </div>

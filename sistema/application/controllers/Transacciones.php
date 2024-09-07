@@ -74,6 +74,7 @@ class Transacciones extends CI_Controller
     {
         $sucursal = $this->session->userdata('sucursal');
         $estados = $this->generico_modelo->listado('base_estado', '1');
+        $igvs = $this->generico_modelo->listado('proceso_igv', '1');
         $tipocomprobantes = $this->generico_modelo->listado('proceso_tipo_comprobante', '1', ['orderby'=>'id','direction'=>'asc']);
         $tipo_venta_pagos = $this->generico_modelo->listado('proceso_tipo_venta_pago', '1', ['orderby'=>'id','direction'=>'asc']);
         $tipo_pagos = $this->generico_modelo->listado('proceso_tipo_pago', '1', ['orderby'=>'id','direction'=>'asc']);
@@ -89,6 +90,7 @@ class Transacciones extends CI_Controller
             'tipocomprobantes'=>$tipocomprobantes,
             'tipo_venta_pagos'=>$tipo_venta_pagos,
             'tipo_pagos'=>$tipo_pagos,
+            'igvs'=>$igvs,
             'caja'=>$caja,
             'tipos'=>$tipos_documento,
             'departamento' => 2,
@@ -154,7 +156,6 @@ class Transacciones extends CI_Controller
             $registro['cliente_datos']['tipo_documento_desc'] = basedetalleregistro('proceso_tipo_documento', ['id'=>$registro['cliente_datos']['tipo_documento']]);
             $registro['tipo_comprobante_desc'] = basedetalleregistro('proceso_tipo_comprobante', ['id'=>$registro['tipo_comprobante']]);
             $registro['detalles'] = $this->generico_modelo->listado('proceso_venta_detalle', '1', ['venta'=>$id]);
-            $registro['tipo'] = 'venta';
             $this->load->library('NumberToLetters');
             $letras = new NumberToLetters();
             $registro['letras'] =$letras->convertir($registro['total']);
@@ -178,23 +179,18 @@ class Transacciones extends CI_Controller
             $registro['sucursal'] = basedetalleregistro('base_sucursal', ['estado'=>'1','id'=>$this->session->userdata('sucursal')]);
             $registro['sunat'] = basedetalleregistro('proceso_envio_sunat', ['estado'=>'1','venta'=>$id]);
             foreach ($registro['detalles'] as &$item) {
-                $item['codigo'] = spd($item['producto'], 6, '0');
                 $producto = basedetalleregistro('proceso_producto', ['estado'=>'1','id'=>$item['producto']]);
-                $item['tipo'] = $producto['tipo'];
-                if ($producto['tipo'] == 1) {
-                    $unidad = basedetalleregistro('proceso_unidad', ['estado'=>'1','id'=>$producto['unidad']]);
-                    $item['abreviatura'] = $unidad['abreviatura'];
-                } else {
-                    $item['abreviatura'] = 'Serv.';
-                    $duracion_unidad = basedetalleregistro('proceso_duracion_unidad', ['estado'=>'1','id'=>$producto['duracion_unidad']]);
-                    $item['duracion_unidad_desc'] = $duracion_unidad['descripcion'];
-                }
+                $detalle_tipo_producto = detalle_tipo_producto($producto);
+                $item['tipo'] = $detalle_tipo_producto['tipo'];
+                $item['codigo'] = $detalle_tipo_producto['codigo'];
+                $item['existencias'] = $detalle_tipo_producto['existencias'];
+                $item['abreviatura'] = $detalle_tipo_producto['abreviatura'];
+                $item['duracion_unidad_desc'] = $detalle_tipo_producto['duracion_unidad_desc'];
             }
 
             $this->load->library('NumberToLetters');
             $letras = new NumberToLetters();
             $registro['letras'] =$letras->convertir($registro['total'], 'SOLES');
-            $registro['tipo'] = 'venta';
 
             $qr = new QRCode();
             $registro['qr'] = $qr->render($registro['sunat']['cadena_para_codigo_qr']);

@@ -96,7 +96,11 @@ jQuery(function () {
                 dataSrc: function (response) {
                     switch (response.status) {
                         case 200:
+                            var data = [];
                             for ( var i=0, ien=response.data.length ; i<ien ; i++ ) {
+                                if (response.data[i]['id'] == '1') {
+                                    continue;
+                                }
                                 response.data[i]['acciones'] =
                                     '<div class="btn-group">'+
                                     '    <button class="btn btn-xs btn-info editarregistro" data-toggle="tooltip" data-placement="top" title="Detalles" data-id="'+response.data[i]['id']+'" data-table="proceso_cliente">'+
@@ -105,8 +109,9 @@ jQuery(function () {
                                     '</div>';
                                 response.data[i]['preciostr']='S/ '+response.data[i]['precio'];
                                 response.data[i]['estadostr']='<label class="label label-'+response.data[i]['estadocol']+'">'+response.data[i]['estadodesc']+'</label>';
+                                data.push(response.data[i]);
                             }
-                            return response.data;
+                            return data;
                             break;
                         case 500:
                             notifytemplate('fa fa-times', response.message, 'danger');
@@ -193,7 +198,11 @@ jQuery(function () {
                 dataSrc: function (response) {
                     switch (response.status) {
                         case 200:
+                            var data = [];
                             for ( var i=0, ien=response.data.length ; i<ien ; i++ ) {
+                                if (response.data[i]['id'] == '1') {
+                                    continue;
+                                }
                                 response.data[i]['acciones'] = '<div class="btn-group">'+
                                                                         '    <button class="btn btn-xs btn-info editarregistro" data-toggle="tooltip" data-placement="top" title="Detalles" data-id="'+response.data[i]['id']+'" data-table="proceso_cliente">'+
                                                                         '        <i class="fa fa-bars"></i>'+
@@ -206,8 +215,9 @@ jQuery(function () {
                                 response.data[i]['etiqueta'] = fomartted.etiqueta;
                                 response.data[i]['dias_filter'] = fomartted.dias_filter;
                                 response.data[i]['estadostr'] = '<label class="label label-'+response.data[i]['estadocol']+'">'+response.data[i]['estadodesc']+'</label>';
+                                data.push(response.data[i]);
                             }
-                            return response.data;
+                            return data;
                             break;
                         case 500:
                             notifytemplate('fa fa-times', response.message, 'danger');

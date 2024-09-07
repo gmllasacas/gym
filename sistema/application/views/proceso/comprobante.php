@@ -129,10 +129,6 @@
                                     <th class="text-center" width="15%">TOTAL</th>
                                 </tr>
                             </thead>
-                            <?php
-                            switch ($registro['tipo']) {
-                                case 'venta':
-                                    ?>
                                 <tbody>
                                     <?php foreach ($registro['detalles'] as $item) :?>
                                         <tr>
@@ -169,12 +165,6 @@
                                         <td class="text-right">S/ <?php echo $registro['total']; ?></td>
                                     </tr>
                                 </tfoot>
-                                    <?php
-                                    break;
-                                default:
-                                    break;
-                            }
-                            ?>
                         </table>
                         <br>
                         <span style="font-size: 14px;">REPRESENTACIÓN IMPRESA DE LA <?php echo($registro['tipo_comprobante_desc'] != '' ? $registro['tipo_comprobante_desc']['descripcion'].' ELECTRÓNICA': ''); ?></span>

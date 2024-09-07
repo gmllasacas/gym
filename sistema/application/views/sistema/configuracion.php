@@ -54,7 +54,7 @@
                                 </div>
                                 <h3 class="h5 font-w600 text-uppercase push-15"><i class="fa fa-navicon text-primary push-5-r"></i> Datos de sistema</h3>
                                 <div class="row">
-                                    <div class="col-xs-12 col-sm-3">
+                                    <div class="col-xs-6 col-sm-3">
                                         <div class="form-group text-left">
                                             <div class="col-xs-12">
                                                 <div class="input-group form-material form-material-info">
@@ -65,7 +65,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-xs-12 col-sm-3">
+                                    <div class="col-xs-6 col-sm-3">
                                         <div class="form-group">
                                             <div class="col-xs-12">
                                                 <div class="form-material form-material-info">
@@ -78,13 +78,19 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-xs-12 col-sm-3">
+                                    <script>
+                                        var igv_id ='<?php echo $this->configuracion['igv'];?>';
+                                    </script>
+                                    <div class="col-xs-6 col-sm-2">
                                         <div class="form-group">
                                             <div class="col-xs-12">
-                                                <div class="input-group form-material form-material-info">
-                                                    <input class="form-control required number" type="number" step="0.01" min="0.00" name="igv" value="<?php echo $configuracion['igv'];?>">
+                                                <div class="form-material form-material-info">
+                                                    <select class="form-control required" name="igv" style="width: 100%;">
+                                                        <?php foreach ((array)$igvs as $item) :?>
+                                                        <option value="<?php echo $item['id']; ?>" ><?php echo $item['descripcion']; ?> %</option>
+                                                        <?php endforeach;?>
+                                                    </select>
                                                     <label>IGV</label>
-                                                    <span class="input-group-addon">%</span>
                                                 </div>
                                             </div>
                                         </div>

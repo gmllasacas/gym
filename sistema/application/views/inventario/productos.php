@@ -35,6 +35,7 @@
                                 <thead>
                                     <tr>
                                         <th>Código</th>
+                                        <th>Categoría</th>
                                         <th>Descripción</th>
                                         <th>Tipo</th>
                                         <th>Tipo</th>
@@ -69,13 +70,28 @@
                                     <input type="hidden" name="table" value="proceso_producto">
                                     <h3 class="h5 font-w600 text-uppercase push-15"><i class="fa fa-info text-primary push-5-r"></i> Datos generales</h3>
                                     <div class="row">
-                                        <div class="col-xs-12 col-sm-4 col-sm-offset-4">
+                                        <div class="col-xs-12 col-sm-4 col-sm-offset-2">
                                             <div class="form-group">
                                                 <div class="col-xs-12">
                                                     <div class="input-group form-material form-material-info">
                                                         <input class="form-control" type="text" name="codigo" readonly>
                                                         <label>Código</label>
                                                         <span class="input-group-addon"><i class="fa fa-barcode"></i></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-12 col-sm-4">
+                                            <div class="form-group">
+                                                <div class="col-xs-12">
+                                                    <div class="form-material form-material-info">
+                                                        <select class="form-control select2 required" name="categoria" style="width: 100%;" data-placeholder="Seleccione categoría">
+                                                            <option value="">Seleccione</option>
+                                                            <?php foreach ((array)$categorias as $item) :?>
+                                                            <option value="<?php echo $item['id']; ?>" ><?php echo $item['descripcion']; ?></option>
+                                                            <?php endforeach;?>
+                                                        </select>
+                                                        <label>Categoría</label>
                                                     </div>
                                                 </div>
                                             </div>
@@ -155,6 +171,18 @@
                                                         <span class="input-group-addon">S/ </span>
                                                         <input class="form-control required number" type="number" step="0.01" min="0.00" name="precio">
                                                         <label>Precio referencial</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-xs-12 col-sm-8 col-sm-offset-2">
+                                            <div class="form-group">
+                                                <div class="col-xs-12">
+                                                    <div class="form-material">
+                                                        <textarea class="form-control textoareainput" name="notas" rows="2"></textarea>
+                                                        <label>Notas</label>
                                                     </div>
                                                 </div>
                                             </div>

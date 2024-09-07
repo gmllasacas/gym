@@ -16,6 +16,7 @@ jQuery(function () {
         jQuery('#passwordswb').hide();
         jQuery('#passwordsw').prop("checked",true).trigger("change");
         reiniciarform(registroform,registrovalidate,'generico/nuevoregistro','<i class="fa fa-plus push-5-r"></i> Registrar');
+        jQuery(registroform+' [name=perfil]').trigger('change');
         jQuery(registroform+' [name="estado"]').val(1);
         jQuery(registromodal).modal('toggle');
     });
@@ -38,6 +39,7 @@ jQuery(function () {
                             jQuery(registroform+' [name='+index+']').val(item);
                         }
                     });
+                    jQuery(registroform+' [name=perfil]').trigger('change');
                     jQuery(registroform+' [name=cliente_sistema]').val(response.registro.cliente_sistema).trigger("change");
                     jQuery(registroform+' [name=cliente_sistema]').prop('disabled',true);
                     jQuery(registroform+' [name=password]').val('');
@@ -291,5 +293,4 @@ jQuery(function () {
             });
         }
     });
-
 });

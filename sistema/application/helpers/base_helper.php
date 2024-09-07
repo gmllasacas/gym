@@ -378,6 +378,62 @@ if (! function_exists('registro_kardex')) {
     }
 }
 
+if (! function_exists('tipo_producto')) {
+    function tipo_producto($producto)
+    {
+        $exclude = [];
+        $descripcionComprobante = '';
+        switch ($producto['tipo']) {
+            case '1':// Producto
+                $exclude = ['id', 'table', 'codigo', 'duracion', 'duracion_unidad'];
+                $descripcionComprobante = '<b>[' . $producto['cantidad'] . ']</b> ' . $producto['abreviatura'] . ' ' .$producto['codigo'] . ' ' . $producto['descripcion'];
+                break;
+            case '2'://Membresía
+                $exclude = ['id', 'table', 'codigo', 'unidad'];
+                $descripcionComprobante = '<b>[' . $producto['cantidad'] . ']</b> ' . $producto['abreviatura'] . ' ' .$producto['codigo'] . ' ' . $producto['descripcion'] . ' (' . $producto['duracion_unidad_desc'] . ')';
+                break;
+            case '3'://Comestible
+                $exclude = ['id', 'table', 'codigo', 'duracion', 'duracion_unidad'];
+                $descripcionComprobante = '<b>[' . $producto['cantidad'] . ']</b> ' . $producto['abreviatura'] . ' ' .$producto['codigo'] . ' ' . $producto['descripcion'];
+                break;
+            default:
+                break;
+        }
+
+        return [
+            'exclude' => $exclude,
+            'descripcionComprobante' => $descripcionComprobante,
+        ];
+    }
+}
+
+if (! function_exists('detalle_tipo_producto')) {
+    function detalle_tipo_producto($producto)
+    {
+        $producto['codigo'] = spd($producto['id'], 6, '0');
+        $producto['existencias'] = 0;
+        $producto['duracion_unidad_desc'] = '';
+        switch ($producto['tipo']) {
+            case '1':// Producto
+                $kardex = ultimo_kardex(['estado' => '1','producto' => $producto['id']]);
+                $producto['existencias'] = ($kardex['saldo']>0 ? $kardex['saldo'] : 0);
+                $producto['abreviatura'] = basedetalleregistro('proceso_unidad', ['estado'=>'1','id'=>$producto['unidad']])['abreviatura'];
+                break;
+            case '2'://Membresía
+                $producto['abreviatura'] = 'Memb.';
+                $producto['duracion_unidad_desc'] = basedetalleregistro('proceso_duracion_unidad', ['estado'=>'1','id'=>$producto['duracion_unidad']])['descripcion'];
+                break;
+            case '3'://Comestible
+                $producto['abreviatura'] = basedetalleregistro('proceso_unidad', ['estado'=>'1','id'=>$producto['unidad']])['abreviatura'];
+                break;
+            default:
+                break;
+        }
+
+        return $producto;
+    }
+}
+
 if (! function_exists('numeracion_actual')) {
     function numeracion_actual($tipo_comprobante, $sucursal = null)
     {
@@ -452,8 +508,8 @@ if (! function_exists('sunat_comprobante')) {
             case 'generar_comprobante':
                 foreach ($venta['detalles'] as $item) {
                     $total_item = $item['subtotal'];
-                    $subtotal_item = round($total_item * (100/(100 + $configuracion['igv'])), 2);
-                    $valor_unitario = round($item['precio'] * (100/(100 + $configuracion['igv'])), 2);
+                    $subtotal_item = round($total_item * (100/(100 + $venta['igv_percent'])), 2);
+                    $valor_unitario = round($item['precio'] * (100/(100 + $venta['igv_percent'])), 2);
                     $detalles[] = [
                         "unidad_de_medida" => ($item['producto_tipo'] == 1 ? "NIU" : "ZZ"),
                         "codigo" => spd($item['producto'], 6, '0'),
@@ -489,7 +545,7 @@ if (! function_exists('sunat_comprobante')) {
                     "fecha_de_vencimiento" => "",
                     "moneda" => "1",
                     "tipo_de_cambio" => "",
-                    "porcentaje_de_igv" => $configuracion['igv'],
+                    "porcentaje_de_igv" => $venta['igv_percent'],
                     "descuento_global" => $venta['descuento'] ?? "",
                     "total_descuento" => $venta['descuento'] ?? "",
                     "total_anticipo" => "",

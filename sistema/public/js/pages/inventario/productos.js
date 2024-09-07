@@ -19,6 +19,7 @@ jQuery(function () {
         jQuery(registroform+' [name="estado"]').val(1);
         jQuery(registroform+' [name=cliente]').prop('disabled',false);
         jQuery(registroform+' [name=tipo]').prop('disabled',false).val(1).trigger('change');
+        jQuery(registroform+' [name=categoria]').prop('disabled',false);
         jQuery(registroform+' [name=unidad]').prop('disabled',false);
         jQuery(registroform+' [name=duracion]').prop('disabled',false);
         jQuery(registroform+' [name=duracion_unidad]').prop('disabled',false).val(1).trigger('change');
@@ -44,6 +45,7 @@ jQuery(function () {
                             jQuery(registroform+' [name='+index+']').val(item);
                         }
                     });
+                    jQuery(registroform+' [name=categoria]').prop('disabled',true).trigger('change');
                     jQuery(registroform+' [name=tipo]').prop('disabled',true).trigger('change');
                     jQuery(registroform+' [name=unidad]').prop('disabled',true).trigger('change');
                     jQuery(registroform+' [name=duracion]').prop('disabled',true).trigger('change');
@@ -101,14 +103,19 @@ jQuery(function () {
                     }else{
                       color = 'success';
                     }
-                    response.data[i]['existenciasstr'] = '<span class="text-'+color+'">'+response.data[i]['existencias']+' '+response.data[i]['abreviatura']+'</span>';
                     response.data[i]['duracionstr'] = '';
+                    response.data[i]['existenciasstr'] = '<span class="text-'+color+'">'+response.data[i]['existencias']+' '+response.data[i]['abreviatura']+'</span>';
                     response.data[i]['tipodescstr']='<label class="label label-info">'+response.data[i]['tipodesc']+'</label>';
                     break;
                   case '2':
                     response.data[i]['duracionstr'] = response.data[i]['duracion']+' '+response.data[i]['duracion_unidad_desc'];
                     response.data[i]['existenciasstr'] = '';
                     response.data[i]['tipodescstr']='<label class="label label-success">'+response.data[i]['tipodesc']+'</label>';
+                    break;
+                  case '3':
+                    response.data[i]['duracionstr'] = '';
+                    response.data[i]['existenciasstr'] = '';
+                    response.data[i]['tipodescstr']='<label class="label label-primary">'+response.data[i]['tipodesc']+'</label>';
                   default:
                     break;
                 }
@@ -136,6 +143,7 @@ jQuery(function () {
       },
       columns: [
         { data: 'codigo' },
+        { data: 'categoriadesc' },
         { data: 'descripcion' },
         { data: 'tipodesc' },
         { data: 'tipodescstr' },
@@ -149,11 +157,11 @@ jQuery(function () {
       ],
       columnDefs: [
         {	
-          targets: [2],
+          targets: [3],
           visible: false, 
         },
         {
-          targets: [3,4,5,6,-3,-2,-1],
+          targets: [4,5,6,7,-3,-2,-1],
           className: 'dt-body-center'
         },
         /*{
@@ -162,11 +170,11 @@ jQuery(function () {
         },*/
         {
           type: membresias,
-          targets: 5
+          targets: 6
         },
       ],
       buttons: true,
-      order: [[5, "desc"]],
+      order: [[6, "desc"]],
       bAutoWidth: false,
       initComplete: function () {
         selectores();
@@ -204,7 +212,7 @@ jQuery(function () {
 
     function selectores() { 
         jQuery(tablelist).closest('.block-content').find('.options div:nth-child(3)').empty();
-        listdt.columns([2]).every( function () {
+        listdt.columns([3]).every( function () {
             var column = this;
             var select = jQuery('<select class="js-select2-filtro form-control" id="filtrado1" data-placeholder="Filtro por tipo" data-allow-clear="true"></select>')
                 .appendTo(jQuery(tablelist).closest('.block-content').find('.options div:nth-child(3)'))
@@ -272,6 +280,7 @@ jQuery(function () {
 
     jQuery('body').on('change', registroform+' [name="tipo"]', function(e) {
         var tipo = jQuery(registroform+' [name="tipo"]').val();
+        jQuery(registroform+' [name="categoria"]').prop('disabled',false).addClass('required').trigger('change');
         switch (tipo) {
             case '1':
                 jQuery('#producto').show();
@@ -284,6 +293,14 @@ jQuery(function () {
                 jQuery('#producto').hide();
                 jQuery(registroform+' [name="duracion"]').addClass('required');
                 jQuery(registroform+' [name="unidad"]').removeClass('required');
+                jQuery(registroform+' [name="categoria"]').prop('disabled',true).removeClass('required');
+                break;
+            case '3':
+                jQuery('#producto').show();
+                jQuery('#servicio').hide();
+                jQuery(registroform+' [name="unidad"]').addClass('required');
+                jQuery(registroform+' [name="duracion"]').removeClass('required');
+                break;
             default:
                 break;
         }

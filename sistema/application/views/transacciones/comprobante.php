@@ -102,7 +102,7 @@
                                 <td class="text-left"><b>MONEDA:</b> SOLES</td>
                             </tr>
                             <tr>                                  
-                                <td class="text-left"><b>IGV: </b> <?php echo number_format(100*($registro['igv']/$registro['subtotal']), 2, '.', ''); ?>%</td>
+                               <td class="text-left"><b>IGV: </b> <?php echo number_format($registro['igv_percent'], 2, '.', ''); ?>%</td>
                             </tr>
                         </tbody>
                     </table>
@@ -118,11 +118,7 @@
                             </thead>
                             <tbody>
                                 <?php foreach ($registro['detalles'] as $item) :
-                                    if ($item['tipo'] == 1) {
-                                        $descripcion = '<b>[' . $item['cantidad'] . ']</b> ' . $item['abreviatura'] . ' ' .$item['codigo'] . ' ' . $item['descripcion'];
-                                    } else {
-                                        $descripcion = '<b>[' . $item['cantidad'] . ']</b> ' . $item['abreviatura'] . ' ' .$item['codigo'] . ' ' . $item['descripcion'] . ' (' . $item['duracion_unidad_desc'] . ')';
-                                    }
+                                    $descripcion = tipo_producto($item)['descripcionComprobante'];
                                     ?>
                                     <tr>
                                         <td class="text-left"><?php echo $descripcion; ?></td>

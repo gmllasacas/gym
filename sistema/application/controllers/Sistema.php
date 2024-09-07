@@ -122,8 +122,11 @@ class Sistema extends CI_Controller
     public function configuracion()
     {
         $this->configuracion['dashboard'] = ($this->configuracion['dashboard'] == '') ? 'public/img/recursos/dashboard.jpg' : $this->configuracion['dashboard'];
+        $igvs = $this->generico_modelo->listado('proceso_igv', '1');
+
         $datos = [
             'menu_text' => $this->menu_text,
+            'igvs' => $igvs,
             'submenu_text' => 'Configuración',
             'export_text' => 'Formulario',
             'registro_text' => '',
@@ -199,26 +202,23 @@ class Sistema extends CI_Controller
         $this->load->view('bases/funciones', ['funciones' => ['sistema/auditoria']]);
     }
 
-    public function sucursales()
+    public function perfiles()
     {
-        $usuarios = $this->generico_modelo->listado('base_usuario', '1');
-        $estados = $this->generico_modelo->listado('base_estado', '1');
-
+        $menues = $this->generico_modelo->listado('base_menu', '1');
         $datos = [
             'menu_text' => $this->menu_text,
-            'submenu_text' => 'Sucursales',
-            'export_text' => 'Listado de sucursales',
-            'registro_text' => 'sucursal',
-            'usuarios' => $usuarios,
-            'estados' => $estados,
+            'submenu_text' => 'Perfiles',
+            'export_text' => 'Listado de perfiles',
+            'registro_text' => 'Perfil',
+            'menues' => $menues
         ];
 
         $this->load->view('bases/cabezera');
-        $this->load->view('bases/menu', ['menu' =>$this->menu,'submenu' =>106]);
+        $this->load->view('bases/menu', ['menu' =>$this->menu,'submenu' =>107]);
         $this->load->view('bases/barra');
-        $this->load->view('sistema/sucursales', $datos);
+        $this->load->view('sistema/perfiles', $datos);
         $this->load->view('bases/pie');
-        $this->load->view('bases/funciones', ['funciones' => ['sistema/sucursales']]);
+        $this->load->view('bases/funciones', ['funciones' => ['sistema/perfiles']]);
     }
 
 
