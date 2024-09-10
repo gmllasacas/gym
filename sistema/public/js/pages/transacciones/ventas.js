@@ -363,7 +363,7 @@ jQuery(function () {
                                                                         '    <button class="btn btn-xs btn-info detalleregistro" data-toggle="tooltip" data-placement="top" title="Detalles" data-id="'+response.data[i]['id']+'" data-table="proceso_venta">'+
                                                                         '        <i class="fa fa-bars"></i>'+
                                                                         '    </button>'+
-                                                                        '    <a target="_new" class="btn btn-xs btn-success" href="'+base_url+'transacciones/comprobanteventa/'+response.data[i]['id']+'" data-toggle="tooltip" data-placement="top" title="Comprobante de venta">'+
+                                                                        '    <a target="_new" class="btn btn-xs btn-success" href="'+base_url+'transacciones/comprobante/'+response.data[i]['id']+'" data-toggle="tooltip" data-placement="top" title="Comprobante de venta">'+
                                                                         '        <i class="si si-printer"></i>'+
                                                                         '    </a>';
                                     switch (perfil) {

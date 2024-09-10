@@ -7,7 +7,6 @@ jQuery(function () {
     //jQuery('#ruc').trigger('input');
     
     var registroform= '#registro-form';
-    jQuery(registroform+' [name="igv"]').val(igv_id);
 
     jQuery('body').on('click', '#editarlogo', function() {
         jQuery(registroform+' [name=logo]').trigger('click');

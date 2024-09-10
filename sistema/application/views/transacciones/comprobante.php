@@ -10,8 +10,15 @@
         <meta name="robots" content="noindex, nofollow">
         <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1.0">
         <title><?php echo $this->configuracion['titulo'];?></title>
-        
     </head>
+    <?php
+    $electronica = ' ELECTRÓNICA';
+    $representacion = 'REPRESENTACIÓN IMPRESA DE LA ' . $registro['tipo_comprobante_desc']['descripcion'].' ELECTRÓNICA, VISITA: <a href="www.nubefact.com/' . $this->configuracion['ruc'] . '" target="_blank">www.nubefact.com/' . $this->configuracion['ruc'] . '</a></br>';
+    if ($registro['tipo_comprobante'] == 99) {
+        $electronica = '';
+        $representacion = '';
+    }
+    ?>
     <body>
         <main>
             <div class="content">
@@ -30,8 +37,8 @@
                         margin: 0 auto;
                     }
                     body{
-                        font-family: "Fake Receipt", Helvetica, Arial, sans-serif;
-                        font-size: 13px;
+                        font-family: Helvetica, Arial, sans-serif;
+                        font-size: 11px;
                         color: black;
                     }
                     .table {
@@ -64,7 +71,6 @@
                     }
 
                 </style>
-
                 <div>
                     <table style="width:100%;">
                         <tbody>
@@ -78,7 +84,7 @@
                                 <td class="text-center"><b>RUC <?php echo $this->config->item('system_ruc'); ?></b></td>
                             </tr>
                             <tr>
-                                <td class="text-center"><b><?php echo($registro['tipo_comprobante_desc'] != '' ? $registro['tipo_comprobante_desc']['descripcion'].' ELECTRÓNICA': ''); ?></b></td>
+                                <td class="text-center"><b><?php echo($registro['tipo_comprobante_desc'] != '' ? $registro['tipo_comprobante_desc']['descripcion']. $electronica: ''); ?></b></td>
                             </tr>
                             <tr>
                                 <td class="text-center"><b><?php echo($registro['comprobante'] != '' ? $registro['comprobante'] : ''); ?></b></td>
@@ -157,8 +163,7 @@
                         <div style="width:100%;" class="text-center"><b>IMPORTE EN LETRAS:</b> <?php echo $registro['letras']; ?></div>
                         <hr>
                         <div style="width:100%;" class="text-center">
-                            REPRESENTACIÓN IMPRESA DE LA <?php echo($registro['tipo_comprobante_desc'] != '' ? $registro['tipo_comprobante_desc']['descripcion'].' ELECTRÓNICA': ''); ?>, 
-                            VISITA: <a href="www.nubefact.com/20610902961" target="_blank">www.nubefact.com/20610902961</a>
+                            <?php echo $representacion; ?>
                             <img style="width: 50%;" src="<?php echo $registro['qr']; ?>" alt="QR Code" />
                         </div>
                     </div>

@@ -78,23 +78,6 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <script>
-                                        var igv_id ='<?php echo $this->configuracion['igv'];?>';
-                                    </script>
-                                    <div class="col-xs-6 col-sm-2">
-                                        <div class="form-group">
-                                            <div class="col-xs-12">
-                                                <div class="form-material form-material-info">
-                                                    <select class="form-control required" name="igv" style="width: 100%;">
-                                                        <?php foreach ((array)$igvs as $item) :?>
-                                                        <option value="<?php echo $item['id']; ?>" ><?php echo $item['descripcion']; ?> %</option>
-                                                        <?php endforeach;?>
-                                                    </select>
-                                                    <label>IGV</label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
                                 </div>
                                 <h3 class="h5 font-w600 text-uppercase push-15"><i class="fa fa-photo text-primary push-5-r"></i> Datos de interfaz</h3>
                                 <div class="row">

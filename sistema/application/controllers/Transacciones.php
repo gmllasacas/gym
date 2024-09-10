@@ -81,6 +81,7 @@ class Transacciones extends CI_Controller
         $caja = $this->generico_modelo->caja(['sucursal' => $sucursal, 'estado'=>1]);
         $tipos_documento = $this->generico_modelo->listado('proceso_tipo_documento', '1');
         $codigos_descuento = $this->generico_modelo->listado('proceso_codigo_descuento', '1');
+        $sucursal = basedetalleregistro('base_sucursal', ['id'=>$sucursal]);
 
         $datos = [
             'menu_text' => $this->menu_text,
@@ -96,6 +97,7 @@ class Transacciones extends CI_Controller
             'departamento' => 2,
             'codigos_descuento' => $codigos_descuento,
             'estados'=>$estados,
+            'sucursal'=>$sucursal,
         ];
 
         $this->load->view('bases/cabezera');
@@ -196,6 +198,24 @@ class Transacciones extends CI_Controller
             $registro['qr'] = $qr->render($registro['sunat']['cadena_para_codigo_qr']);
 
             $this->load->view('transacciones/comprobante', ['registro' => $registro]);
+        } else {
+            show_error('El comprobante no existe', '404', 'No encontrado');
+        }
+    }
+
+    public function comprobanteAnulacion($id)
+    {
+        $registro=basedetalleregistro('proceso_venta', ['id'=>$id]);
+        if (count((array)$registro)>0) {
+            $registro['cliente_datos'] = basedetalleregistro('proceso_cliente', ['id'=>$registro['cliente']]);
+            $registro['cliente_datos']['tipo_documento_desc'] = basedetalleregistro('proceso_tipo_documento', ['id'=>$registro['cliente_datos']['tipo_documento']]);
+            $registro['tipo_comprobante_desc'] = basedetalleregistro('proceso_tipo_comprobante', ['id'=>$registro['tipo_comprobante']]);
+            $registro['detalles'] = $this->generico_modelo->listado('proceso_venta_detalle', '1', ['venta'=>$id]);
+            $registro['sucursal'] = basedetalleregistro('base_sucursal', ['estado'=>'1','id'=>$this->session->userdata('sucursal')]);
+            $registro['sunat'] = basedetalleregistro('proceso_envio_sunat', ['estado'=>'1','venta'=>$id]);
+            $registro['anulacion'] = basedetalleregistro('proceso_venta_anulacion', ['estado'=>'1','venta'=>$id]);
+
+            $this->load->view('transacciones/comprobante_anulacion', ['registro' => $registro]);
         } else {
             show_error('El comprobante no existe', '404', 'No encontrado');
         }

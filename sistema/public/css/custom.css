@@ -491,6 +491,11 @@ div.tagsinput span.tag a{
 	color: #f3b760;
 	border: 1px solid #f3b760;
 }
+.label-muted {
+	background-color: white;
+	color: #999999;
+	border: 1px solid #999999;
+}
 .btn-primary {
 	color: #5c90d2;
 	background-color: white;
@@ -516,6 +521,7 @@ div.tagsinput span.tag a{
 	background-color: white;
 	border-color: #efa231;
 }
+
 .btn-warning.disabled, .btn-warning[disabled],
 fieldset[disabled] .btn-warning, .btn-warning.disabled:hover,
 .btn-warning[disabled]:hover, fieldset[disabled] .btn-warning:hover,

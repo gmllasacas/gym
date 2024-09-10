@@ -20,6 +20,7 @@ class Gimnasio extends CI_Controller
     {
         $usuarios = $this->generico_modelo->listado('base_usuario', '1');
         $estados = $this->generico_modelo->listado('base_estado', '1');
+        $igvs = $this->generico_modelo->listado('proceso_igv', '1');
 
         $datos = [
             'menu_text' => $this->menu_text,
@@ -28,6 +29,7 @@ class Gimnasio extends CI_Controller
             'registro_text' => 'sucursal',
             'usuarios' => $usuarios,
             'estados' => $estados,
+            'igvs' => $igvs,
         ];
 
         $this->load->view('bases/cabezera');

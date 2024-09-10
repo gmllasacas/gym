@@ -281,6 +281,9 @@
                     jQuery.validator.addClassRules('passwordinput', {
                         minlength: 8
                     });
+                    jQuery.validator.addClassRules('serieinput', {
+                        maxlength: 4
+                    });
                     jQuery.validator.addClassRules('textoareainput', {
                         maxlength: 1000,
                     });

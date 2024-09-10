@@ -63,7 +63,7 @@
                     </div>
                     <script type="text/javascript">
                         var reportetext='<?php echo $export_text;?>';
-                        var igv_id ='<?php echo $this->configuracion['igv'];?>';
+                        var igv_id ='<?php echo $sucursal['igv'];?>';
                     </script>
                     <div class="block-header bg-gray-lighter">
                         <h3 class="block-title"><?php echo $export_text;?></h3>
@@ -230,7 +230,7 @@
                                             <th colspan="5" class="text-right"></th>
                                             <th>
                                                 <span class="pull-left">IGV</span>
-                                                <select class="form-control pull-right" name="igv_percent" style="width: 70%;height: 24px;font-size: 10px;padding: 0px 4px;">
+                                                <select class="form-control pull-right" name="igv_percent" style="width: 70%;height: 24px;font-size: 10px;padding: 0px 4px;pointer-events:none;" readonly>
                                                     <?php foreach ((array)$igvs as $item) :?>
                                                     <option value="<?php echo $item['id']; ?>" data-value="<?php echo $item['descripcion']; ?>"><?php echo $item['descripcion']; ?>%</option>
                                                     <?php endforeach;?>

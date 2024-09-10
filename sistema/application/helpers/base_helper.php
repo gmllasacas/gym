@@ -279,7 +279,7 @@ if (! function_exists('response')) {
 }
 
 if (! function_exists('caja_actual')) {
-    function caja_actual($estado = '1', $id = '0')
+    function caja_actual($estado = '1', $id = '0', $sucursal = '0')
     {
         $ci=& get_instance();
         $ci->load->model('generico_modelo');
@@ -287,7 +287,11 @@ if (! function_exists('caja_actual')) {
         if ($id != '0') {
             $parameters = ['id' => $id, 'sucursal' => $ci->session->userdata('sucursal'), 'estado'=>$estado];
         } else {
-            $parameters = ['sucursal' => $ci->session->userdata('sucursal'), 'estado'=>$estado];
+            if ($sucursal != '0') {
+                $parameters = ['sucursal' => $sucursal, 'estado'=>$estado];
+            } else {
+                $parameters = ['sucursal' => $ci->session->userdata('sucursal'), 'estado'=>$estado];
+            }
         }
         $data = $ci->generico_modelo->caja($parameters);
         if (!isset($data['id'])) {
@@ -324,6 +328,7 @@ if (! function_exists('registro_detalle_caja')) {
         if ($data['monto'] > 0.00) {
             $inputs = [
                 'tipo_caja_detalle' => isset($data['tipo_caja_detalle']) ? $data['tipo_caja_detalle'] : 1,
+                'pago' => $data['pago'],
                 'caja' => $data['caja'],
                 'referencia' => $data['referencia'],
                 'monto' => $data['monto'],
@@ -454,6 +459,10 @@ if (! function_exists('numeracion_actual')) {
                 $comprobante = spd($sucursal['serie_boleta'], 4, 'B') . '-' . spd($sucursal['numeracion_boleta'], 6, '0');
                 $campo = 'numeracion_boleta';
                 break;
+            case '99':
+                $comprobante = spd($sucursal['serie_nota_venta'], 4, 'N') . '-' . spd($sucursal['numeracion_nota_venta'], 6, '0');
+                $campo = 'numeracion_nota_venta';
+                break;
             default:
                 break;
         }
@@ -486,7 +495,6 @@ if (! function_exists('sunat_comprobante')) {
         $ci=& get_instance();
         $ci->load->database();
 
-        $configuracion = basedetalleregistro('base_configuracion', ['id'=>1]);
         $sucursal_id = $sucursal ?? $ci->session->userdata('sucursal');
         $sucursal = basedetalleregistro('base_sucursal', ['id'=>$sucursal_id]);
         $ruta = $sucursal['sunat_api_ruta'];

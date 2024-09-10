@@ -360,9 +360,13 @@ jQuery(function () {
                                     tipodescstr = '<label class="label label-success">'+item.tipodesc+'</label>';
                                     break;
                                   case '3':
+                                    tipodescstr = '<label class="label label-muted">'+item.tipodesc+'</label>';
+                                    break;
+                                  case '4':
                                     tipodescstr = '<label class="label label-danger">'+item.tipodesc+'</label>';
                                     break;
                                   default:
+                                    tipodescstr = ''
                                     break;
                                 }
 

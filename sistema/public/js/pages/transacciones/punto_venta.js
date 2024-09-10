@@ -206,7 +206,15 @@ jQuery(function () {
     jQuery('body').on('click', '.clear-form', function() {
       load(false);
     });
+
+    jQuery('body').on('change', registroform+' [name="cliente"]', function() {
+      validar_tipo_documento();
+    });
   
+    jQuery('body').on('change', registroform+' [name="tipo_comprobante"]', function() {
+      validar_tipo_documento();
+    });
+
     var registrovalidate = jQuery(registroform).validate({
       ignore: '',
       errorClass: 'help-block text-right animated fadeInDown',
@@ -236,7 +244,13 @@ jQuery(function () {
               }
               if(response.status=='200'){
                 notifytemplate('fa fa-check', response.message, 'success');
+                var documento = base_url + 'transacciones/comprobante/' + response.data.id;
                 load();
+                try {
+                  window.open(documento, '_blank').focus();
+                } catch(err) {
+                  notifytemplate('fa fa-times', 'Por favor habilite los popups en este navegador para poder abrir el comprobante de forma automática', 'danger', 8000);
+                }
               }
             }
           });
@@ -563,7 +577,7 @@ jQuery(function () {
 
           var clientes = '<option value="">Seleccione</option>';
           jQuery.each(response.data.clientes, function(index, item) {
-            clientes += '<option value="'+item.id+'">'+item.tipodesc+ ' ' +item.documento+' | '+item.nombre_o_razon_social+'</option>';
+            clientes += '<option value="'+item.id+'" data-tipo_documento="'+item.tipo_documento+'"x>'+item.tipodesc+ ' ' +item.documento+' | '+item.nombre_o_razon_social+'</option>';
           });
           jQuery(registroform+' [name="cliente"]').html(clientes).trigger('change');
           jQuery(registroform+' [name="sucursal"]').val(response.meta.sucursal);
@@ -622,7 +636,7 @@ jQuery(function () {
                 var montostr = '';
                 var monto = Number(item.monto);
                 switch (item.tipo_caja_detalle) {
-                  case '1':
+                  case '1'://Ajuste
                     if (item.monto > 0) {
                       icon = 'fa fa-plus-circle text-info';
                       montostr = '<span class="pull-right text-success">+ S/ '+monto.toFixed(2)+'</span>';
@@ -636,7 +650,7 @@ jQuery(function () {
                             '  <div><span class="text-info">'+item.tipodesc+'</span><small class="pull-right text-muted">'+item.fecha+'</small></div>'+
                             '</li>';
                     break;
-                  case '2':
+                  case '2'://Venta
                     icon = 'si si-basket text-success';
                     element ='<li>'+
                             '  <i class="'+icon+'"></i>'+
@@ -644,12 +658,19 @@ jQuery(function () {
                             '  <div><a class="text-info link-effect" target="_blank" href="'+ base_url + 'transacciones/comprobante/' + item.referencia + '"><i class="fa fa-file-pdf-o push-5-r"></i>'+item.tipodesc+'<i class="si si-share-alt push-10-l"></i></a><small class="pull-right text-muted">'+item.fecha+'</small></div>'+
                             '</li>';
                     break;
-                  case '3':
-                    icon = 'fa fa-minus-circle text-danger';
-                    element ='<li>'+
+                  case '3'://Anulacion de venta
+                    icon = 'fa fa-ban';
+                    element ='<li class="text-muted">'+
                             '  <i class="'+icon+'"></i>'+
-                            '  <div class="font-w600"><span class="text-muted">Cliente:</span> '+item.clientedesc+' <br> <span class="text-muted">Usuario:</span> '+item.username+' <span class="pull-right text-danger">- S/ '+Math.abs(monto).toFixed(2)+'</span></div>'+
-                            '  <div><a class="text-info link-effect" target="_blank" href="'+ base_url + 'transacciones/comprobante_anulacion/' + item.referencia + '"><i class="fa fa-file-pdf-o push-5-r"></i>'+item.tipodesc+'<i class="si si-share-alt push-10-l"></i></a><small class="pull-right text-muted">'+item.fecha+'</small></div>'+
+                            '  <div class="font-w600"><span class="text-muted">Cliente:</span> '+item.clientedesc+' <br> <span>Usuario:</span> '+item.username+' <span class="pull-right">+ S/ '+Math.abs(monto).toFixed(2)+'</span></div>'+
+                            '  <div><a class="text-info link-effect" target="_blank" href="'+ base_url + 'transacciones/comprobanteAnulacion/' + item.referencia + '"><i class="fa fa-file-pdf-o push-5-r"></i>'+item.tipodesc+'<i class="si si-share-alt push-10-l"></i></a><small class="pull-right text-muted">'+item.fecha+'</small></div>'+
+                            '</li>';
+                    break;
+                  case '4'://Ajuste por anulacion
+                    element ='<li>'+
+                            '  <i class="fa fa-minus-circle text-danger"></i>'+
+                            '  <div class="font-w600"><span class="text-muted">Usuario:</span> '+item.username+' <span class="pull-right text-danger">- S/ '+Math.abs(monto).toFixed(2)+'</span></div>'+
+                            '  <div><span class="text-info">'+item.tipodesc+'</span><small class="pull-right text-muted">'+item.fecha+'</small></div>'+
                             '</li>';
                     break;
                   default:
@@ -713,6 +734,27 @@ jQuery(function () {
       jQuery(registroform+' [name="igv"]').val(igv);
 
     /**Total venta */
+  }
+
+  function validar_tipo_documento() {
+    var tipo_comprobante = jQuery(registroform+' [name="tipo_comprobante"]').val();
+    var tipo_documento = jQuery(registroform+' [name="cliente"]').find("option:selected").data('tipo_documento');
+    jQuery(registroform+' button[type="submit"]').prop('disabled',false);
+
+    if(tipo_comprobante){
+      switch (tipo_comprobante) {
+        case '1'://FACTURA
+          if (tipo_documento != 6) {
+            notifytemplate('fa fa-times', 'Solo de puede crear una FACTURA a clientes con RUC', 'danger');
+            jQuery(registroform+' button[type="submit"]').prop('disabled',true);
+          }
+          break;
+        case '3'://BOLETA
+          break;
+        default:
+          break;
+      }
+    }
   }
 
   load();

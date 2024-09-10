@@ -366,7 +366,7 @@ class GenericoModelo extends CI_Model
                     FROM proceso_venta 
                     INNER JOIN proceso_cliente ON proceso_venta.cliente=proceso_cliente.id
                     INNER JOIN base_sucursal ON proceso_venta.sucursal = base_sucursal.id AND base_sucursal.id = ?
-                    WHERE (YEAR(proceso_venta.fecha) = YEAR(?) AND MONTH(proceso_venta.fecha) = MONTH(?)) AND proceso_venta.estado REGEXP ?",
+                    WHERE (YEAR(proceso_venta.fecha) = YEAR(?) AND MONTH(proceso_venta.fecha) = MONTH(?)) AND proceso_venta.estado REGEXP ? AND proceso_venta.tipo_comprobante <> 99",
                     array($this->session->userdata('sucursal'),$fecha, $fecha,'^['.$estado.']')
                 );
                 break;

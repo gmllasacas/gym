@@ -1,4 +1,4 @@
-        <div id="page-container" class="sidebar-l sidebar-o side-scroll header-navbar-fixed">
+        <div id="page-container" class="sidebar-l sidebar-mini sidebar-o side-scroll header-navbar-fixed">
             <nav id="sidebar">
                 <div id="sidebar-scroll">
                     <div class="sidebar-content">
