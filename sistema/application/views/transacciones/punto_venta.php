@@ -35,6 +35,105 @@
         font-size: 18px;
         text-align: center;
     }
+    #preventa-detalles .form-control {
+        height: auto;
+        padding: 2px 4px;
+        font-size: 12px;
+        line-height: 1;
+        text-align: right;
+    }
+    #preventa-detalles label {
+        height: auto;
+        font-size: 12px;
+    }
+    #preventa-detalles .input-group-addon {
+        padding: 2px 4px;
+        font-size: 11px;
+    }
+    #preventa-detalles .form-control-static {
+        min-height: 20px;
+        padding-top: 0px;
+        padding-bottom: 0px;
+    }
+    #preventa-detalles .form-control-static small {
+        font-size: 75%;
+    }
+    #preventa-detalles .form-group {
+        margin-bottom: 0px;
+    }
+    .detalle .block.block-bordered {
+        position: relative;
+    }
+    .detalle .quitarfila{
+        position: absolute;
+        right: -10px;
+        top: -10px;
+        z-index: 2;
+    }
+    .h6 small {
+        font-weight: 400;
+        font-size: 75%;
+        color: #999999;
+    }
+
+    .ribbon-box {
+        padding: 0 0px;
+        height: 20px;
+        width: 20px;
+        line-height: 18px;
+        font-size: 14px;
+        color: #fff;
+        top: -10px;
+        right: -10px;
+        border-radius: 10px;
+        background: white;
+        border: 1px solid #d9dbdb;
+    }
+
+    #preventa-modal .block-header + .block-content-mini {
+        padding: 20px 20px 1px;
+    }
+
+    
+    #preventa-modal .block-content .block {
+        margin-bottom: 10px;
+    }
+
+    @media screen and (max-width: 767px){
+        #preventatab .form-horizontal .control-label {
+            line-height: 35px;
+            margin-bottom: -5px;
+        }
+        #preventa-detalles .form-group {
+            margin-bottom: 5px;
+        }
+        .favoritos .block-content.block-content-mini {
+            padding: 5px 10px;
+        }
+        .favoritos .block.block-bordered {
+            margin-bottom: 10px;
+        }
+        .favoritos .block.block-bordered small{
+            font-size: 75%;
+        }
+        .favoritos .block.block-bordered h6{
+            font-size: 12px;
+        }
+        .detalle .quitarfila {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            font-size: 10px;
+            border-radius: 2px;
+            z-index: 2;
+        }
+        #preventa-modal .block-header + .block-content-mini {
+            padding: 10px;
+        }
+        .block-content .block {
+            margin-bottom: 10px;
+        }
+    }
 </style>
 
 <main id="main-container" >
@@ -65,13 +164,17 @@
                         var reportetext='<?php echo $export_text;?>';
                         var igv_id ='<?php echo $sucursal['igv'];?>';
                     </script>
+                    
                     <div class="block-header bg-gray-lighter">
-                        <h3 class="block-title"><?php echo $export_text;?></h3>
+                        <div class="block-options-simple">
+                            <button class="btn btn-xs btn-success nuevapreventa" type="button"><i class="fa fa-plus"></i><span class="hidden-xs push-5-l">REGISTRAR</span> PREVENTA</button>
+                        </div>
+                        <h3 class="block-title">Formulario de Venta</h3>
                     </div>
                     <div class="block-content">
-                        <br>
                         <form class="form-horizontal" method="post" action="" id="registro-form" autocomplete="off">
                             <input type="hidden" name="id" value="">
+                            <input type="hidden" name="preventa" value="">
                             <input type="hidden" name="table" value="proceso_venta">
                             <input type="hidden" name="estado" value="1">
                             <input type="hidden" name="counter" value="0">
@@ -174,20 +277,28 @@
                                 </div>
                             </div>
 
-                            <h3 class="h5 font-w600 text-uppercase push-15"><i class="fa fa-list text-primary push-5-r"></i> Detalles de venta</h3>
+                            <h3 class="h5 font-w600 text-uppercase push-15"><i class="fa fa-star text-warning push-5-r"></i> Productos favoritos</h3>
                             <div class="row favoritos">
+                            </div>
+
+                            <h3 class="h5 font-w600 text-uppercase push-15"><i class="si si-list text-primary push-5-r"></i> Detalles de venta <small class="text-info preventa-tag"></small></h3>
+                            <div class="row">
+                                <div class="col-xs-12 col-md-12 col-lg-10 col-lg-offset-1">
+                                    <div class="form-group">
+                                        <div class="col-xs-10 col-md-8">
+                                            <select class="form-control select2" name="producto_sel" style="width: 100%;" data-placeholder="Seleccione producto - servicio">
+                                                <option></option>
+                                            </select>
+                                        </div>
+                                        <div class="col-xs-2 col-md-4">
+                                            <button class="btn btn-success btn-producto" style="width: 100%;" type="button"><i class="fa fa-plus"></i><span class="hidden-xs push-10-l">AGREGAR DETALLE</span></button>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                             <div class="table-responsive">
                                 <table class="table table-condensed table-hover table-bordered" id="table-detalles">
                                     <thead>
-                                        <tr>
-                                            <th colspan="3" class="text-right" style="vertical-align:middle">Producto - Servicio</th>
-                                            <th colspan="3">
-                                                <select class="form-control select2" name="producto_sel" style="width: 100%;" data-placeholder="Seleccione producto - servicio">
-                                                </select>
-                                            </th>
-                                            <th colspan="2" class="text-center"><button class="btn btn-success btn-producto" type="button"><i class="fa fa-plus"></i><span class=" push-10-l">AGREGAR DETALLE</button></th>
-                                        </tr>
                                         <tr>
                                             <th width="3%" class="text-center">#</th>
                                             <th width="12%" class="text-center">Cantidad</th>
@@ -262,7 +373,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-lg-4">
+            <div class="col-md-4">
                 <div class="block block-caja">
                     <script>
                         var caja_id ='<?php echo isset($caja['id']) ? $caja['id'] : 0; ?>';
@@ -288,13 +399,17 @@
                     <?php } ?>
                     <div class="block-content">
                         <div class="row items-push">
-                            <div class="col-xs-7">
+                            <div class="col-xs-12 col-sm-4">
                                 <div class="font-w700 text-gray-darker text-uppercase"><i class="si si-calendar push-5-r"></i> Fecha</div>
-                                <a class="h4 font-w300 text-primary caja-date" style="line-height: 30px;"></a>
+                                <a class="h3 font-w300 text-primary caja-date"></a>
                             </div>
-                            <div class="col-xs-5">
-                                <div class="font-w700 text-gray-darker text-uppercase"><i class="si si-drawer push-5-r"></i> Total</div>
+                            <div class="col-xs-6 col-sm-4">
+                                <div class="font-w700 text-gray-darker text-uppercase"><i class="si si-wallet push-5-r"></i> Total (Efectivo)</div>
                                 <a class="h3 font-w300 text-primary caja-total"></a>
+                            </div>
+                            <div class="col-xs-6 col-sm-4">
+                                <div class="font-w700 text-gray-darker text-uppercase"><i class="si si-credit-card push-5-r"></i> Total (Tarjeta)</div>
+                                <a class="h3 font-w300 text-primary caja-total-tarjeta"></a>
                             </div>
                         </div>
                     </div>
@@ -305,7 +420,7 @@
                             </div>
                             <?php if (isset($caja['id'])) { ?>
                             <div class="col-xs-6 text-right">
-                                <button class="btn btn-xs btn-success nuevoajusteregistro" type="button"><i class="fa fa-plus"></i><span class="hidden-xs push-5-l">REGISTRAR AJUSTE</span></button>
+                                <button class="btn btn-xs btn-success nuevoajusteregistro" type="button"><i class="fa fa-plus"></i><span class="push-5-l">REGISTRAR AJUSTE</span></button>
                             </div>
                             <?php } ?>
                         </div>
@@ -667,6 +782,102 @@
                             <div class="col-xs-12 text-center">
                                 <a class="btn btn-minw btn-square btn-muted" data-dismiss="modal"><i class="fa fa-times push-5-r"></i> Cerrar</a>
                                 <button class="btn btn-minw btn-square btn-success" type="submit"><i class="fa fa-plus push-5-r"></i> Registrar</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="preventa-modal" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-popout modal-lg">
+        <div class="modal-content">
+            <div class="block block-themed block-transparent remove-margin-b">
+                <div class="block-header bg-primary">
+                    <ul class="block-options"><li><button data-dismiss="modal" type="button"><i class="si si-close"></i></button></li></ul>
+                    <h3 class="block-title"><i class="fa fa-plus push-10-r"></i><span>Formulario de Preventa</span></h3>
+                </div>
+                <div class="block-content block-content-mini">
+                    <form class="form-horizontal" method="post" action="" id="preventa-form" autocomplete="off">
+                        <input type="hidden" name="id" value="">
+                        <input type="hidden" name="table" value="proceso_preventa">
+                        <input type="hidden" name="estado" value="1">
+                        <input type="hidden" name="counter" value="0">
+
+                        <h3 class="h5 font-w600 text-uppercase push-15"><i class="si si-docs text-info push-5-r"></i> Preventas registradas</h3>
+                        <div class="row preventas">
+                        </div>
+
+                        <div class="block block-bordered">
+                            <div class="block-content block-content-mini">
+                                <h3 class="h5 font-w600 text-uppercase push-15"><i class="fa fa-star text-warning push-5-r"></i> Productos favoritos</h3>
+                                <div class="row favoritos">
+                                </div>
+                                <h3 class="h5 font-w600 text-uppercase push-15"><i class="si si-list text-primary push-5-r"></i> Detalles de Preventa</h3>
+                                <div class="row">
+                                    <div class="col-xs-12">
+                                        <div class="form-group">
+                                            <div class="col-xs-10 col-md-8">
+                                                <select class="form-control select2" name="producto_sel" style="width: 100%;" data-placeholder="Seleccione producto - servicio">
+                                                    <option></option>
+                                                </select>
+                                            </div>
+                                            <div class="col-xs-2 col-md-4">
+                                                <button class="btn btn-success btn-producto" style="width: 100%;" type="button"><i class="fa fa-plus"></i><span class="hidden-xs push-10-l">AGREGAR DETALLE</span></button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="preventa-detalles">
+                                </div>
+                                <div class="row">
+                                    <div class="col-xs-12 col-md-12 col-lg-10 col-lg-offset-1">
+                                        <a class="block block-bordered">
+                                            <div class="block-content block-content-mini clearfix">
+                                                <div class="row">
+                                                    <div class="col-xs-12 col-sm-4 col-sm-offset-8">
+                                                        <div class="form-group push-5">
+                                                            <label class="col-xs-3 control-label text-success">TOTAL</label>
+                                                            <div class="col-xs-9">
+                                                                <div class="input-group">
+                                                                    <span class="input-group-addon">S/</span>
+                                                                    <input class="form-control" style="text-align: right;" type="number" step="0.01" name="total" value="0.00" readonly>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="row push-5-t">
+                                    <div class="col-xs-12 col-sm-6 col-sm-offset-3">
+                                        <div class="form-group">
+                                            <div class="col-xs-12">
+                                                <div class="form-material form-material-info">
+                                                    <select class="form-control select2" name="datos_adicionales" style="width: 100%;" data-placeholder="Seleccione dato">
+                                                        <option value="">Seleccione dato</option>
+                                                        <?php foreach ((array)$mesas as $item) :?>
+                                                        <option value="<?php echo $item; ?>" ><?php echo $item; ?></option>
+                                                        <?php endforeach;?>
+                                                    </select>
+                                                    <label>Datos adicionales</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-xs-12 text-center">
+                                <a class="btn btn-minw btn-square btn-muted push-5-t push-5-r" data-dismiss="modal"><i class="fa fa-times push-5-r"></i> CERRAR</a>
+                                <button class="btn btn-minw btn-square btn-success push-5-t push-5-r" type="submit"></button>
+                                <a class="btn btn-minw btn-square btn-info push-5-t convertir_venta"><i class="si si-action-redo push-5-r"></i> CONVERTIR A VENTA</a>
                             </div>
                         </div>
                     </form>

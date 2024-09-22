@@ -370,4 +370,24 @@ class Sistema extends CI_Controller
             }
         }
     }
+
+    public function consultaDocumento()
+    {
+        $tipo_documento = $this->input->post('tipo_documento');
+        $documento = $this->input->post('documento');
+        $this->form_validation->set_rules('tipo_documento', 'tipo_documento', 'required');
+        $this->form_validation->set_rules('documento', 'documento', 'required');
+        
+        if ($this->form_validation->run() == false) {
+            response(['message'=>'Parámetros incorrectos'], 500);
+        } else {
+            $consulta = consulta_documento(['tipo_documento' => $tipo_documento, 'documento' => $documento]);
+            if ($consulta['proceso']) {
+                $consulta['inputs']['response'] = json_decode($consulta['inputs']['response'], true);
+                response(['data'=>$consulta['inputs']], 200);
+            } else {
+                response(['message'=>$consulta['inputs']['response']], 500);
+            }
+        }
+    }
 }

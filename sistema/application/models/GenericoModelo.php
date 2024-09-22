@@ -289,6 +289,23 @@ class GenericoModelo extends CI_Model
                     array('^['.$estado.']')
                 );
                 break;
+            case 'proceso_preventa_detalle':
+                $query = $this->db->query(
+                    "SELECT proceso_preventa_detalle.*,
+                    proceso_producto.descripcion,
+                    proceso_producto.tipo as producto_tipo,
+                    proceso_producto.unidad as producto_unidad,
+                    proceso_producto.duracion_unidad as producto_duracion_unidad,
+                    proceso_tipo_producto.descripcion as tipodesc,
+                    proceso_categoria_producto.descripcion as categoriadesc
+                    FROM proceso_preventa_detalle 
+                    INNER JOIN proceso_producto ON proceso_preventa_detalle.producto=proceso_producto.id
+                    LEFT JOIN proceso_tipo_producto ON proceso_producto.tipo=proceso_tipo_producto.id
+                    LEFT JOIN proceso_categoria_producto ON proceso_producto.categoria=proceso_categoria_producto.id
+                    WHERE proceso_preventa_detalle.estado REGEXP ? AND proceso_preventa_detalle.preventa = ?",
+                    array('^['.$estado.']',$params['preventa'])
+                );
+                break;
             default:
                 $order_by = isset($params['order_by']) ? $params['order_by'] : 'id';
                 $direction = isset($params['direction']) ? $params['direction'] : 'DESC';
@@ -662,19 +679,34 @@ class GenericoModelo extends CI_Model
         $query = $this->db->query(
             "SELECT proceso_caja.*,
             base_sucursal.sucursal as sucursaldesc,
-            COALESCE(SUM(proceso_caja_detalle.monto),0) as total,
             bu1.username as usuariodesc,
             bu2.username as usuario_cierredesc
             FROM proceso_caja
             INNER JOIN base_sucursal ON proceso_caja.sucursal = base_sucursal.id AND base_sucursal.id = ?
-            LEFT JOIN proceso_caja_detalle ON proceso_caja.id = proceso_caja_detalle.caja
-            INNER JOIN base_usuario bu1 ON proceso_caja.usuario = bu1.id
+            LEFT JOIN base_usuario bu1 ON proceso_caja.usuario = bu1.id
             LEFT JOIN base_usuario bu2 ON proceso_caja.usuario_cierre = bu2.id
             WHERE proceso_caja.estado REGEXP ? $con_where
             GROUP BY proceso_caja.id
             ORDER BY proceso_caja.fecha DESC
             LIMIT 1",
             [$params['sucursal'], '^['.$params['estado'].']']
+        );
+
+        return $query->row_array();
+    }
+
+    public function cajaTotal($params)
+    {
+        $query = $this->db->query(
+            "SELECT proceso_caja.*,
+            COALESCE(SUM(proceso_caja_detalle.monto),0) as total
+            FROM proceso_caja
+            LEFT JOIN proceso_caja_detalle ON proceso_caja.id = proceso_caja_detalle.caja AND proceso_caja_detalle.tipo_pago = ?
+            WHERE proceso_caja.estado REGEXP ? AND proceso_caja.id = ?
+            GROUP BY proceso_caja.id
+            ORDER BY proceso_caja.fecha DESC
+            LIMIT 1",
+            [$params['tipo_pago'], '^['.$params['estado'].']', $params['id']]
         );
 
         return $query->row_array();

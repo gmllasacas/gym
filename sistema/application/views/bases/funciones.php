@@ -73,26 +73,28 @@
                 }
 
                 function notifytemplate(icon, message, type, delay = 2000, flag = true, z_index = 1051) {
-                    ajaxflagunblock = flag;
-                    jQuery.notify({
-                        icon: icon,
-                        message: message
-                        },{
-                        element: 'body',
-                        type: type,
-                        allow_dismiss: true,
-                        newest_on_top: true,
-                        showProgressbar: false,
-                        mouse_over: 'pause',
-                        offset: 20,
-                        spacing: 10,
-                        z_index: z_index,
-                        delay: delay,
-                        animate: {
-                            enter: 'animated fadeIn',
-                            exit: 'animated fadeOutDown'
-                        }
-                    });
+                    if (message) {
+                        ajaxflagunblock = flag;
+                        jQuery.notify({
+                            icon: icon,
+                            message: message
+                            },{
+                            element: 'body',
+                            type: type,
+                            allow_dismiss: true,
+                            newest_on_top: true,
+                            showProgressbar: false,
+                            mouse_over: 'pause',
+                            offset: 20,
+                            spacing: 10,
+                            z_index: z_index,
+                            delay: delay,
+                            animate: {
+                                enter: 'animated fadeIn',
+                                exit: 'animated fadeOutDown'
+                            }
+                        });
+                    }
                 }
 
                 function datatabletemplate(idtable,lengthChange=true) {
@@ -199,9 +201,10 @@
                     if(width <769){
                         select2_enabled = false;
                         blockUI_message = '';
-                        if (jQuery('select.select2').data('select2')) {
+                        jQuery('select.select2').select2();
+                        /*if (jQuery('select.select2').data('select2')) {
                             jQuery('select.select2').select2("destroy");
-                        }
+                        }*/
                     }else{
                         jQuery('select.select2').select2();
                         jQuery('body').tooltip({

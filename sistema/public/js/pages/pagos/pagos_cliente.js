@@ -44,27 +44,27 @@ jQuery(function () {
                                 case '3':
                                     response.data[i]['pagostr'] = '<span class="text-danger">S/ '+response.data[i]['pago']+'</span>';
                                     response.data[i]['acciones']='<div class="btn-group">'+
-                                                                        '    <button class="btn btn-xs btn-info detalleregistro" data-toggle="tooltip" data-placement="top" title="Detalles" data-id="'+response.data[i]['id']+'" data-table="proceso_pago">'+
-                                                                        '        <i class="fa fa-bars"></i>'+
-                                                                        '    </button>'+
-                                                                        '</div>';
+                                                                '    <button class="btn btn-xs btn-info detalleregistro" data-toggle="tooltip" data-placement="top" title="Detalles" data-id="'+response.data[i]['id']+'" data-table="proceso_pago">'+
+                                                                '        <i class="fa fa-bars"></i>'+
+                                                                '    </button>'+
+                                                                '</div>';
                                     break;
                                 case '1':
                                     response.data[i]['pagostr'] = '<span class="text-success">S/ '+response.data[i]['pago']+'</span>';
                                     response.data[i]['acciones']='<div class="btn-group">'+
-                                                                        '    <button class="btn btn-xs btn-info detalleregistro" data-toggle="tooltip" data-placement="top" title="Detalles" data-id="'+response.data[i]['id']+'" data-table="proceso_pago">'+
-                                                                        '        <i class="fa fa-bars"></i>'+
-                                                                        '    </button>'+
-                                                                        '    <button class="btn btn-xs btn-info editarregistro" data-toggle="tooltip" data-placement="top" title="Editar" data-id="'+response.data[i]['id']+'" data-table="proceso_pago">'+
-                                                                        '        <i class="fa fa-edit"></i>'+
-                                                                        '    </button>';
+                                                                '    <button class="btn btn-xs btn-info detalleregistro" data-toggle="tooltip" data-placement="top" title="Detalles" data-id="'+response.data[i]['id']+'" data-table="proceso_pago">'+
+                                                                '        <i class="fa fa-bars"></i>'+
+                                                                '    </button>'+
+                                                                '    <button class="btn btn-xs btn-info editarregistro" data-toggle="tooltip" data-placement="top" title="Editar" data-id="'+response.data[i]['id']+'" data-table="proceso_pago">'+
+                                                                '        <i class="fa fa-edit"></i>'+
+                                                                '    </button>';
                                     switch (perfil) {
                                         case '1':
                                         case '2':
                                         case '4':
-                                            response.data[i]['acciones']+='<button class="btn btn-xs btn-danger anularregistro" data-toggle="tooltip" data-placement="top" title="Anular" data-id="' + response.data[i]['id'] + '" data-table="proceso_pago">' +
-                                                                                '        <i class="fa fa-times"></i>'+
-                                                                                '    </button>';
+                                            /*response.data[i]['acciones']+='<button class="btn btn-xs btn-danger anularregistro" data-toggle="tooltip" data-placement="top" title="Anular" data-id="' + response.data[i]['id'] + '" data-table="proceso_pago">' +
+                                                                        '        <i class="fa fa-times"></i>'+
+                                                                        '    </button>';*/
                                             break;
                                         default:
                                             response.data[i]['acciones']+='';
@@ -261,7 +261,7 @@ jQuery(function () {
                                 });
                                 jQuery(registroform+' [name="id"]').prop('disabled',false);
                                 jQuery(registroform+' [name="observaciones"]').prop('disabled',false);
-                                jQuery(registroform+' [name="tipo_pago"]').prop('disabled',false);
+                                jQuery(registroform+' [name="tipo_pago"]').prop('disabled',true);
                                 jQuery(registroform+' button[type="submit"]').show();
                                 jQuery(registromodal).modal('toggle');
                             }

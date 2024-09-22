@@ -82,6 +82,18 @@ class Transacciones extends CI_Controller
         $tipos_documento = $this->generico_modelo->listado('proceso_tipo_documento', '1');
         $codigos_descuento = $this->generico_modelo->listado('proceso_codigo_descuento', '1');
         $sucursal = basedetalleregistro('base_sucursal', ['id'=>$sucursal]);
+        $mesas = [
+            'Mesa 1',
+            'Mesa 2',
+            'Mesa 3',
+            'Mesa 4',
+            'Mesa 5',
+            'Mesa 6',
+            'Mesa 7',
+            'Mesa 8',
+            'Mesa 9',
+            'Mesa 10'
+        ];
 
         $datos = [
             'menu_text' => $this->menu_text,
@@ -98,6 +110,7 @@ class Transacciones extends CI_Controller
             'codigos_descuento' => $codigos_descuento,
             'estados'=>$estados,
             'sucursal'=>$sucursal,
+            'mesas'=>$mesas,
         ];
 
         $this->load->view('bases/cabezera');

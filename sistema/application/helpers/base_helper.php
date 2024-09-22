@@ -294,6 +294,8 @@ if (! function_exists('caja_actual')) {
             }
         }
         $data = $ci->generico_modelo->caja($parameters);
+        $data['total'] = $ci->generico_modelo->cajaTotal(['id' => $id, 'tipo_pago'=>1, 'estado'=>$estado])['total'];
+        $data['total_tarjeta'] = $ci->generico_modelo->cajaTotal(['id' => $id, 'tipo_pago'=>2, 'estado'=>$estado])['total'];
         if (!isset($data['id'])) {
             return false;
         }
@@ -328,6 +330,7 @@ if (! function_exists('registro_detalle_caja')) {
         if ($data['monto'] > 0.00) {
             $inputs = [
                 'tipo_caja_detalle' => isset($data['tipo_caja_detalle']) ? $data['tipo_caja_detalle'] : 1,
+                'tipo_pago' => $data['tipo_pago'],
                 'pago' => $data['pago'],
                 'caja' => $data['caja'],
                 'referencia' => $data['referencia'],
@@ -656,5 +659,89 @@ if (! function_exists('sunat_comprobante')) {
             'proceso' => $proceso,
             'inputs' => $inputs,
         ];
+    }
+}
+
+if (! function_exists('consulta_documento')) {
+    function consulta_documento($parameters)
+    {
+        $ci=& get_instance();
+        $ci->load->database();
+
+        $configuracion = basedetalleregistro('base_configuracion', ['id'=>1]);
+        $documento_cache = basedetalleregistro('proceso_consulta_documento', ['documento'=>$parameters['documento'], 'tipo_documento'=>$parameters['tipo_documento']]);
+        if (isset($documento_cache['nombres'])) {
+            return [
+                'proceso' => true,
+                'inputs' => ['nombres'=>$documento_cache['nombres']],
+            ];
+        }
+        if ($configuracion['consulta_documento'] == '1') {
+            $ruta = $ci->config->item('document_consult_url');
+            $token = $ci->config->item('document_consult_token');
+
+            switch ($parameters['tipo_documento']) {
+                case '1':
+                    $ruta_sub = 'dni/';
+                    break;
+                case '6':
+                    $ruta_sub = 'ruc/';
+                    break;
+                default:
+                    break;
+            }
+
+            $consulta = $ruta . $ruta_sub . $parameters['documento'] . "?token=$token";
+
+            $request = curl_init();
+            curl_setopt($request, CURLOPT_URL, $consulta);
+            curl_setopt(
+                $request,
+                CURLOPT_HTTPHEADER,
+                [
+                    'Content-Type: application/json',
+                ]
+            );
+            curl_setopt($request, CURLOPT_SSL_VERIFYPEER, false);
+            curl_setopt($request, CURLOPT_RETURNTRANSFER, true);
+            $response  = curl_exec($request);
+            $httpcode = curl_getinfo($request, CURLINFO_HTTP_CODE);
+            curl_close($request);
+
+            $response_json = json_decode($response, true);
+            //dd([$consulta, $response_json]);
+
+            $inputs['documento'] = $parameters['documento'];
+            $inputs['tipo_documento'] = $parameters['tipo_documento'];
+            $inputs['fecha'] = date('Y-m-d H:i:s');
+            if (isset($response_json['dni']) || isset($response_json['ruc'])) {
+                $proceso = true;
+                $inputs['response'] = json_encode($response_json, true);
+                switch ($parameters['tipo_documento']) {
+                    case '1':
+                        $inputs['nombres'] = $response_json['nombres'] . ' ' . $response_json['apellidoPaterno'] . ' ' . $response_json['apellidoMaterno'];
+                        break;
+                    case '6':
+                        $inputs['nombres'] = $response_json['razonSocial'];
+                        break;
+                    default:
+                        break;
+                }
+            } else {
+                $proceso = false;
+                $inputs['response'] = $response_json['message'];
+            }
+            basenuevoregistro($inputs, 'proceso_consulta_documento', []);
+
+            return [
+                'proceso' => $proceso,
+                'inputs' => $inputs,
+            ];
+        } else {
+            return [
+                'proceso' => false,
+                'inputs' => [],
+            ];
+        }
     }
 }

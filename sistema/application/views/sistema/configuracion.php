@@ -104,9 +104,9 @@
                                         </div>
                                     </div>
                                 </div>
-                                <h3 class="h5 font-w600 text-uppercase push-15 hidden"><i class="fa fa-cogs text-primary push-5-r"></i>SUNAT</h3>
-                                <div class="row hidden">
-                                    <div class="col-xs-12 col-sm-2">
+                                <h3 class="h5 font-w600 text-uppercase push-15"><i class="fa fa-cogs text-primary push-5-r"></i>Integraciones</h3>
+                                <div class="row">
+                                    <div class="col-xs-12 col-sm-2 hidden">
                                         <div class="form-group">
                                             <div class="col-xs-12">
                                                 <div class="form-material form-material-info">
@@ -119,13 +119,15 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-xs-12 col-sm-5">
+                                    <div class="col-xs-12 col-sm-3">
                                         <div class="form-group">
                                             <div class="col-xs-12">
-                                                <div class="input-group form-material form-material-info">
-                                                    <input class="form-control required textoinput" type="text" name="sunat_ruc_url" value="<?php echo $configuracion['sunat_ruc_url'];?>">
-                                                    <label>URL de validación de RUC</label>
-                                                    <span class="input-group-addon"><i class="si si-share"></i></span>
+                                                <div class="form-material form-material-info">
+                                                    <select class="form-control required" name="consulta_documento" style="width: 100%;">
+                                                        <option value="1" <?php echo ($configuracion['consulta_documento']=='1'?'selected':'');?>>Activo</option>
+                                                        <option value="0" <?php echo ($configuracion['consulta_documento']=='0'?'selected':'');?>>Inactivo</option>
+                                                    </select>
+                                                    <label>Consulta de DNI/RUC</label>
                                                 </div>
                                             </div>
                                         </div>

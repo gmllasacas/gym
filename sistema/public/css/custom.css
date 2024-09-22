@@ -178,10 +178,13 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
 }
 
 .select2-container .select2-search__field {
-	width: 100% !important;
+	/*width: 100% !important;*/
 }
 
-select +.select2-container{width:100%!important;}
+select +.select2-container{
+    /*max-width:100%!important;*/
+}
+
 .oculto{
 	display: none;
 }
@@ -1076,6 +1079,9 @@ a.block.block-link-disabled:hover {
     .js-select2-filtro.form-control {
         margin-top: 10px;
         margin-bottom: 10px;
+    }
+    .content {
+        padding: 14px 8px 1px;
     }
 }
 
