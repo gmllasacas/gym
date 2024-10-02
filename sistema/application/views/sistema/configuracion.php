@@ -66,6 +66,28 @@
                                         </div>
                                     </div>
                                     <div class="col-xs-6 col-sm-3">
+                                        <div class="form-group text-left">
+                                            <div class="col-xs-12">
+                                                <div class="input-group form-material form-material-info">
+                                                    <input class="form-control required textoinput" type="text" name="empresa" value="<?php echo $configuracion['empresa'];?>">
+                                                    <label><b>Denominación de Empresa</b></label>
+                                                    <span class="input-group-addon"><i class="fa fa-info"></i></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-6 col-sm-3">
+                                        <div class="form-group">
+                                            <div class="col-xs-12">
+                                                <div class="input-group form-material form-material-info">
+                                                    <input class="form-control required textoinput email" type="text" name="correo_sistema" value="<?php echo $configuracion['correo_sistema'];?>">
+                                                    <label>Correo de sistema</label>
+                                                    <span class="input-group-addon"><i class="si si-envelope"></i></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-6 col-sm-3">
                                         <div class="form-group">
                                             <div class="col-xs-12">
                                                 <div class="form-material form-material-info">

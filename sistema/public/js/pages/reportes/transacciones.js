@@ -109,16 +109,20 @@ jQuery(function () {
         ordering: false,
         bAutoWidth: false,
         initComplete: function () {
-          jQuery(tablelist+' .cantidad').text(cantidad+' Registros');
-          jQuery(tablelist+' .subtotal').text(subtotal.toFixed(2));
-          jQuery(tablelist+' .igv').text(igv.toFixed(2));
-          jQuery(tablelist+' .total').text(total.toFixed(2));
+          totales();
         },
       });
+    
+      function totales() { 
+        jQuery(tablelist+' .cantidad').html(cantidad+' Registros');
+        jQuery(tablelist+' .subtotal').html(subtotal.toFixed(2));
+        jQuery(tablelist+' .igv').html(igv.toFixed(2));
+        jQuery(tablelist+' .total').html(total.toFixed(2));
+      };
 
       var busquedavalidate = jQuery(busquedaform).validate({
         submitHandler: function(form) {
-          listdt.ajax.reload();
+          listdt.ajax.reload(totales);
         }
       });
       jQuery('#table-list_filter').hide();

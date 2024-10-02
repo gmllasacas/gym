@@ -210,7 +210,7 @@ class Transacciones extends CI_Controller
             $qr = new QRCode();
             $registro['qr'] = $qr->render($registro['sunat']['cadena_para_codigo_qr']);
 
-            $this->load->view('transacciones/comprobante', ['registro' => $registro]);
+            $this->load->view('transacciones/comprobante', ['registro' => $registro, 'configuracion'=>$this->configuracion]);
         } else {
             show_error('El comprobante no existe', '404', 'No encontrado');
         }
@@ -228,7 +228,7 @@ class Transacciones extends CI_Controller
             $registro['sunat'] = basedetalleregistro('proceso_envio_sunat', ['estado'=>'1','venta'=>$id]);
             $registro['anulacion'] = basedetalleregistro('proceso_venta_anulacion', ['estado'=>'1','venta'=>$id]);
 
-            $this->load->view('transacciones/comprobante_anulacion', ['registro' => $registro]);
+            $this->load->view('transacciones/comprobante_anulacion', ['registro' => $registro, 'configuracion'=>$this->configuracion]);
         } else {
             show_error('El comprobante no existe', '404', 'No encontrado');
         }

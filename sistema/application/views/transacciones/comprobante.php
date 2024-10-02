@@ -75,13 +75,13 @@
                     <table style="width:100%;">
                         <tbody>
                             <tr>
-                                <td class="text-center"><b><?php echo $this->config->item('system_username'); ?></b></td>
+                                <td class="text-center"><b><?php echo $configuracion['empresa']; ?></b></td>
                             </tr>
                             <tr>
                                 <td class="text-center"><?php echo $registro['sucursal']['direccion']; ?></td>
                             </tr>
                             <tr>
-                                <td class="text-center"><b>RUC <?php echo $this->config->item('system_ruc'); ?></b></td>
+                                <td class="text-center"><b>RUC <?php echo $configuracion['ruc']; ?></b></td>
                             </tr>
                             <tr>
                                 <td class="text-center"><b><?php echo($registro['tipo_comprobante_desc'] != '' ? $registro['tipo_comprobante_desc']['descripcion']. $electronica: ''); ?></b></td>

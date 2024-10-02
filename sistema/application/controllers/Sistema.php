@@ -255,7 +255,7 @@ class Sistema extends CI_Controller
 
                         $this->email->set_newline("\r\n");
                         $this->email->initialize(['mailtype'  => 'html']);
-                        $this->email->from($this->config->item('system_email'), $this->config->item('system_username'));
+                        $this->email->from($this->configuracion['correo_sistema'], $this->configuracion['empresa']);
                         $this->email->to($registro['correo']);
                         $this->email->subject($titulo);
                         $this->email->message($this->load->view('correo/recuperar', $datos, true));
@@ -347,7 +347,7 @@ class Sistema extends CI_Controller
 
                         $this->email->set_newline("\r\n");
                         $this->email->initialize(['mailtype'  => 'html']);
-                        $this->email->from($this->config->item('system_email'), $this->config->item('system_username'));
+                        $this->email->from($this->configuracion['correo_sistema'], $this->configuracion['empresa']);
                         $this->email->to($registro['correo']);
                         $this->email->subject($titulo);
                         $this->email->message($this->load->view('correo/notificacion', $datos, true));
