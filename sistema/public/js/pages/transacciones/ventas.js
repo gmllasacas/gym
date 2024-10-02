@@ -152,7 +152,7 @@ jQuery(function () {
                             }
                             if(response.status=='200'){
                                 reiniciarform(registroform,registrovalidate,'','');
-                                jQuery(registromodal+' .btn-print').prop("href", base_url+'transaccion/comprobanteventa/'+elemento.data('id'));
+                                jQuery(registromodal+' .btn-print').prop("href", base_url+'transacciones/comprobanteventa/'+elemento.data('id'));
                                 jQuery(registromodal+' .btn-print').show();
                                 var clientes = '<option value=""></option>';
                                 jQuery.each(responseouter.data.clientes, function(index, item) {
@@ -363,7 +363,7 @@ jQuery(function () {
                                                                         '    <button class="btn btn-xs btn-info detalleregistro" data-toggle="tooltip" data-placement="top" title="Detalles" data-id="'+response.data[i]['id']+'" data-table="proceso_venta">'+
                                                                         '        <i class="fa fa-bars"></i>'+
                                                                         '    </button>'+
-                                                                        '    <a target="_new" class="btn btn-xs btn-success" href="'+base_url+'transaccion/comprobanteventa/'+response.data[i]['id']+'" data-toggle="tooltip" data-placement="top" title="Comprobante de venta">'+
+                                                                        '    <a target="_new" class="btn btn-xs btn-success" href="'+base_url+'transacciones/comprobante/'+response.data[i]['id']+'" data-toggle="tooltip" data-placement="top" title="Comprobante de venta">'+
                                                                         '        <i class="si si-printer"></i>'+
                                                                         '    </a>';
                                     switch (perfil) {

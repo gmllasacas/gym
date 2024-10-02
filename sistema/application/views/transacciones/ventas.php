@@ -340,23 +340,23 @@
                                                     <th></th>
                                                 </tr>
                                                 <tr>
-                                                    <th colspan="6" class="text-right text-success">Total</th>
+                                                    <th colspan="6" class="text-right">Gravada</th>
                                                     <th>
-                                                        <div class="input-group"><span class="input-group-addon">S/</span><input style="text-align:right" class="form-control" type="text" name="total" readonly tabindex="-1"></div>
+                                                        <div class="input-group"><span class="input-group-addon">S/</span><input style="text-align:right" class="form-control" type="text" name="subtotal" readonly tabindex="-1"></div>
                                                     </th>
                                                     <th></th>
                                                 </tr>
                                                 <tr>
                                                     <th colspan="6" class="text-right">IGV</th>
                                                     <th>
-                                                        <div class="input-group"><span class="input-group-addon">S/</span><input style="text-align:right" class="form-control" type="text" name="igv" readonly tabindex="-1" data-igv="<?php echo $this->configuracion['igv'];?>"></div>
+                                                        <div class="input-group"><span class="input-group-addon">S/</span><input style="text-align:right" class="form-control" type="text" name="igv" readonly tabindex="-1"></div>
                                                     </th>
                                                     <th></th>
                                                 </tr>
                                                 <tr>
-                                                    <th colspan="6" class="text-right">Gravada</th>
+                                                    <th colspan="6" class="text-right text-success">Total</th>
                                                     <th>
-                                                        <div class="input-group"><span class="input-group-addon">S/</span><input style="text-align:right" class="form-control" type="text" name="subtotal" readonly tabindex="-1"></div>
+                                                        <div class="input-group"><span class="input-group-addon">S/</span><input style="text-align:right" class="form-control" type="text" name="total" readonly tabindex="-1"></div>
                                                     </th>
                                                     <th></th>
                                                 </tr>

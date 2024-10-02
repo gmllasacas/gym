@@ -74,12 +74,26 @@ class Transacciones extends CI_Controller
     {
         $sucursal = $this->session->userdata('sucursal');
         $estados = $this->generico_modelo->listado('base_estado', '1');
+        $igvs = $this->generico_modelo->listado('proceso_igv', '1');
         $tipocomprobantes = $this->generico_modelo->listado('proceso_tipo_comprobante', '1', ['orderby'=>'id','direction'=>'asc']);
         $tipo_venta_pagos = $this->generico_modelo->listado('proceso_tipo_venta_pago', '1', ['orderby'=>'id','direction'=>'asc']);
         $tipo_pagos = $this->generico_modelo->listado('proceso_tipo_pago', '1', ['orderby'=>'id','direction'=>'asc']);
         $caja = $this->generico_modelo->caja(['sucursal' => $sucursal, 'estado'=>1]);
         $tipos_documento = $this->generico_modelo->listado('proceso_tipo_documento', '1');
         $codigos_descuento = $this->generico_modelo->listado('proceso_codigo_descuento', '1');
+        $sucursal = basedetalleregistro('base_sucursal', ['id'=>$sucursal]);
+        $mesas = [
+            'Mesa 1',
+            'Mesa 2',
+            'Mesa 3',
+            'Mesa 4',
+            'Mesa 5',
+            'Mesa 6',
+            'Mesa 7',
+            'Mesa 8',
+            'Mesa 9',
+            'Mesa 10'
+        ];
 
         $datos = [
             'menu_text' => $this->menu_text,
@@ -89,11 +103,14 @@ class Transacciones extends CI_Controller
             'tipocomprobantes'=>$tipocomprobantes,
             'tipo_venta_pagos'=>$tipo_venta_pagos,
             'tipo_pagos'=>$tipo_pagos,
+            'igvs'=>$igvs,
             'caja'=>$caja,
             'tipos'=>$tipos_documento,
             'departamento' => 2,
             'codigos_descuento' => $codigos_descuento,
             'estados'=>$estados,
+            'sucursal'=>$sucursal,
+            'mesas'=>$mesas,
         ];
 
         $this->load->view('bases/cabezera');
@@ -154,7 +171,6 @@ class Transacciones extends CI_Controller
             $registro['cliente_datos']['tipo_documento_desc'] = basedetalleregistro('proceso_tipo_documento', ['id'=>$registro['cliente_datos']['tipo_documento']]);
             $registro['tipo_comprobante_desc'] = basedetalleregistro('proceso_tipo_comprobante', ['id'=>$registro['tipo_comprobante']]);
             $registro['detalles'] = $this->generico_modelo->listado('proceso_venta_detalle', '1', ['venta'=>$id]);
-            $registro['tipo'] = 'venta';
             $this->load->library('NumberToLetters');
             $letras = new NumberToLetters();
             $registro['letras'] =$letras->convertir($registro['total']);
@@ -178,28 +194,41 @@ class Transacciones extends CI_Controller
             $registro['sucursal'] = basedetalleregistro('base_sucursal', ['estado'=>'1','id'=>$this->session->userdata('sucursal')]);
             $registro['sunat'] = basedetalleregistro('proceso_envio_sunat', ['estado'=>'1','venta'=>$id]);
             foreach ($registro['detalles'] as &$item) {
-                $item['codigo'] = spd($item['producto'], 6, '0');
                 $producto = basedetalleregistro('proceso_producto', ['estado'=>'1','id'=>$item['producto']]);
-                $item['tipo'] = $producto['tipo'];
-                if ($producto['tipo'] == 1) {
-                    $unidad = basedetalleregistro('proceso_unidad', ['estado'=>'1','id'=>$producto['unidad']]);
-                    $item['abreviatura'] = $unidad['abreviatura'];
-                } else {
-                    $item['abreviatura'] = 'Serv.';
-                    $duracion_unidad = basedetalleregistro('proceso_duracion_unidad', ['estado'=>'1','id'=>$producto['duracion_unidad']]);
-                    $item['duracion_unidad_desc'] = $duracion_unidad['descripcion'];
-                }
+                $detalle_tipo_producto = detalle_tipo_producto($producto);
+                $item['tipo'] = $detalle_tipo_producto['tipo'];
+                $item['codigo'] = $detalle_tipo_producto['codigo'];
+                $item['existencias'] = $detalle_tipo_producto['existencias'];
+                $item['abreviatura'] = $detalle_tipo_producto['abreviatura'];
+                $item['duracion_unidad_desc'] = $detalle_tipo_producto['duracion_unidad_desc'];
             }
 
             $this->load->library('NumberToLetters');
             $letras = new NumberToLetters();
             $registro['letras'] =$letras->convertir($registro['total'], 'SOLES');
-            $registro['tipo'] = 'venta';
 
             $qr = new QRCode();
             $registro['qr'] = $qr->render($registro['sunat']['cadena_para_codigo_qr']);
 
-            $this->load->view('transacciones/comprobante', ['registro' => $registro]);
+            $this->load->view('transacciones/comprobante', ['registro' => $registro, 'configuracion'=>$this->configuracion]);
+        } else {
+            show_error('El comprobante no existe', '404', 'No encontrado');
+        }
+    }
+
+    public function comprobanteAnulacion($id)
+    {
+        $registro=basedetalleregistro('proceso_venta', ['id'=>$id]);
+        if (count((array)$registro)>0) {
+            $registro['cliente_datos'] = basedetalleregistro('proceso_cliente', ['id'=>$registro['cliente']]);
+            $registro['cliente_datos']['tipo_documento_desc'] = basedetalleregistro('proceso_tipo_documento', ['id'=>$registro['cliente_datos']['tipo_documento']]);
+            $registro['tipo_comprobante_desc'] = basedetalleregistro('proceso_tipo_comprobante', ['id'=>$registro['tipo_comprobante']]);
+            $registro['detalles'] = $this->generico_modelo->listado('proceso_venta_detalle', '1', ['venta'=>$id]);
+            $registro['sucursal'] = basedetalleregistro('base_sucursal', ['estado'=>'1','id'=>$this->session->userdata('sucursal')]);
+            $registro['sunat'] = basedetalleregistro('proceso_envio_sunat', ['estado'=>'1','venta'=>$id]);
+            $registro['anulacion'] = basedetalleregistro('proceso_venta_anulacion', ['estado'=>'1','venta'=>$id]);
+
+            $this->load->view('transacciones/comprobante_anulacion', ['registro' => $registro, 'configuracion'=>$this->configuracion]);
         } else {
             show_error('El comprobante no existe', '404', 'No encontrado');
         }

@@ -122,7 +122,7 @@ class Reportes extends CI_Controller
                 $igv = 0;
                 $total = 0;
                 $body = '';
-                $filename = 'Registro de ventas ' . $mes . ' - ' . date("Y", strtotime($date . '-01')) . ' de ' . $this->config->item('system_username');
+                $filename = 'Registro de ventas ' . $mes . ' - ' . date("Y", strtotime($date . '-01')) . ' de ' . $this->configuracion['empresa'];
                 $style_number_right = '{"format": "#,##0.00","text-align": "right"}';
                 $style_right = '{"text-align": "right"}';
                 $style_center_wrap_width = '{"text-align": "center","text-wrap":"true","vertical-align":"center","width": 30}';
@@ -197,7 +197,7 @@ class Reportes extends CI_Controller
                                 </tr>
                                 <tr>
                                     <th _excel-styles='{\"width\": 4}'></th>
-                                    <th colspan='23' _excel-styles='$style_center_wrap'>" . $this->config->item('system_username') . "</th>
+                                    <th colspan='23' _excel-styles='$style_center_wrap'>" . $this->configuracion['empresa'] . "</th>
                                 </tr>
                                 <tr>
                                     <th></th>

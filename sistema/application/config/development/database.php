@@ -8,7 +8,7 @@ $query_builder = true;
 $db['default']['hostname'] = 'localhost';
 $db['default']['username'] = 'root';
 $db['default']['password'] = '';
-$db['default']['database'] = 'tahua';
+$db['default']['database'] = 'tahua_2';
 $db['default']['port'] = 3308;
 
 #GENERAL

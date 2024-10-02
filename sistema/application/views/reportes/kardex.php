@@ -251,7 +251,7 @@
                                                 <tr>
                                                     <th colspan="6" class="text-right">IGV</th>
                                                     <th>
-                                                        <div class="input-group"><span class="input-group-addon">S/</span><input style="text-align:right" class="form-control" type="text" name="igv" readonly tabindex="-1" data-igv="<?php echo $this->configuracion['igv'];?>"></div>
+                                                        <div class="input-group"><span class="input-group-addon">S/</span><input style="text-align:right" class="form-control" type="text" name="igv" readonly tabindex="-1"></div>
                                                     </th>
                                                     <th></th>
                                                 </tr>

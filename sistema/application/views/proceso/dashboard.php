@@ -62,17 +62,17 @@
                         </div>
                     </div>
                     <div class="row push-20 text-uppercase">
-                        <div class="col-xs-6 col-sm-4">
+                        <div class="col-xs-6 col-sm-3">
                             <div class="font-w700 text-gray-darker animated fadeIn">Ingresos del mes</div>
                             <div class="text-muted animated fadeIn"><small><i class="si si-calendar"></i> Período <?php echo $contadores['mes'];?></small></div>
                             <a class="h3 font-w300 text-success" href="#"><?php echo $contadores['ingresos_mes'];?></a>
                         </div>
-                        <div class="col-xs-6 col-sm-4">
+                        <div class="col-xs-6 col-sm-3">
                             <div class="font-w700 text-gray-darker animated fadeIn">Ingresos de la semana</div>
                             <div class="text-muted animated fadeIn"><small><i class="si si-calendar"></i>  <?php echo $contadores['semana'];?></small></div>
                             <a class="h3 font-w300 text-success" href="#"><?php echo $contadores['ingresos_semana'];?></a>
                         </div>
-                        <div class="col-xs-6 col-sm-4">
+                        <div class="col-xs-6 col-sm-3">
                             <div class="font-w700 text-gray-darker animated fadeIn">Ingresos del día</div>
                             <div class="text-muted animated fadeIn"><small><i class="si si-calendar"></i>  <?php echo $contadores['dia'];?></small></div>
                             <a class="h3 font-w300 text-success" href="#"><?php echo $contadores['ingresos_diario'];?></a>
@@ -162,7 +162,7 @@
                         <div class="col-md-6">
                             <div class="block">
                                 <div class="block-header">
-                                    <h3 class="block-title">VENTAS POR CLIENTE DEL AñO (8 MAYORES)</h3>
+                                    <h3 class="block-title">DISTRIBUCIÓN DE FLUJO DE CAJA</h3>
                                 </div>
                                 <div class="block-content block-content-full bg-gray-lighter text-center">
                                     <div id="high-pie1" style="width: 100%; height: 250px; margin: 0 auto"></div>

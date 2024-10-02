@@ -60,6 +60,7 @@ class Inventario extends CI_Controller
     public function productos()
     {
         $estados = $this->generico_modelo->listado('base_estado', '1');
+        $categorias = $this->generico_modelo->listado('proceso_categoria_producto', '1');
         $tipos = $this->generico_modelo->listado('proceso_tipo_producto', '1');
         $unidades = $this->generico_modelo->listado('proceso_unidad', '1');
         $duracion_unidades = $this->generico_modelo->listado('proceso_duracion_unidad', '1');
@@ -69,6 +70,7 @@ class Inventario extends CI_Controller
             'submenu_text' => 'Productos y Servicios',
             'export_text' => 'Listado de productos y servicios',
             'registro_text' => 'producto o servicio',
+            'categorias'=>$categorias,
             'tipos'=>$tipos,
             'duracion_unidades'=>$duracion_unidades,
             'unidades'=>$unidades,

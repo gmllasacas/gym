@@ -122,8 +122,11 @@ class Sistema extends CI_Controller
     public function configuracion()
     {
         $this->configuracion['dashboard'] = ($this->configuracion['dashboard'] == '') ? 'public/img/recursos/dashboard.jpg' : $this->configuracion['dashboard'];
+        $igvs = $this->generico_modelo->listado('proceso_igv', '1');
+
         $datos = [
             'menu_text' => $this->menu_text,
+            'igvs' => $igvs,
             'submenu_text' => 'Configuración',
             'export_text' => 'Formulario',
             'registro_text' => '',
@@ -199,26 +202,23 @@ class Sistema extends CI_Controller
         $this->load->view('bases/funciones', ['funciones' => ['sistema/auditoria']]);
     }
 
-    public function sucursales()
+    public function perfiles()
     {
-        $usuarios = $this->generico_modelo->listado('base_usuario', '1');
-        $estados = $this->generico_modelo->listado('base_estado', '1');
-
+        $menues = $this->generico_modelo->listado('base_menu', '1');
         $datos = [
             'menu_text' => $this->menu_text,
-            'submenu_text' => 'Sucursales',
-            'export_text' => 'Listado de sucursales',
-            'registro_text' => 'sucursal',
-            'usuarios' => $usuarios,
-            'estados' => $estados,
+            'submenu_text' => 'Perfiles',
+            'export_text' => 'Listado de perfiles',
+            'registro_text' => 'Perfil',
+            'menues' => $menues
         ];
 
         $this->load->view('bases/cabezera');
-        $this->load->view('bases/menu', ['menu' =>$this->menu,'submenu' =>106]);
+        $this->load->view('bases/menu', ['menu' =>$this->menu,'submenu' =>107]);
         $this->load->view('bases/barra');
-        $this->load->view('sistema/sucursales', $datos);
+        $this->load->view('sistema/perfiles', $datos);
         $this->load->view('bases/pie');
-        $this->load->view('bases/funciones', ['funciones' => ['sistema/sucursales']]);
+        $this->load->view('bases/funciones', ['funciones' => ['sistema/perfiles']]);
     }
 
 
@@ -255,7 +255,7 @@ class Sistema extends CI_Controller
 
                         $this->email->set_newline("\r\n");
                         $this->email->initialize(['mailtype'  => 'html']);
-                        $this->email->from($this->config->item('system_email'), $this->config->item('system_username'));
+                        $this->email->from($this->configuracion['correo_sistema'], $this->configuracion['empresa']);
                         $this->email->to($registro['correo']);
                         $this->email->subject($titulo);
                         $this->email->message($this->load->view('correo/recuperar', $datos, true));
@@ -347,7 +347,7 @@ class Sistema extends CI_Controller
 
                         $this->email->set_newline("\r\n");
                         $this->email->initialize(['mailtype'  => 'html']);
-                        $this->email->from($this->config->item('system_email'), $this->config->item('system_username'));
+                        $this->email->from($this->configuracion['correo_sistema'], $this->configuracion['empresa']);
                         $this->email->to($registro['correo']);
                         $this->email->subject($titulo);
                         $this->email->message($this->load->view('correo/notificacion', $datos, true));
@@ -367,6 +367,26 @@ class Sistema extends CI_Controller
                 }
             } else {
                 response(['message'=>'El enlace ha caducado'], 500);
+            }
+        }
+    }
+
+    public function consultaDocumento()
+    {
+        $tipo_documento = $this->input->post('tipo_documento');
+        $documento = $this->input->post('documento');
+        $this->form_validation->set_rules('tipo_documento', 'tipo_documento', 'required');
+        $this->form_validation->set_rules('documento', 'documento', 'required');
+        
+        if ($this->form_validation->run() == false) {
+            response(['message'=>'Parámetros incorrectos'], 500);
+        } else {
+            $consulta = consulta_documento(['tipo_documento' => $tipo_documento, 'documento' => $documento]);
+            if ($consulta['proceso']) {
+                $consulta['inputs']['response'] = json_decode($consulta['inputs']['response'], true);
+                response(['data'=>$consulta['inputs']], 200);
+            } else {
+                response(['message'=>$consulta['inputs']['response']], 500);
             }
         }
     }

@@ -37,6 +37,7 @@
         <link rel="stylesheet" href="<?php echo base_url();?>public/js/plugins/bootstrap-datepicker/bootstrap-datepicker3.min.css">
         <link rel="stylesheet" href="<?php echo base_url();?>public/js/plugins/bootstrap-datetimepicker/bootstrap-datetimepicker.min.css">
         <link rel="stylesheet" href="<?php echo base_url();?>public/js/plugins/jquery-confirm/jquery-confirm.min.css">
+        <link rel="stylesheet" href="<?php echo base_url();?>public/js/plugins/touchspin/jquery.bootstrap-touchspin.min.css">
             
         <link rel="stylesheet" href="<?php echo base_url();?>public/css/bootstrap.min.css" media="all" />
         <link rel="stylesheet" href="<?php echo base_url();?>public/css/oneui.css" id="css-main">

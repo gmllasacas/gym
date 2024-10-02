@@ -155,7 +155,7 @@
                                     <div class="row">
                                         <div class="col-xs-12 col-sm-2">
                                         </div>
-                                        <div class="col-xs-12 col-sm-8">                                            
+                                        <div class="col-xs-12 col-sm-8">
                                             <div class="table-responsive">
                                                 <table class="table table-condensed table-hover table-bordered" id="table-detalles">
                                                     <thead>

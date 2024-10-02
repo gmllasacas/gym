@@ -178,10 +178,13 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
 }
 
 .select2-container .select2-search__field {
-	width: 100% !important;
+	/*width: 100% !important;*/
 }
 
-select +.select2-container{width:100%!important;}
+select +.select2-container{
+    /*max-width:100%!important;*/
+}
+
 .oculto{
 	display: none;
 }
@@ -491,6 +494,11 @@ div.tagsinput span.tag a{
 	color: #f3b760;
 	border: 1px solid #f3b760;
 }
+.label-muted {
+	background-color: white;
+	color: #999999;
+	border: 1px solid #999999;
+}
 .btn-primary {
 	color: #5c90d2;
 	background-color: white;
@@ -516,6 +524,7 @@ div.tagsinput span.tag a{
 	background-color: white;
 	border-color: #efa231;
 }
+
 .btn-warning.disabled, .btn-warning[disabled],
 fieldset[disabled] .btn-warning, .btn-warning.disabled:hover,
 .btn-warning[disabled]:hover, fieldset[disabled] .btn-warning:hover,
@@ -921,7 +930,7 @@ div.dataTables_wrapper  .form-control:focus {
    width: 100%;
    height: 100%;
    background-color: #ffffffc9;
-   z-index: 5;
+   z-index: 1000;
 }
 
 .block .block-blocker:after {
@@ -936,7 +945,7 @@ div.dataTables_wrapper  .form-control:focus {
     font-family: 'FontAwesome';
     font-size: 25px;
     text-align: center;
-    z-index: 2;
+    z-index: 1001;
     content: "\f05e";
     animation: none;
     -webkit-animation: none;
@@ -1070,6 +1079,9 @@ a.block.block-link-disabled:hover {
     .js-select2-filtro.form-control {
         margin-top: 10px;
         margin-bottom: 10px;
+    }
+    .content {
+        padding: 14px 8px 1px;
     }
 }
 

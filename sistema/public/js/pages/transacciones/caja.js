@@ -133,7 +133,7 @@ jQuery(function () {
         jQuery(tablelist).closest('.block-content').find('.options div:nth-child(3)').empty();
         listdt.columns([4]).every( function () {
             var column = this;
-            var select = jQuery('<select class="js-select2-filtro form-control" id="filtrado1" data-placeholder="Filtro por usuario" data-allow-clear="true"></select>')
+            var select = jQuery('<select class="js-select2-filtro form-control" id="filtrado1" data-placeholder="Filtro por usuario de apertura" data-allow-clear="true"></select>')
                 .appendTo(jQuery(tablelist).closest('.block-content').find('.options div:nth-child(3)'))
                 .on( 'change', function () {
                     var val = jQuery.fn.dataTable.util.escapeRegex(
@@ -144,7 +144,7 @@ jQuery(function () {
                         .draw();
                 } );
             if (select2_enabled) { select.append( '<option value=""></option>' ); }
-            else { select.append( '<option value="">Filtro por tipo</option>' ); }
+            else { select.append( '<option value=""></option>' ); }
             column.data().unique().sort().each( function ( d, j ) {
                 select.append( '<option value="'+d+'">'+d+'</option>' )
             } );
@@ -360,9 +360,13 @@ jQuery(function () {
                                     tipodescstr = '<label class="label label-success">'+item.tipodesc+'</label>';
                                     break;
                                   case '3':
+                                    tipodescstr = '<label class="label label-muted">'+item.tipodesc+'</label>';
+                                    break;
+                                  case '4':
                                     tipodescstr = '<label class="label label-danger">'+item.tipodesc+'</label>';
                                     break;
                                   default:
+                                    tipodescstr = ''
                                     break;
                                 }
 
