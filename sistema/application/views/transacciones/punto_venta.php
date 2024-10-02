@@ -64,7 +64,10 @@
     .detalle .block.block-bordered {
         position: relative;
     }
-    .detalle .quitarfila{
+    .preventas .block.block-bordered {
+        position: relative;
+    }
+    .btn-delete{
         position: absolute;
         right: -10px;
         top: -10px;
@@ -99,6 +102,18 @@
         margin-bottom: 10px;
     }
 
+    #preventa-detalles .btn-xxs {
+        padding: 2px 10px 1px;
+        font-size: 12px;
+        line-height: 1.5;
+        border-radius: 3px;
+    }
+
+    hr.mini {
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+
     @media screen and (max-width: 767px){
         #preventatab .form-horizontal .control-label {
             line-height: 35px;
@@ -119,7 +134,7 @@
         .favoritos .block.block-bordered h6{
             font-size: 12px;
         }
-        .detalle .quitarfila {
+        .btn-delete {
             position: absolute;
             right: 10px;
             top: 10px;
@@ -167,7 +182,7 @@
                     
                     <div class="block-header bg-gray-lighter">
                         <div class="block-options-simple">
-                            <button class="btn btn-xs btn-success nuevapreventa" type="button"><i class="fa fa-plus"></i><span class="hidden-xs push-5-l">REGISTRAR</span> PREVENTA</button>
+                            <button class="btn btn-xs btn-success nuevapreventa" type="button"><i class="fa fa-plus"></i><span class="hidden-xs push-5-l">VER O REGISTRAR</span> PREVENTAS</button>
                         </div>
                         <h3 class="block-title">Formulario de Venta</h3>
                     </div>
@@ -181,9 +196,9 @@
                             <input type="hidden" name="tipo_venta_pago" value="2">
                             <div class="row">
                                 <div class="col-xs-12 col-sm-6">
-                                    <div class="form-group no-sides-form-group">
+                                    <div class="form-group no-sides-form-group has-success">
                                         <div class="row">
-                                            <label class="col-xs-12">Cliente</label>
+                                            <label class="col-xs-12 text-success">CLIENTE</label>
                                             <div class="col-xs-12">
                                                 <div class="input-group push-10">
                                                     <select class="form-control select2 required" name="cliente" style="width: 100%;" data-placeholder="Seleccione cliente">
@@ -197,16 +212,15 @@
                                     </div>
                                 </div>
                                 <div class="col-xs-12 col-sm-3">
-                                    <div class="form-group">
-                                        <div class="col-xs-12">
-                                            <div class="form-material form-material-info">
-                                                <select class="form-control required" name="tipo_comprobante" style="width: 100%;" data-placeholder="Seleccione">
-                                                    <option value="">Seleccione</option>
+                                    <div class="form-group no-sides-form-group has-info">
+                                        <div class="row">
+                                            <label class="col-xs-12 text-info">TIPO DE COMPROBANTE</label>
+                                            <div class="col-xs-12">
+                                                <select class="form-control text-info font-w700 required" name="tipo_comprobante" style="width: 100%;">
                                                     <?php foreach ((array)$tipocomprobantes as $item) :?>
                                                     <option value="<?php echo $item['id']; ?>" ><?php echo $item['descripcion']; ?></option>
                                                     <?php endforeach;?>
                                                 </select>
-                                                <label>Tipo de comprobante</label>
                                             </div>
                                         </div>
                                     </div>
@@ -216,7 +230,7 @@
                                         <div class="col-xs-12">
                                             <div class="input-group form-material form-material-info">
                                                 <input class="form-control textoinput" type="text" name="comprobante" readonly>
-                                                <label>N° de comprobante</label>
+                                                <label>NRO. DE COMPROBANTE</label>
                                                 <span class="input-group-addon"><i class="fa fa-barcode"></i></span>
                                             </div>
                                         </div>
@@ -229,7 +243,7 @@
                                         <div class="col-xs-12">
                                             <div class="input-group form-material form-material-info">
                                                 <input class="form-control textoareainput" type="text" name="datos_adicionales">
-                                                <label>Datos adicionales</label>
+                                                <label>DATOS ADICIONALES</label>
                                                 <span class="input-group-addon"><i class="si si-info"></i></span>
                                             </div>
                                         </div>
@@ -245,7 +259,7 @@
                                                     <option data-descuento_tipo="<?php echo $item['descuento_tipo']; ?>" data-descuento_cantidad="<?php echo $item['descuento_cantidad']; ?>" value="<?php echo $item['id']; ?>" ><?php echo $item['codigo'] . ' (' . $item['descuento_tipo'].$item['descuento_cantidad'] .')'; ?></option>
                                                     <?php endforeach;?>
                                                 </select>
-                                                <label>Código de descuento</label>
+                                                <label>CÓDIGO DE DESCUENTO</label>
                                             </div>
                                         </div>
                                     </div>
@@ -259,7 +273,7 @@
                                                     <option value="<?php echo $item['id']; ?>" ><?php echo $item['descripcion']; ?></option>
                                                     <?php endforeach;?>
                                                 </select>
-                                                <label>Tipo de pago</label>
+                                                <label>TIPO DE PAGO</label>
                                             </div>
                                         </div>
                                     </div>
@@ -269,7 +283,7 @@
                                         <div class="col-xs-12">
                                             <div class="input-group form-material form-material-info">
                                                 <input class="form-control textoinput" type="text" name="numero_operacion">
-                                                <label>N° de operación</label>
+                                                <label>NRO. DE OPERACIÓN</label>
                                                 <span class="input-group-addon"><i class="fa fa-barcode"></i></span>
                                             </div>
                                         </div>
@@ -876,8 +890,7 @@
                         <div class="form-group">
                             <div class="col-xs-12 text-center">
                                 <a class="btn btn-minw btn-square btn-muted push-5-t push-5-r" data-dismiss="modal"><i class="fa fa-times push-5-r"></i> CERRAR</a>
-                                <button class="btn btn-minw btn-square btn-success push-5-t push-5-r" type="submit"></button>
-                                <a class="btn btn-minw btn-square btn-info push-5-t convertir_venta"><i class="si si-action-redo push-5-r"></i> CONVERTIR A VENTA</a>
+                                <button class="btn btn-minw btn-square btn-success push-5-t" type="submit"></button>
                             </div>
                         </div>
                     </form>

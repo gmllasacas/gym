@@ -147,7 +147,7 @@ class Generico extends CI_Controller
                             $saldo = (isset($kardex['saldo']) ? ($kardex['saldo'] > 0 ? $kardex['saldo'] : 0) : 0);
                             if ($item['cantidad'] > $saldo) {
                                 $flag = false;
-                                $message = 'El producto '.$item['productodesc'].' no posee '.$item['cantidad'].' unid. en existencias';
+                                $message = 'El producto '.$item['productodesc'].' no posee '.$item['cantidad'].' existencias';
                                 break;
                             }
                         }
@@ -543,7 +543,7 @@ class Generico extends CI_Controller
                         $saldo = (isset($kardex['saldo']) ? ($kardex['saldo']>0 ? $kardex['saldo'] : 0) : 0);
                         if ($item['cantidad']>$saldo) {
                             $flag=false;
-                            $message='El producto '.$item['descripcion'].' no posee '.$item['cantidad'].' unid. en existencias';
+                            $message='El producto '.$item['descripcion'].' no posee '.$item['cantidad'].' existencias';
                             break;
                         }
                     }
@@ -740,8 +740,9 @@ class Generico extends CI_Controller
                         $inputs_c['fecha_cierre'] = $fecha;
                         $inputs_c['estado'] = $this->input->post('estado');
                         $registro = baseactualizarregistro($inputs_c, $table, ['id' => $id], []);
-                        $this->session->set_userdata('caja', null);
                         if ($registro) {
+                            $this->session->set_userdata('caja', null);
+                            $this->db->delete('proceso_preventa', ['sucursal' => $sucursal]);
                             $actual = $caja_actual['total'];
                             $monto = 0;
                             if ($cierre != $actual) {

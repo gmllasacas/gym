@@ -30,6 +30,7 @@
         <script src="<?php echo base_url();?>public/js/plugins/highcharts/modules/drilldown.js"></script>
         <script src="<?php echo base_url();?>public/js/plugins/jquery-blockui/jquery.blockUI.js"></script>
         <script src="<?php echo base_url();?>public/js/plugins/jquery-confirm/jquery-confirm.min.js"></script>
+        <script src="<?php echo base_url();?>public/js/plugins/touchspin/jquery.bootstrap-touchspin.min.js"></script>
         <script>
             jQuery(function () {
                 App.initHelpers(['datepicker','datetimepicker','maxlength', 'select2', 'tags-inputs', 'slimscroll', 'notify', 'table-tools', 'masked-inputs', 'rangeslider', 'magnific-popup']);

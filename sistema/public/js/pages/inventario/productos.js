@@ -234,8 +234,8 @@ jQuery(function () {
     };
 
     jQuery('body').on('click', '#block-reload', function() {
-        listdt.ajax.reload(selectores);
-   });
+      listdt.ajax.reload(selectores);
+    });
 
     
     jQuery('body').on('click', cambiadatoregistro, function() {

@@ -45,38 +45,40 @@ class Proceso extends CI_Controller
         $contadores['mes']= date('Y-m');
 
         /**Ventas */
+        $venta_sucursal = 'AND proceso_venta.sucursal = ' . $this->session->userdata('sucursal');
+
         $ventas_diario = $this->db->query(
             "SELECT COALESCE(SUM(proceso_venta.total),0) as ventas 
             FROM proceso_venta
-            WHERE proceso_venta.estado REGEXP ? AND (DATE(proceso_venta.fecha) = ?);",
+            WHERE proceso_venta.estado REGEXP ? AND (DATE(proceso_venta.fecha) = ?) $venta_sucursal;",
             array('^['.$estado.']',$date)
         )->row_array();
                 
         $ventas_diario_credito = $this->db->query(
             "SELECT COALESCE(SUM(proceso_venta.total),0) as ventas 
             FROM proceso_venta
-            WHERE proceso_venta.estado REGEXP ? AND proceso_venta.tipo_venta_pago = 1 AND (DATE(proceso_venta.fecha) = ?);",
+            WHERE proceso_venta.estado REGEXP ? AND proceso_venta.tipo_venta_pago = 1 AND (DATE(proceso_venta.fecha) = ?) $venta_sucursal;",
             array('^['.$estado.']',$date)
         )->row_array();
 
         $ventas_diario_contado = $this->db->query(
             "SELECT COALESCE(SUM(proceso_venta.total),0) as ventas 
             FROM proceso_venta
-            WHERE proceso_venta.estado REGEXP ? AND proceso_venta.tipo_venta_pago = 2 AND (DATE(proceso_venta.fecha) = ?);",
+            WHERE proceso_venta.estado REGEXP ? AND proceso_venta.tipo_venta_pago = 2 AND (DATE(proceso_venta.fecha) = ?) $venta_sucursal;",
             array('^['.$estado.']',$date)
         )->row_array();
 
         $ventas_semana = $this->db->query(
             "SELECT COALESCE(SUM(proceso_venta.total),0) as ventas 
             FROM proceso_venta
-            WHERE proceso_venta.estado REGEXP ? AND (DATE(proceso_venta.fecha) BETWEEN ? AND ?);",
+            WHERE proceso_venta.estado REGEXP ? AND (DATE(proceso_venta.fecha) BETWEEN ? AND ?) $venta_sucursal;",
             array('^['.$estado.']',$dateinisemana,$datefinsemana)
         )->row_array();
 
         $ventas_mes = $this->db->query(
             "SELECT COALESCE(SUM(proceso_venta.total),0) as ventas 
             FROM proceso_venta
-            WHERE proceso_venta.estado REGEXP ? AND (DATE(proceso_venta.fecha) BETWEEN ? AND ?);",
+            WHERE proceso_venta.estado REGEXP ? AND (DATE(proceso_venta.fecha) BETWEEN ? AND ?) $venta_sucursal;",
             array('^['.$estado.']',$dateinimes,$datefinmes)
         )->row_array();
 
@@ -85,7 +87,7 @@ class Proceso extends CI_Controller
             FROM (
                 SELECT IFNULL(proceso_venta.total, 0) as total, MONTH(proceso_venta.fecha) as mdate
                 FROM proceso_venta
-                WHERE proceso_venta.estado REGEXP ? AND (DATE(proceso_venta.fecha) BETWEEN ? AND ?)
+                WHERE proceso_venta.estado REGEXP ? AND (DATE(proceso_venta.fecha) BETWEEN ? AND ?) $venta_sucursal
             ) total_mes
             RIGHT OUTER JOIN base_meses on total_mes.mdate = base_meses.id
             GROUP BY base_meses.mes
@@ -110,9 +112,12 @@ class Proceso extends CI_Controller
         /**Ventas */
 
         /**Pagos */
+        $pago_sucursal = 'AND proceso_caja.sucursal = ' . $this->session->userdata('sucursal');
+
         $pagos_diario = $this->db->query(
             "SELECT COALESCE(SUM(proceso_pago.pago),0) as pagos 
             FROM proceso_pago
+            INNER JOIN proceso_caja ON proceso_caja.id = proceso_pago.caja $pago_sucursal
             WHERE proceso_pago.estado REGEXP ? AND (DATE(proceso_pago.fecha) = ?);",
             array('^['.$estado.']',$date)
         )->row_array();
@@ -120,6 +125,7 @@ class Proceso extends CI_Controller
         $pagos_diario_efectivo = $this->db->query(
             "SELECT COALESCE(SUM(proceso_pago.pago),0) as pagos 
             FROM proceso_pago
+            INNER JOIN proceso_caja ON proceso_caja.id = proceso_pago.caja $pago_sucursal
             WHERE proceso_pago.estado REGEXP ? AND proceso_pago.tipo_pago = 1 AND (DATE(proceso_pago.fecha) = ?);",
             array('^['.$estado.']',$date)
         )->row_array();
@@ -127,6 +133,7 @@ class Proceso extends CI_Controller
         $pagos_diario_deposito = $this->db->query(
             "SELECT COALESCE(SUM(proceso_pago.pago),0) as pagos 
             FROM proceso_pago
+            INNER JOIN proceso_caja ON proceso_caja.id = proceso_pago.caja $pago_sucursal
             WHERE proceso_pago.estado REGEXP ? AND proceso_pago.tipo_pago = 2 AND (DATE(proceso_pago.fecha) = ?);",
             array('^['.$estado.']',$date)
         )->row_array();
@@ -134,6 +141,7 @@ class Proceso extends CI_Controller
         $pagos_semana = $this->db->query(
             "SELECT COALESCE(SUM(proceso_pago.pago),0) as pagos 
             FROM proceso_pago
+            INNER JOIN proceso_caja ON proceso_caja.id = proceso_pago.caja $pago_sucursal
             WHERE proceso_pago.estado REGEXP ? AND (DATE(proceso_pago.fecha) BETWEEN ? AND ?);",
             array('^['.$estado.']',$dateinisemana,$datefinsemana)
         )->row_array();
@@ -141,6 +149,7 @@ class Proceso extends CI_Controller
         $pagos_mes = $this->db->query(
             "SELECT COALESCE(SUM(proceso_pago.pago),0) as pagos 
             FROM proceso_pago
+            INNER JOIN proceso_caja ON proceso_caja.id = proceso_pago.caja $pago_sucursal
             WHERE proceso_pago.estado REGEXP ? AND (DATE(proceso_pago.fecha) BETWEEN ? AND ?);",
             array('^['.$estado.']',$dateinimes,$datefinmes)
         )->row_array();
@@ -150,6 +159,7 @@ class Proceso extends CI_Controller
             FROM (
                 SELECT IFNULL(proceso_pago.pago, 0) as total, MONTH(proceso_pago.fecha) as mdate
                 FROM proceso_pago
+                INNER JOIN proceso_caja ON proceso_caja.id = proceso_pago.caja $pago_sucursal
                 WHERE proceso_pago.estado REGEXP ? AND (DATE(proceso_pago.fecha) BETWEEN ? AND ?)
             ) total_mes
             RIGHT OUTER JOIN base_meses on total_mes.mdate = base_meses.id
@@ -175,9 +185,12 @@ class Proceso extends CI_Controller
         /**Pagos */
 
         /**Ingresos */
+        $ingreso_sucursal = 'AND proceso_ingreso.sucursal = ' . $this->session->userdata('sucursal');
+
         $ingresos_diario = $this->db->query(
             "SELECT COALESCE(SUM(proceso_ingreso_detalle.cantidad),0) as ingresos 
             FROM proceso_ingreso_detalle
+            INNER JOIN proceso_ingreso ON proceso_ingreso.id = proceso_ingreso_detalle.ingreso $ingreso_sucursal
             WHERE proceso_ingreso_detalle.estado REGEXP ? AND (DATE(proceso_ingreso_detalle.fecha) = ?);",
             array('^['.$estado.']',$date)
         )->row_array();
@@ -186,6 +199,7 @@ class Proceso extends CI_Controller
         $ingresos_semana = $this->db->query(
             "SELECT COALESCE(SUM(proceso_ingreso_detalle.cantidad),0) as ingresos 
             FROM proceso_ingreso_detalle
+            INNER JOIN proceso_ingreso ON proceso_ingreso.id = proceso_ingreso_detalle.ingreso $ingreso_sucursal
             WHERE proceso_ingreso_detalle.estado REGEXP ? AND (DATE(proceso_ingreso_detalle.fecha) BETWEEN ? AND ?);",
             array('^['.$estado.']',$dateinisemana,$datefinsemana)
         )->row_array();
@@ -193,6 +207,7 @@ class Proceso extends CI_Controller
         $ingresos_mes = $this->db->query(
             "SELECT COALESCE(SUM(proceso_ingreso_detalle.cantidad),0) as ingresos 
             FROM proceso_ingreso_detalle
+            INNER JOIN proceso_ingreso ON proceso_ingreso.id = proceso_ingreso_detalle.ingreso $ingreso_sucursal
             WHERE proceso_ingreso_detalle.estado REGEXP ? AND (DATE(proceso_ingreso_detalle.fecha) BETWEEN ? AND ?);",
             array('^['.$estado.']',$dateinimes,$datefinmes)
         )->row_array();
@@ -202,6 +217,7 @@ class Proceso extends CI_Controller
             FROM (
                 SELECT IFNULL(proceso_ingreso_detalle.cantidad, 0) as total, MONTH(proceso_ingreso_detalle.fecha) as mdate
                 FROM proceso_ingreso_detalle
+                INNER JOIN proceso_ingreso ON proceso_ingreso.id = proceso_ingreso_detalle.ingreso $ingreso_sucursal
                 WHERE proceso_ingreso_detalle.estado REGEXP ? AND (DATE(proceso_ingreso_detalle.fecha) BETWEEN ? AND ?)
             ) total_mes
             RIGHT OUTER JOIN base_meses on total_mes.mdate = base_meses.id
@@ -226,7 +242,8 @@ class Proceso extends CI_Controller
         /**Ingresos */
 
         /**Clientes */
-        $clientes_ventas_anual = $this->db->query(
+        $data_pie_clientes = '[]';
+        /*$clientes_ventas_anual = $this->db->query(
             "SELECT COALESCE(SUM(proceso_venta.total),0) as ventas, proceso_cliente.nombre_o_razon_social
             FROM proceso_venta
             INNER JOIN proceso_cliente ON proceso_venta.cliente=proceso_cliente.id
@@ -245,7 +262,7 @@ class Proceso extends CI_Controller
             $data_pie_clientes = substr($data_pie_clientes, 0, -2).']';
         } else {
             $data_pie_clientes = '[]';
-        }
+        }*/
         /**Clientes */
 
         /**Año actual */

@@ -181,7 +181,7 @@ jQuery(function () {
                                     '<div class="form-group"><div class="col-xs-12"><div class="input-group"><span class="input-group-addon">S/</span><input class="form-control input-subtotal required" type="text" name="producto['+counter+'][subtotal]" value="0.00" readonly></div></div></div>'+
                                 '</td>'+
                                 '<td>'+
-                                    '<a class="btn btn-xs btn-danger quitarfila" data-toggle="tooltip" data-placement="top" title="Eliminar detalle"><i class="fa fa-times"></i></a>'+
+                                    '<a class="btn btn-xs btn-danger quitarfila" data-toggle="tooltip" data-placement="top" title="BORRAR"><i class="fa fa-times"></i></a>'+
                                 '</td>'+
                             '</tr>';
                 jQuery(tabledetalles+' tbody').append(tr);
@@ -259,6 +259,7 @@ jQuery(function () {
     var preventadetalles= '#preventa-detalles';
     var preventas= '.preventas';
     var nuevapreventa= '.nuevapreventa';
+    var eliminar_preventa= '.eliminar_preventa';
 
     jQuery('body').on('click', preventadetalles+' .quitarfila', function() {
       $(this).tooltip('hide');
@@ -357,10 +358,10 @@ jQuery(function () {
                 var element = '<div class="row detalle">'+
                                 '<div class="col-xs-12 col-md-12 col-lg-10 col-lg-offset-1">'+
                                     '<a class="block block-bordered">'+
-                                        '<button class="btn btn-xs btn-rounded btn-danger quitarfila" data-toggle="tooltip" data-placement="top" title="Eliminar detalle" type="button"><i class="fa fa-times"></i><span class="hidden-sm hidden-md hidden-lg push-5-l">BORRAR</span></button>'+
+                                        '<button class="btn btn-xs btn-rounded btn-danger btn-delete quitarfila" data-toggle="tooltip" data-placement="top" title="BORRAR" type="button"><i class="fa fa-times"></i><span class="hidden-sm hidden-md hidden-lg push-5-l">BORRAR</span></button>'+
                                         '<div class="block-content block-content-mini clearfix">'+
                                             '<div class="row">'+
-                                                '<div class="col-xs-12 col-sm-6">'+
+                                                '<div class="col-xs-12 col-sm-5">'+
                                                     '<div class="form-group">'+
                                                         '<label class="col-xs-12">'+(response.registro.categoriadesc || response.registro.tipodesc)+'</label>'+
                                                         '<div class="col-sm-12">'+
@@ -375,23 +376,23 @@ jQuery(function () {
                                                         '</div>'+
                                                     '</div>'+
                                                 '</div>'+
-                                                '<div class="col-xs-4 col-sm-2">'+
+                                                '<div class="col-xs-6 col-sm-3">'+
                                                     '<div class="form-group">'+
                                                         '<label class="col-xs-12">Cantidad</label>'+
                                                         '<div class="col-xs-12">'+
                                                             '<div class="input-group">';
                 if (response.registro['tipo'] == 1) {
-                          element += '<input class="form-control input-cantidad required" type="number" step="1" min="1" max="'+response.registro.existencias+'" name="producto['+counter+'][cantidad]" value="1"><span class="input-group-addon">'+response.registro.abreviatura+'</span>';
+                          element += '<input class="form-control input-cantidad required" type="number" step="1" min="1" max="'+response.registro.existencias+'" name="producto['+counter+'][cantidad]" value="1">';
                 } else if (response.registro['tipo'] == 2) {
-                          element += '<input class="form-control input-cantidad required" type="number" name="producto['+counter+'][cantidad]" value="1" readonly><span class="input-group-addon">'+response.registro.abreviatura+'</span>';
+                          element += '<input class="form-control input-cantidad required" type="number" name="producto['+counter+'][cantidad]" value="1" readonly>';
                 } else {
-                          element += '<input class="form-control input-cantidad required" type="number" name="producto['+counter+'][cantidad]" value="1"><span class="input-group-addon">'+response.registro.abreviatura+'</span>';
+                          element += '<input class="form-control input-cantidad required" type="number" name="producto['+counter+'][cantidad]" value="1">';
                 }
                                                 element +=  '</div>'+
                                                         '</div>'+
                                                     '</div>'+
                                                 '</div>'+
-                                                '<div class="col-xs-4 col-sm-2">'+
+                                                '<div class="col-xs-6 col-sm-2">'+
                                                     '<div class="form-group">'+
                                                         '<label class="col-xs-12">P. Venta</label>'+
                                                         '<div class="col-xs-12">'+
@@ -402,7 +403,7 @@ jQuery(function () {
                                                         '</div>'+
                                                     '</div>'+
                                                 '</div>'+
-                                                '<div class="col-xs-4 col-sm-2">'+
+                                                '<div class="col-xs-6 col-xs-offset-3 col-sm-2 col-sm-offset-0">'+
                                                     '<div class="form-group">'+
                                                         '<label class="col-xs-12">Total</label>'+
                                                         '<div class="col-xs-12">'+
@@ -419,6 +420,15 @@ jQuery(function () {
                                 '</div>'+
                             '</div>';
                 jQuery(preventadetalles).append(element);
+                jQuery(preventadetalles + " .input-cantidad").TouchSpin({
+                  min: 1,
+                  step: 1,
+                  postfix: response.registro.abreviatura,
+                  postfix_extraclass:'btn-xxs',
+                  buttondown_class:'btn btn-default btn-xxs',
+                  buttonup_class:'btn btn-default btn-xxs',
+                });
+
                 jQuery(preventaform+' [name="producto['+counter+'][precio]"]').trigger('change');
                 jQuery(preventaform+' [name="counter"]').val( parseInt(counter)+1);
                 jQuery(preventaform+' [name="producto_sel"]').val(null).trigger('change');
@@ -449,8 +459,8 @@ jQuery(function () {
             notifytemplate('fa fa-times', response.message, 'danger');
           }
           if(response.status=='200'){
-            elemento.find('.border-b').addClass('bg-gray-lighter');
-            elemento.find('.block-content-full').addClass('bg-primary');
+            elemento.closest('.border-b').addClass('bg-primary');
+            elemento.closest('.block').find('.block-nd').addClass('bg-gray-lighter');
             reiniciarform(preventaform,preventavalidate,'generico/nuevoregistro','<i class="fa fa-plus push-5-r"></i> EDITAR PRE-VENTA');
             jQuery(preventaform+' [name="id"]').val(response.registro.id);
             jQuery(preventaform+' [name="datos_adicionales"]').val(response.registro.datos_adicionales).trigger('change');
@@ -461,7 +471,7 @@ jQuery(function () {
               var element = '<div class="row detalle">'+
                               '<div class="col-xs-12 col-md-12 col-lg-10 col-lg-offset-1">'+
                                   '<a class="block block-bordered">'+
-                                      '<button class="btn btn-xs btn-rounded btn-danger quitarfila" data-toggle="tooltip" data-placement="top" title="Eliminar detalle" type="button"><i class="fa fa-times"></i><span class="hidden-sm hidden-md hidden-lg push-5-l">BORRAR</span></button>'+
+                                      '<button class="btn btn-xs btn-rounded btn-danger btn-delete quitarfila" data-toggle="tooltip" data-placement="top" title="BORRAR" type="button"><i class="fa fa-times"></i><span class="hidden-sm hidden-md hidden-lg push-5-l">BORRAR</span></button>'+
                                       '<div class="block-content block-content-mini clearfix">'+
                                           '<div class="row">'+
                                               '<div class="col-xs-12 col-sm-6">'+
@@ -527,7 +537,47 @@ jQuery(function () {
             });
             jQuery(preventaform+' [name="counter"]').val(parseInt(counter));
             jQuery(preventaform+' [name="total"]').val(response.registro.total);
-            jQuery(preventaform+' .convertir_venta').show();
+          }
+        }
+      });
+    });
+  
+    jQuery('body').on('click', eliminar_preventa, function() {
+      var elemento = jQuery(this);
+      var id = jQuery(this).data('id');
+
+      jQuery.confirm({
+        icon: 'fa fa-warning',
+        title: 'Advertencia',
+        content: '¿Eliminar preventa?',
+        type: 'red',
+        closeIcon: true,
+        draggable: false,
+        buttons: {
+          cancel: {
+            btnClass: 'btn-muted',
+            text: 'Cancelar'
+          },
+          success: {
+            btnClass: 'btn-green',
+            text: 'Confimar',
+            action: function(){
+              jQuery.ajax({
+                type: "POST",
+                url: base_url + "generico/actualizarregistro",
+                data: 'table=proceso_preventa&id=' + id + '&estado=5',
+                dataType: 'json',
+                timeout: 60000,
+                success: function(response) {
+                  if(response.status=='500'){
+                    notifytemplate('fa fa-times', response.message, 'danger');
+                  }
+                  if(response.status=='201'){
+                    preventas_();
+                  }
+                }
+              });
+            }
           }
         }
       });
@@ -536,8 +586,7 @@ jQuery(function () {
     jQuery('body').on('click', preventaform + ' .convertir_venta', function(e) {
       e.preventDefault();
       var elemento = jQuery(this);
-      var counter = jQuery(preventaform+' [name="counter"]').val();
-      var id = jQuery(preventaform+' [name="id"]').val();
+      var id = jQuery(this).data('id');
 
       jQuery.ajax({
         type: "POST",
@@ -550,8 +599,8 @@ jQuery(function () {
             notifytemplate('fa fa-times', response.message, 'danger');
           }
           if(response.status=='200'){
-            jQuery('.preventas').find('.border-b').removeClass('bg-gray-lighter');
-            jQuery('.preventas').find('.block-content-full').removeClass('bg-primary');
+            jQuery('.preventas').find('.border-b').removeClass('bg-primary');
+            jQuery('.preventas').find('.block-nd').removeClass('bg-gray-lighter');
             jQuery(registroform+' [name="preventa"]').val(response.registro.id);
             jQuery(registroform+' .preventa-tag').html('(Preventa: '+response.registro.datos_adicionales+')');
             jQuery(tabledetalles+' tbody').html('');
@@ -595,7 +644,7 @@ jQuery(function () {
                                   '<div class="form-group"><div class="col-xs-12"><div class="input-group"><span class="input-group-addon">S/</span><input class="form-control input-subtotal required" type="text" name="producto['+counter+'][subtotal]" value="0.00" readonly></div></div></div>'+
                               '</td>'+
                               '<td>'+
-                                  '<a class="btn btn-xs btn-danger quitarfila" data-toggle="tooltip" data-placement="top" title="Eliminar detalle"><i class="fa fa-times"></i></a>'+
+                                  '<a class="btn btn-xs btn-danger quitarfila" data-toggle="tooltip" data-placement="top" title="BORRAR"><i class="fa fa-times"></i></a>'+
                               '</td>'+
                           '</tr>';
               jQuery(tabledetalles+' tbody').append(tr);
@@ -994,12 +1043,12 @@ jQuery(function () {
           jQuery.each(response.data.clientes, function(index, item) {
             clientes += '<option value="'+item.id+'" data-tipo_documento="'+item.tipo_documento+'"x>'+item.tipodesc+ ' ' +item.documento+' | '+item.nombre_o_razon_social+'</option>';
           });
+          jQuery(registroform+' [name="tipo_comprobante"]').val(99).prop('disabled',false).trigger('change');
           jQuery(registroform+' [name="cliente"]').html(clientes).val(1).prop('disabled',false).trigger('change');
           jQuery(registroform+' [name="sucursal"]').val(response.meta.sucursal);
 
           jQuery(registroform+' button[type="submit"]').show();
           jQuery(registroform+' .producto-div').show();
-          jQuery(registroform+' [name="tipo_comprobante"]').prop('disabled',false);
           jQuery(registroform+' [name="comprobante"]').prop('disabled',false);
           jQuery(registroform+' [name="tipo_pago"]').prop('disabled',false).trigger('change');
           jQuery(registroform+' [name="datos_adicionales"]').prop('disabled',false);
@@ -1016,10 +1065,9 @@ jQuery(function () {
     var total = 0.00;
     var totaltarjeta = 0.00;
     var empty ='<li>'+
-              '    <i class="si si-close text-danger"></i>'+
-              '    <div class="font-w600 text-center">Sin detalles<br><br></div>'+
+                '<div class="font-w600 text-center"><i class="si si-close push-10-r text-danger"></i>Sin detalles<br><br></div>'+
               '</li>';
-
+    jQuery(cajadetalles).html(empty);
     jQuery('.caja-date').text('-/-/-');
     jQuery('.caja-total').text('S/ ' + total.toFixed(2));
     jQuery('.caja-total-tarjeta').text('S/ ' + totaltarjeta.toFixed(2));
@@ -1043,8 +1091,9 @@ jQuery(function () {
             notifytemplate('fa fa-times', response.message, 'danger');
           }
           if(response.status=='200'){
-            jQuery(cajadetalles).html('');
+            jQuery('.caja-date').text(response.registro.fecha_apertura_format);
             if (response.registro.detalles.length > 0) {
+              jQuery(cajadetalles).html('');
               jQuery.each(response.registro.detalles, function(index, item) {
                 var icon = '';
                 var element = '';
@@ -1127,7 +1176,6 @@ jQuery(function () {
                 }
                 jQuery(cajadetalles).append(element);
               });              
-              jQuery('.caja-date').text(response.registro.fecha_apertura_format);
               var total = Number(response.registro.total);
               var total_tarjeta = Number(response.registro.total_tarjeta);
               jQuery('.caja-total').text('S/ ' + total.toFixed(2));
@@ -1136,8 +1184,6 @@ jQuery(function () {
           }
         }
       });
-    } else {
-      jQuery(cajadetalles).append(empty);
     }
   };
 
@@ -1265,7 +1311,6 @@ jQuery(function () {
           productos_selector += productos + '</optgroup>' + membresias + '</optgroup>' + servicios + '</optgroup>';
           jQuery(preventaform+' [name="producto_sel"]').html(productos_selector).trigger('change');
           jQuery(preventaform+' .favoritos').html(favoritos == '' ? '<div class="col-xs-12 text-muted text-center push-15">No existen productos - servicios favoritos</div>' : favoritos);
-          jQuery(preventaform+' .convertir_venta').hide();
 
           var clientes = '<option value="">Seleccione</option>';
           jQuery.each(response.data.clientes, function(index, item) {
@@ -1304,15 +1349,21 @@ jQuery(function () {
               var total = Number(item.total);
 
               element ='<div class="col-xs-12 col-sm-4">'+
-                '<a class="block block-bordered block-link-hover3 text-center editar_preventa" data-id="'+item.id+'" href="javascript:void(0)">'+
-                    '<div class="block-content block-content-mini border-b">'+
-                        '<div class="h2 font-w400"><span class="h4 text-muted">S/</span> '+total.toFixed(2)+'</div>'+
-                        '<div class="h6 text-muted text-uppercase push-5-t"><i class="si si-tag text-info push-10-r"></i> '+(item.datos_adicionales || '-')+'</div>'+
+                '<div class="block block-bordered text-center">'+
+                  '<div class="block-content block-content-mini border-b">'+
+                    '<div class="block-options-simple btn-group btn-group-xs">'+
+                      '<button class="btn btn-success editar_preventa" data-id="'+item.id+'" type="button" data-toggle="tooltip" title="EDITAR"><i class="fa fa-edit"></i></button>'+
+                      '<button class="btn btn-info convertir_venta" data-id="'+item.id+'" type="button" data-toggle="tooltip" title="CONVERTIR A VENTA"><i class="si si-action-redo"></i></button>'+
+                      '<button class="btn btn-danger eliminar_preventa" data-id="'+item.id+'" type="button" data-toggle="tooltip" title="BORRAR"><i class="fa fa-times"></i></button>'+
                     '</div>'+
-                    '<div class="block-content block-content-full block-content-mini">'+
-                        '<i class="si si-calendar text-info push-10-r"></i>'+item.fecha+'<i class="si si-user text-info push-10-l push-10-r"></i>'+item.username+
-                    '</div>'+
-                '</a>'+
+                    '<div class="h6 text-left text-uppercase"><i class="si si-tag text-info push-10-r"></i> '+(item.datos_adicionales || '-')+'</div>'+
+                  '</div>'+
+                  '<div class="block-content block-content-mini block-nd">'+
+                    '<div class="h2 font-w400"><span class="h4 text-muted">S/</span> '+total.toFixed(2)+'</div>'+
+                    '<hr class="mini">'+
+                    '<i class="si si-calendar text-info push-10-r"></i>'+item.fecha+'<i class="si si-user text-info push-10-l push-10-r"></i>'+item.username+
+                  '</div>'+
+                '</div>'+
               '</div>';
 
               jQuery(preventas).append(element);
@@ -1341,9 +1392,11 @@ jQuery(function () {
   function validar_tipo_documento() {
     var tipo_comprobante = jQuery(registroform+' [name="tipo_comprobante"]').val();
     var tipo_documento = jQuery(registroform+' [name="cliente"]').find("option:selected").data('tipo_documento');
+    console.log(tipo_comprobante);
+    console.log(tipo_documento);
     jQuery(registroform+' button[type="submit"]').prop('disabled',false);
 
-    if(tipo_comprobante){
+    if(tipo_comprobante && tipo_documento){
       switch (tipo_comprobante) {
         case '1'://FACTURA
           if (tipo_documento != 6) {

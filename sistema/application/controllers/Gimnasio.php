@@ -88,9 +88,9 @@ class Gimnasio extends CI_Controller
 
         $datos = [
             'menu_text' => $this->menu_text,
-            'submenu_text' => 'Planificicaón de horarios',
-            'export_text' => 'Listado de cursos',
-            'registro_text' => 'curso',
+            'submenu_text' => 'Planificación de horarios',
+            'export_text' => 'Listado de Planificaciones',
+            'registro_text' => 'Planificación',
             'estados' => $estados,
             'salas' => $salas,
             'cursos' => $cursos,
@@ -99,8 +99,8 @@ class Gimnasio extends CI_Controller
         $this->load->view('bases/cabezera');
         $this->load->view('bases/menu', ['menu' =>$this->menu,'submenu' =>1004]);
         $this->load->view('bases/barra');
-        $this->load->view('gimnasio/cursos', $datos);
+        $this->load->view('gimnasio/planificacion', $datos);
         $this->load->view('bases/pie');
-        $this->load->view('bases/funciones', ['funciones' => ['gimnasio/cursos']]);
+        $this->load->view('bases/funciones', ['funciones' => ['gimnasio/planificacion']]);
     }
 }
